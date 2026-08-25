@@ -105,7 +105,22 @@ export type Database = {
           service_id?: string | null
           sort_order?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bundle_items_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "engagement_bundles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bundle_items_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       chat_conversations: {
         Row: {
@@ -168,7 +183,15 @@ export type Database = {
           sender_id?: string
           sender_role?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       deposits: {
         Row: {
@@ -258,7 +281,22 @@ export type Database = {
           updated_at?: string | null
           use_custom_ratios?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "engagement_bundles_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engagement_bundles_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       engagement_order_items: {
         Row: {
@@ -342,7 +380,22 @@ export type Database = {
           target_count?: number | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "engagement_order_items_engagement_order_id_fkey"
+            columns: ["engagement_order_id"]
+            isOneToOne: false
+            referencedRelation: "engagement_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engagement_order_items_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       engagement_orders: {
         Row: {
@@ -396,7 +449,15 @@ export type Database = {
           user_id?: string
           variance_percent?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "engagement_orders_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "engagement_bundles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       internal_cron_tokens: {
         Row: {
@@ -516,7 +577,15 @@ export type Database = {
           user_id?: string
           variance_percent?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       organic_run_schedule: {
         Row: {
@@ -600,7 +669,29 @@ export type Database = {
           status?: string | null
           variance_applied?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "organic_run_schedule_engagement_order_item_id_fkey"
+            columns: ["engagement_order_item_id"]
+            isOneToOne: false
+            referencedRelation: "engagement_order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organic_run_schedule_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organic_run_schedule_provider_account_id_fkey"
+            columns: ["provider_account_id"]
+            isOneToOne: false
+            referencedRelation: "provider_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       oxapay_deposits: {
         Row: {
@@ -1032,7 +1123,22 @@ export type Database = {
           service_id?: string | null
           sort_order?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "service_provider_mapping_provider_account_id_fkey"
+            columns: ["provider_account_id"]
+            isOneToOne: false
+            referencedRelation: "provider_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_provider_mapping_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       services: {
         Row: {
@@ -1098,7 +1204,22 @@ export type Database = {
           start_time?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "services_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "services_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscription_requests: {
         Row: {
@@ -1221,7 +1342,15 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transactions: {
         Row: {
@@ -1263,7 +1392,22 @@ export type Database = {
           type?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -1317,7 +1461,15 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "wallets_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       zapupi_deposits: {
         Row: {
@@ -1478,7 +1630,16 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      admin_ban_user_and_cancel: {
+        Args: { p_reason?: string; p_target_user_id: string }
+        Returns: Json
+      }
+      admin_unban_user: { Args: { p_target_user_id: string }; Returns: Json }
+      cancel_order_with_refund: {
+        Args: { p_actor: string; p_is_admin: boolean; p_order_id: string }
+        Returns: Json
+      }
+      cleanup_old_completed_engagement_orders: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
