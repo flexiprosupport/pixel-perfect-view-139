@@ -331,7 +331,7 @@ const Index = () => {
                     <Zap className="w-3 h-3" /> Partner tool
                   </span>
                   <h3 className="text-[1.5rem] sm:text-[2rem] font-black tracking-[-0.02em] text-white leading-tight">
-                    EXTIPSINGHT<span style={{ color: '#3B82F6' }}>PRO</span>
+                    FLEXI<span style={{ color: '#3B82F6' }}>PRO</span>
                   </h3>
                   <p className="mt-2 text-[13px] sm:text-[14px]" style={{ color: '#CBD5E1' }}>
                     Edit everything inside Insight Editor — Instagram & TikTok traffic, highlights, feed percentage, gender, graphs & engagement controls. Clean professional dashboard. Simple, smooth and powerful all-in-one editing app.
