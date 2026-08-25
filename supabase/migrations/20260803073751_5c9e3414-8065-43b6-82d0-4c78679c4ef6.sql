@@ -1,0 +1,1 @@
+UPDATE public.platform_settings SET maintenance_mode = true, updated_at = now();

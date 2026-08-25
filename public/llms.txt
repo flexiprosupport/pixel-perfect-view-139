@@ -1,0 +1,23 @@
+# Extips Panel
+
+> AI-organic social media growth panel. Real Instagram, YouTube and TikTok engagement delivered with natural patterns — S-curve growth, peak-hour optimisation and ±50% variance — so accounts stay 100% safe.
+
+Extips Panel is a wallet-based SMM platform with engagement bundles, multi-provider auto-rotation, live delivery previews, subscriptions and 24/7 live chat support. Sign-up is free; pay per order from your wallet.
+
+## Pages
+
+- [Home](/): Product overview, features and pricing highlights.
+- [Services](/services): Browse Instagram, YouTube, TikTok and Twitter/X services with prices and speeds.
+- [Sign in / Sign up](/auth): Create a free account or log in.
+- [Support & FAQ](/support): Frequently asked questions about delivery, payments, refunds and Organic Mode.
+
+## Legal
+
+- [Terms of Service](/terms)
+- [Privacy Policy](/privacy)
+- [Refund Policy](/refund)
+- [Cookie Policy](/cookies)
+
+## Optional
+
+- [API access](/api-access): Reseller API documentation (requires login).

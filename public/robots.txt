@@ -1,14 +1,102 @@
+# Extips Panel — robots.txt
+# Site:    https://extipspanel.com
+# Updated: 2026-05-05
+
+# ───────────────────────────── Default rule ─────────────────────────────
+User-agent: *
+Allow: /
+Allow: /services
+Allow: /auth
+Allow: /terms
+Allow: /privacy
+Allow: /refund
+Allow: /cookies
+
+# Authenticated / private routes — must NOT be indexed
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /order
+Disallow: /order/*
+Disallow: /orders
+Disallow: /orders/*
+Disallow: /engagement-order
+Disallow: /engagement-order/*
+Disallow: /engagement-orders
+Disallow: /engagement-orders/*
+Disallow: /wallet
+Disallow: /settings
+Disallow: /support
+Disallow: /api-access
+
+# Admin
+Disallow: /admin
+Disallow: /admin/*
+
+# Internal / API
+Disallow: /api/
+Disallow: /functions/
+
+# Don't index search/filter URLs (duplicate content)
+Disallow: /*?*
+
+# Allow CSS/JS/images so Googlebot can render properly
+Allow: /assets/
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.svg$
+Allow: /*.webp$
+
+# ───────────────────────────── Search engines ─────────────────────────────
 User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /wallet
+Disallow: /settings
+Disallow: /api-access
+
+User-agent: Googlebot-Image
 Allow: /
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /dashboard
 
-User-agent: Twitterbot
+# ───────────────────────────── AI crawlers (allow for visibility) ─────────────────────────────
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+
+User-agent: ChatGPT-User
 Allow: /
 
-User-agent: facebookexternalhit
+User-agent: PerplexityBot
 Allow: /
 
-User-agent: *
+User-agent: ClaudeBot
 Allow: /
+Disallow: /admin
+
+User-agent: Google-Extended
+Allow: /
+
+# ───────────────────────────── Block bad bots ─────────────────────────────
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# ───────────────────────────── Sitemap & host ─────────────────────────────
+Sitemap: https://extipspanel.com/sitemap.xml
+Host: https://extipspanel.com

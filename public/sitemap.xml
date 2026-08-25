@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <url>
+    <loc>https://extipspanel.com/</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://extipspanel.com/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://extipspanel.com/" />
+    <image:image>
+      <image:loc>https://extipspanel.com/og-image.jpg</image:loc>
+      <image:title>Extips Panel — Organic Social Media Growth Platform</image:title>
+      <image:caption>AI-powered SMM panel for organic social growth</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://extipspanel.com/auth</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://extipspanel.com/terms</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://extipspanel.com/privacy</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://extipspanel.com/refund</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://extipspanel.com/cookies</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://extipspanel.com/about</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://extipspanel.com/contact</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://extipspanel.com/shipping</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://extipspanel.com/dashboard</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://extipspanel.com/orders</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://extipspanel.com/wallet</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://extipspanel.com/settings</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://extipspanel.com/support</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>

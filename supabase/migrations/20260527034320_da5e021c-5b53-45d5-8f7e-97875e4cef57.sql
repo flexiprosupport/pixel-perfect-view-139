@@ -1,0 +1,2 @@
+UPDATE public.bundle_items SET service_id='dc3bbc74-b277-4651-b19c-67af9b121120' WHERE engagement_type='likes' AND bundle_id IN (SELECT id FROM public.engagement_bundles WHERE is_active=true);
+UPDATE public.bundle_items SET service_id='3afab3cf-85ed-45b4-bcf8-0e79468584b6' WHERE engagement_type='saves' AND bundle_id IN (SELECT id FROM public.engagement_bundles WHERE is_active=true);
