@@ -1,0 +1,1 @@
+UPDATE public.platform_settings SET global_markup_percent = 0;

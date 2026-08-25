@@ -1,0 +1,1 @@
+GRANT UPDATE ON public.wallets TO authenticated;

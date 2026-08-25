@@ -1,0 +1,1 @@
+INSERT INTO public.platform_settings (maintenance_mode) VALUES (true);

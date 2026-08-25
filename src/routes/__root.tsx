@@ -8,6 +8,15 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { toast } from "sonner";
+import { AuthProvider } from "@/hooks/useAuth";
+import { CurrencyProvider } from "@/hooks/useCurrency";
+import { ScrollToTop } from "@/components/ScrollToTop";
+import { AppErrorBoundary } from "@/components/app/AppErrorBoundary";
+import { GlobalSubscriptionGuard } from "@/components/subscription/GlobalSubscriptionGuard";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -77,21 +86,34 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Extips Panel — AI Social Media Growth Panel" },
+      {
+        name: "description",
+        content:
+          "Extips Panel — real Instagram, YouTube & TikTok engagement with natural, human-like delivery. Safe, fast and fully automated.",
+      },
+      { name: "author", content: "Extips Panel" },
+      { property: "og:title", content: "Extips Panel — AI Social Media Growth Panel" },
+      {
+        property: "og:description",
+        content:
+          "Real Instagram, YouTube & TikTok engagement with natural delivery. 50,000+ orders delivered, zero bans.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "theme-color", content: "#2563EB" },
     ],
     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap",
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "apple-touch-icon", href: "/icon-192x192.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
     ],
   }),
   shellComponent: RootShell,
@@ -117,10 +139,40 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    const handleRejection = (e: PromiseRejectionEvent) => {
+      console.error("Unhandled rejection:", e.reason);
+      toast.error("An error occurred. Please try again.");
+      e.preventDefault();
+    };
+    const handleError = (e: ErrorEvent) => {
+      console.error("Unhandled error:", e.error || e.message);
+    };
+    window.addEventListener("unhandledrejection", handleRejection);
+    window.addEventListener("error", handleError);
+    return () => {
+      window.removeEventListener("unhandledrejection", handleRejection);
+      window.removeEventListener("error", handleError);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <AuthProvider>
+        <CurrencyProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <AppErrorBoundary>
+              <ScrollToTop />
+              <GlobalSubscriptionGuard>
+                {/* Required: nested routes render here. */}
+                <Outlet />
+              </GlobalSubscriptionGuard>
+            </AppErrorBoundary>
+          </TooltipProvider>
+        </CurrencyProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

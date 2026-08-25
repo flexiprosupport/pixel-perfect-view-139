@@ -1,0 +1,1 @@
+UPDATE public.bundle_items SET service_id = '6d24ce9f-81aa-475f-9443-490d3395213f' WHERE engagement_type = 'shares' AND service_id = '6ea588c6-4fe2-455c-bea3-03189612d1db';

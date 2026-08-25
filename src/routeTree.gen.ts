@@ -10,33 +10,441 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ApiAccessRouteImport } from './routes/api-access'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as EngagementOrderRouteImport } from './routes/engagement-order'
+import { Route as EngagementOrdersRouteImport } from './routes/engagement-orders'
+import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RefundRouteImport } from './routes/refund'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ShippingRouteImport } from './routes/shipping'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminAuditLogRouteImport } from './routes/admin/audit-log'
+import { Route as AdminBundlesRouteImport } from './routes/admin/bundles'
+import { Route as AdminChatRouteImport } from './routes/admin/chat'
+import { Route as AdminCronMonitorRouteImport } from './routes/admin/cron-monitor'
+import { Route as AdminDepositsRouteImport } from './routes/admin/deposits'
+import { Route as AdminOxapayEventsRouteImport } from './routes/admin/oxapay-events'
+import { Route as AdminPopupAdRouteImport } from './routes/admin/popup-ad'
+import { Route as AdminProviderAccountsRouteImport } from './routes/admin/provider-accounts'
+import { Route as AdminServiceProviderMappingRouteImport } from './routes/admin/service-provider-mapping'
+import { Route as AdminServicesRouteImport } from './routes/admin/services'
+import { Route as AdminSubscriptionsRouteImport } from './routes/admin/subscriptions'
+import { Route as AdminTopupPlanRouteImport } from './routes/admin/topup-plan'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as EngagementOrdersOrderNumberRouteImport } from './routes/engagement-orders.$orderNumber'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAccessRoute = ApiAccessRouteImport.update({
+  id: '/api-access',
+  path: '/api-access',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EngagementOrderRoute = EngagementOrderRouteImport.update({
+  id: '/engagement-order',
+  path: '/engagement-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EngagementOrdersRoute = EngagementOrdersRouteImport.update({
+  id: '/engagement-orders',
+  path: '/engagement-orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersRoute = OrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundRoute = RefundRouteImport.update({
+  id: '/refund',
+  path: '/refund',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShippingRoute = ShippingRouteImport.update({
+  id: '/shipping',
+  path: '/shipping',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletRoute = WalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
+  id: '/admin/audit-log',
+  path: '/admin/audit-log',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminBundlesRoute = AdminBundlesRouteImport.update({
+  id: '/admin/bundles',
+  path: '/admin/bundles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminChatRoute = AdminChatRouteImport.update({
+  id: '/admin/chat',
+  path: '/admin/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCronMonitorRoute = AdminCronMonitorRouteImport.update({
+  id: '/admin/cron-monitor',
+  path: '/admin/cron-monitor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDepositsRoute = AdminDepositsRouteImport.update({
+  id: '/admin/deposits',
+  path: '/admin/deposits',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminOxapayEventsRoute = AdminOxapayEventsRouteImport.update({
+  id: '/admin/oxapay-events',
+  path: '/admin/oxapay-events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPopupAdRoute = AdminPopupAdRouteImport.update({
+  id: '/admin/popup-ad',
+  path: '/admin/popup-ad',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminProviderAccountsRoute = AdminProviderAccountsRouteImport.update({
+  id: '/admin/provider-accounts',
+  path: '/admin/provider-accounts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminServiceProviderMappingRoute =
+  AdminServiceProviderMappingRouteImport.update({
+    id: '/admin/service-provider-mapping',
+    path: '/admin/service-provider-mapping',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminServicesRoute = AdminServicesRouteImport.update({
+  id: '/admin/services',
+  path: '/admin/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSubscriptionsRoute = AdminSubscriptionsRouteImport.update({
+  id: '/admin/subscriptions',
+  path: '/admin/subscriptions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTopupPlanRoute = AdminTopupPlanRouteImport.update({
+  id: '/admin/topup-plan',
+  path: '/admin/topup-plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EngagementOrdersOrderNumberRoute =
+  EngagementOrdersOrderNumberRouteImport.update({
+    id: '/$orderNumber',
+    path: '/$orderNumber',
+    getParentRoute: () => EngagementOrdersRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/api-access': typeof ApiAccessRoute
+  '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
+  '/dashboard': typeof DashboardRoute
+  '/engagement-order': typeof EngagementOrderRoute
+  '/engagement-orders': typeof EngagementOrdersRouteWithChildren
+  '/orders': typeof OrdersRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
+  '/settings': typeof SettingsRoute
+  '/shipping': typeof ShippingRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
+  '/wallet': typeof WalletRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/bundles': typeof AdminBundlesRoute
+  '/admin/chat': typeof AdminChatRoute
+  '/admin/cron-monitor': typeof AdminCronMonitorRoute
+  '/admin/deposits': typeof AdminDepositsRoute
+  '/admin/oxapay-events': typeof AdminOxapayEventsRoute
+  '/admin/popup-ad': typeof AdminPopupAdRoute
+  '/admin/provider-accounts': typeof AdminProviderAccountsRoute
+  '/admin/service-provider-mapping': typeof AdminServiceProviderMappingRoute
+  '/admin/services': typeof AdminServicesRoute
+  '/admin/subscriptions': typeof AdminSubscriptionsRoute
+  '/admin/topup-plan': typeof AdminTopupPlanRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/api-access': typeof ApiAccessRoute
+  '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
+  '/dashboard': typeof DashboardRoute
+  '/engagement-order': typeof EngagementOrderRoute
+  '/engagement-orders': typeof EngagementOrdersRouteWithChildren
+  '/orders': typeof OrdersRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
+  '/settings': typeof SettingsRoute
+  '/shipping': typeof ShippingRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
+  '/wallet': typeof WalletRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/bundles': typeof AdminBundlesRoute
+  '/admin/chat': typeof AdminChatRoute
+  '/admin/cron-monitor': typeof AdminCronMonitorRoute
+  '/admin/deposits': typeof AdminDepositsRoute
+  '/admin/oxapay-events': typeof AdminOxapayEventsRoute
+  '/admin/popup-ad': typeof AdminPopupAdRoute
+  '/admin/provider-accounts': typeof AdminProviderAccountsRoute
+  '/admin/service-provider-mapping': typeof AdminServiceProviderMappingRoute
+  '/admin/services': typeof AdminServicesRoute
+  '/admin/subscriptions': typeof AdminSubscriptionsRoute
+  '/admin/topup-plan': typeof AdminTopupPlanRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/api-access': typeof ApiAccessRoute
+  '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
+  '/dashboard': typeof DashboardRoute
+  '/engagement-order': typeof EngagementOrderRoute
+  '/engagement-orders': typeof EngagementOrdersRouteWithChildren
+  '/orders': typeof OrdersRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
+  '/settings': typeof SettingsRoute
+  '/shipping': typeof ShippingRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
+  '/wallet': typeof WalletRoute
+  '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/bundles': typeof AdminBundlesRoute
+  '/admin/chat': typeof AdminChatRoute
+  '/admin/cron-monitor': typeof AdminCronMonitorRoute
+  '/admin/deposits': typeof AdminDepositsRoute
+  '/admin/oxapay-events': typeof AdminOxapayEventsRoute
+  '/admin/popup-ad': typeof AdminPopupAdRoute
+  '/admin/provider-accounts': typeof AdminProviderAccountsRoute
+  '/admin/service-provider-mapping': typeof AdminServiceProviderMappingRoute
+  '/admin/services': typeof AdminServicesRoute
+  '/admin/subscriptions': typeof AdminSubscriptionsRoute
+  '/admin/topup-plan': typeof AdminTopupPlanRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/api-access'
+    | '/auth'
+    | '/contact'
+    | '/cookies'
+    | '/dashboard'
+    | '/engagement-order'
+    | '/engagement-orders'
+    | '/orders'
+    | '/privacy'
+    | '/refund'
+    | '/settings'
+    | '/shipping'
+    | '/support'
+    | '/terms'
+    | '/wallet'
+    | '/admin/audit-log'
+    | '/admin/bundles'
+    | '/admin/chat'
+    | '/admin/cron-monitor'
+    | '/admin/deposits'
+    | '/admin/oxapay-events'
+    | '/admin/popup-ad'
+    | '/admin/provider-accounts'
+    | '/admin/service-provider-mapping'
+    | '/admin/services'
+    | '/admin/subscriptions'
+    | '/admin/topup-plan'
+    | '/admin/users'
+    | '/engagement-orders/$orderNumber'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/api-access'
+    | '/auth'
+    | '/contact'
+    | '/cookies'
+    | '/dashboard'
+    | '/engagement-order'
+    | '/engagement-orders'
+    | '/orders'
+    | '/privacy'
+    | '/refund'
+    | '/settings'
+    | '/shipping'
+    | '/support'
+    | '/terms'
+    | '/wallet'
+    | '/admin/audit-log'
+    | '/admin/bundles'
+    | '/admin/chat'
+    | '/admin/cron-monitor'
+    | '/admin/deposits'
+    | '/admin/oxapay-events'
+    | '/admin/popup-ad'
+    | '/admin/provider-accounts'
+    | '/admin/service-provider-mapping'
+    | '/admin/services'
+    | '/admin/subscriptions'
+    | '/admin/topup-plan'
+    | '/admin/users'
+    | '/engagement-orders/$orderNumber'
+    | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/api-access'
+    | '/auth'
+    | '/contact'
+    | '/cookies'
+    | '/dashboard'
+    | '/engagement-order'
+    | '/engagement-orders'
+    | '/orders'
+    | '/privacy'
+    | '/refund'
+    | '/settings'
+    | '/shipping'
+    | '/support'
+    | '/terms'
+    | '/wallet'
+    | '/admin/audit-log'
+    | '/admin/bundles'
+    | '/admin/chat'
+    | '/admin/cron-monitor'
+    | '/admin/deposits'
+    | '/admin/oxapay-events'
+    | '/admin/popup-ad'
+    | '/admin/provider-accounts'
+    | '/admin/service-provider-mapping'
+    | '/admin/services'
+    | '/admin/subscriptions'
+    | '/admin/topup-plan'
+    | '/admin/users'
+    | '/engagement-orders/$orderNumber'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  ApiAccessRoute: typeof ApiAccessRoute
+  AuthRoute: typeof AuthRoute
+  ContactRoute: typeof ContactRoute
+  CookiesRoute: typeof CookiesRoute
+  DashboardRoute: typeof DashboardRoute
+  EngagementOrderRoute: typeof EngagementOrderRoute
+  EngagementOrdersRoute: typeof EngagementOrdersRouteWithChildren
+  OrdersRoute: typeof OrdersRoute
+  PrivacyRoute: typeof PrivacyRoute
+  RefundRoute: typeof RefundRoute
+  SettingsRoute: typeof SettingsRoute
+  ShippingRoute: typeof ShippingRoute
+  SupportRoute: typeof SupportRoute
+  TermsRoute: typeof TermsRoute
+  WalletRoute: typeof WalletRoute
+  AdminAuditLogRoute: typeof AdminAuditLogRoute
+  AdminBundlesRoute: typeof AdminBundlesRoute
+  AdminChatRoute: typeof AdminChatRoute
+  AdminCronMonitorRoute: typeof AdminCronMonitorRoute
+  AdminDepositsRoute: typeof AdminDepositsRoute
+  AdminOxapayEventsRoute: typeof AdminOxapayEventsRoute
+  AdminPopupAdRoute: typeof AdminPopupAdRoute
+  AdminProviderAccountsRoute: typeof AdminProviderAccountsRoute
+  AdminServiceProviderMappingRoute: typeof AdminServiceProviderMappingRoute
+  AdminServicesRoute: typeof AdminServicesRoute
+  AdminSubscriptionsRoute: typeof AdminSubscriptionsRoute
+  AdminTopupPlanRoute: typeof AdminTopupPlanRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +456,269 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api-access': {
+      id: '/api-access'
+      path: '/api-access'
+      fullPath: '/api-access'
+      preLoaderRoute: typeof ApiAccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/engagement-order': {
+      id: '/engagement-order'
+      path: '/engagement-order'
+      fullPath: '/engagement-order'
+      preLoaderRoute: typeof EngagementOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/engagement-orders': {
+      id: '/engagement-orders'
+      path: '/engagement-orders'
+      fullPath: '/engagement-orders'
+      preLoaderRoute: typeof EngagementOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders': {
+      id: '/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund': {
+      id: '/refund'
+      path: '/refund'
+      fullPath: '/refund'
+      preLoaderRoute: typeof RefundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shipping': {
+      id: '/shipping'
+      path: '/shipping'
+      fullPath: '/shipping'
+      preLoaderRoute: typeof ShippingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallet': {
+      id: '/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/audit-log': {
+      id: '/admin/audit-log'
+      path: '/admin/audit-log'
+      fullPath: '/admin/audit-log'
+      preLoaderRoute: typeof AdminAuditLogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/bundles': {
+      id: '/admin/bundles'
+      path: '/admin/bundles'
+      fullPath: '/admin/bundles'
+      preLoaderRoute: typeof AdminBundlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/chat': {
+      id: '/admin/chat'
+      path: '/admin/chat'
+      fullPath: '/admin/chat'
+      preLoaderRoute: typeof AdminChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/cron-monitor': {
+      id: '/admin/cron-monitor'
+      path: '/admin/cron-monitor'
+      fullPath: '/admin/cron-monitor'
+      preLoaderRoute: typeof AdminCronMonitorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/deposits': {
+      id: '/admin/deposits'
+      path: '/admin/deposits'
+      fullPath: '/admin/deposits'
+      preLoaderRoute: typeof AdminDepositsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/oxapay-events': {
+      id: '/admin/oxapay-events'
+      path: '/admin/oxapay-events'
+      fullPath: '/admin/oxapay-events'
+      preLoaderRoute: typeof AdminOxapayEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/popup-ad': {
+      id: '/admin/popup-ad'
+      path: '/admin/popup-ad'
+      fullPath: '/admin/popup-ad'
+      preLoaderRoute: typeof AdminPopupAdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/provider-accounts': {
+      id: '/admin/provider-accounts'
+      path: '/admin/provider-accounts'
+      fullPath: '/admin/provider-accounts'
+      preLoaderRoute: typeof AdminProviderAccountsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/service-provider-mapping': {
+      id: '/admin/service-provider-mapping'
+      path: '/admin/service-provider-mapping'
+      fullPath: '/admin/service-provider-mapping'
+      preLoaderRoute: typeof AdminServiceProviderMappingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/services': {
+      id: '/admin/services'
+      path: '/admin/services'
+      fullPath: '/admin/services'
+      preLoaderRoute: typeof AdminServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/subscriptions': {
+      id: '/admin/subscriptions'
+      path: '/admin/subscriptions'
+      fullPath: '/admin/subscriptions'
+      preLoaderRoute: typeof AdminSubscriptionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/topup-plan': {
+      id: '/admin/topup-plan'
+      path: '/admin/topup-plan'
+      fullPath: '/admin/topup-plan'
+      preLoaderRoute: typeof AdminTopupPlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/engagement-orders/$orderNumber': {
+      id: '/engagement-orders/$orderNumber'
+      path: '/$orderNumber'
+      fullPath: '/engagement-orders/$orderNumber'
+      preLoaderRoute: typeof EngagementOrdersOrderNumberRouteImport
+      parentRoute: typeof EngagementOrdersRoute
+    }
   }
 }
 
+interface EngagementOrdersRouteChildren {
+  EngagementOrdersOrderNumberRoute: typeof EngagementOrdersOrderNumberRoute
+}
+
+const EngagementOrdersRouteChildren: EngagementOrdersRouteChildren = {
+  EngagementOrdersOrderNumberRoute: EngagementOrdersOrderNumberRoute,
+}
+
+const EngagementOrdersRouteWithChildren =
+  EngagementOrdersRoute._addFileChildren(EngagementOrdersRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  ApiAccessRoute: ApiAccessRoute,
+  AuthRoute: AuthRoute,
+  ContactRoute: ContactRoute,
+  CookiesRoute: CookiesRoute,
+  DashboardRoute: DashboardRoute,
+  EngagementOrderRoute: EngagementOrderRoute,
+  EngagementOrdersRoute: EngagementOrdersRouteWithChildren,
+  OrdersRoute: OrdersRoute,
+  PrivacyRoute: PrivacyRoute,
+  RefundRoute: RefundRoute,
+  SettingsRoute: SettingsRoute,
+  ShippingRoute: ShippingRoute,
+  SupportRoute: SupportRoute,
+  TermsRoute: TermsRoute,
+  WalletRoute: WalletRoute,
+  AdminAuditLogRoute: AdminAuditLogRoute,
+  AdminBundlesRoute: AdminBundlesRoute,
+  AdminChatRoute: AdminChatRoute,
+  AdminCronMonitorRoute: AdminCronMonitorRoute,
+  AdminDepositsRoute: AdminDepositsRoute,
+  AdminOxapayEventsRoute: AdminOxapayEventsRoute,
+  AdminPopupAdRoute: AdminPopupAdRoute,
+  AdminProviderAccountsRoute: AdminProviderAccountsRoute,
+  AdminServiceProviderMappingRoute: AdminServiceProviderMappingRoute,
+  AdminServicesRoute: AdminServicesRoute,
+  AdminSubscriptionsRoute: AdminSubscriptionsRoute,
+  AdminTopupPlanRoute: AdminTopupPlanRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
