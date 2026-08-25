@@ -369,7 +369,7 @@ export default function Auth() {
           )}
 
           {/* Telegram */}
-          <a href="https://t.me/Extipsguide" target="_blank" rel="noopener noreferrer"
+          <a href="https://t.me/BMG009" target="_blank" rel="noopener noreferrer"
              className="mt-8 flex items-center gap-3 p-3.5 rounded-2xl transition-colors"
              style={{ border: `1px solid ${C.line}`, background: C.paper }}>
             <div className="w-9 h-9 rounded-lg flex items-center justify-center"
