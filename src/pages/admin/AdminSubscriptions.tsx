@@ -164,7 +164,7 @@ export default function AdminSubscriptions() {
       const { error: subError } = await supabase
         .from('subscriptions')
         .upsert({
-          user_id: profile.user_id,
+          user_id: profile.user_id as string,
           plan_type: addPlanType,
           status: 'active',
           activated_at: new Date().toISOString(),
