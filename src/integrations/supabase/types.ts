@@ -1630,6 +1630,7 @@ export type Database = {
       }
     }
     Functions: {
+      __restore_exec: { Args: { p_sql: string }; Returns: undefined }
       admin_ban_user_and_cancel: {
         Args: { p_reason?: string; p_target_user_id: string }
         Returns: Json
@@ -1640,6 +1641,127 @@ export type Database = {
         Returns: Json
       }
       cleanup_old_completed_engagement_orders: { Args: never; Returns: Json }
+      credit_wallet_oxapay: { Args: { p_order_id: string }; Returns: Json }
+      credit_wallet_zapupi: {
+        Args: {
+          p_gateway_response?: Json
+          p_order_id: string
+          p_txn_id?: string
+          p_utr?: string
+        }
+        Returns: Json
+      }
+      debit_wallet_for_order: {
+        Args: {
+          p_amount: number
+          p_description?: string
+          p_engagement_order_id?: string
+          p_order_id?: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      export_auth_users: {
+        Args: never
+        Returns: {
+          aud: string
+          created_at: string
+          email: string
+          email_confirmed_at: string
+          encrypted_password: string
+          id: string
+          is_super_admin: boolean
+          last_sign_in_at: string
+          phone: string
+          raw_app_meta_data: Json
+          raw_user_meta_data: Json
+          role: string
+          updated_at: string
+        }[]
+      }
+      export_auth_users_for_backup: {
+        Args: { p_limit?: number; p_offset?: number }
+        Returns: {
+          created_at: string
+          email: string
+          email_confirmed_at: string
+          encrypted_password: string
+          id: string
+          last_sign_in_at: string
+          phone: string
+          raw_app_meta_data: Json
+          raw_user_meta_data: Json
+        }[]
+      }
+      get_admin_dashboard_stats: { Args: never; Returns: Json }
+      get_admin_users_summary: { Args: never; Returns: Json }
+      get_due_engagement_run_ids: {
+        Args: { p_limit?: number }
+        Returns: {
+          id: string
+        }[]
+      }
+      get_or_create_bot_user: {
+        Args: { _full_name?: string; _telegram_id: string }
+        Returns: string
+      }
+      get_provider_topup_breakdown: {
+        Args: never
+        Returns: {
+          pending_quantity: number
+          pending_runs: number
+          pending_user_usd: number
+          provider_id: string
+          provider_name: string
+          service_category: string
+          service_id: string
+          service_name: string
+        }[]
+      }
+      get_provider_topup_plan: {
+        Args: never
+        Returns: {
+          markup_percent: number
+          pending_runs: number
+          pending_user_usd: number
+          provider_id: string
+          provider_name: string
+        }[]
+      }
+      get_public_markup: { Args: never; Returns: number }
+      get_top_pending_users: {
+        Args: { p_limit?: number }
+        Returns: {
+          email: string
+          full_name: string
+          pending_orders: number
+          pending_value_usd: number
+          total_deposited: number
+          total_spent: number
+          user_id: string
+          wallet_balance: number
+        }[]
+      }
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role:
+        | {
+            Args: {
+              _role: Database["public"]["Enums"]["app_role"]
+              _user_id: string
+            }
+            Returns: boolean
+          }
+        | { Args: { _role: string; _user_id: string }; Returns: boolean }
+      is_maintenance_mode: { Args: never; Returns: boolean }
+      is_user_banned: { Args: { _user_id: string }; Returns: boolean }
+      pg_advisory_xact_lock: { Args: { key: number }; Returns: undefined }
+      reschedule_organic_run: {
+        Args: { p_quantity: number; p_run_id: string; p_scheduled_at: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
