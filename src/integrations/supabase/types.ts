@@ -1630,7 +1630,6 @@ export type Database = {
       }
     }
     Functions: {
-      __restore_exec: { Args: { p_sql: string }; Returns: undefined }
       admin_ban_user_and_cancel: {
         Args: { p_reason?: string; p_target_user_id: string }
         Returns: Json
