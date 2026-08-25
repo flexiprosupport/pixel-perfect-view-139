@@ -194,8 +194,8 @@ export default function Auth() {
     >
 
       <PageMeta
-        title={isLogin ? 'Sign in — Extips Panel' : 'Create your account — Extips Panel'}
-        description="Sign in or create your free Extips Panel account to launch organic Instagram, YouTube and TikTok growth campaigns."
+        title={isLogin ? 'Sign in — FlexiPro' : 'Create your account — FlexiPro'}
+        description="Sign in or create your free FlexiPro account to launch organic Instagram, YouTube and TikTok growth campaigns."
         canonicalPath="/auth"
       />
 
@@ -216,10 +216,10 @@ export default function Auth() {
       <div className="hidden lg:flex relative flex-col justify-between p-12"
            style={{ borderRight: `1px solid ${C.line}` }}>
         <Link to="/" className="flex items-center gap-2.5 relative z-10">
-          <img src={logo} alt="Extips Panel" className="w-9 h-9 rounded-xl object-cover"
+          <img src={logo} alt="FlexiPro" className="w-9 h-9 rounded-xl object-cover"
                style={{ border: `1px solid ${C.line}` }} />
           <span className="text-[16px] font-bold tracking-tight" style={{ color: C.navy }}>
-            extips<span style={{ color: C.magenta }}>.</span>panel
+            flexipro<span style={{ color: C.magenta }}>.</span>panel
           </span>
         </Link>
 
@@ -261,10 +261,10 @@ export default function Auth() {
 
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center justify-center gap-2.5 mb-10">
-            <img src={logo} alt="Extips Panel" className="w-10 h-10 rounded-xl object-cover"
+            <img src={logo} alt="FlexiPro" className="w-10 h-10 rounded-xl object-cover"
                  style={{ border: `1px solid ${C.line}` }} />
             <span className="text-[16px] font-bold tracking-tight" style={{ color: C.navy }}>
-              extips<span style={{ color: C.magenta }}>.</span>panel
+              flexipro<span style={{ color: C.magenta }}>.</span>panel
             </span>
           </div>
 
@@ -280,7 +280,7 @@ export default function Auth() {
             </em>
           </h1>
           <p className="text-[14px] mb-8" style={{ color: C.slate }}>
-            {isForgotPassword ? 'Enter your email — we\'ll send a reset link.' : isLogin ? 'Sign in to your Extips Panel account.' : 'Free to start. Every tool unlocked.'}
+            {isForgotPassword ? 'Enter your email — we\'ll send a reset link.' : isLogin ? 'Sign in to your FlexiPro account.' : 'Free to start. Every tool unlocked.'}
           </p>
 
           {showVerifyEmail ? (

@@ -86,14 +86,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Extips Panel — AI Social Media Growth Panel" },
+      { title: "FlexiPro — AI Social Media Growth Panel" },
       {
         name: "description",
         content:
-          "Extips Panel — real Instagram, YouTube & TikTok engagement with natural, human-like delivery. Safe, fast and fully automated.",
+          "FlexiPro — real Instagram, YouTube & TikTok engagement with natural, human-like delivery. Safe, fast and fully automated.",
       },
-      { name: "author", content: "Extips Panel" },
-      { property: "og:title", content: "Extips Panel — AI Social Media Growth Panel" },
+      { name: "author", content: "FlexiPro" },
+      { property: "og:title", content: "FlexiPro — AI Social Media Growth Panel" },
       {
         property: "og:description",
         content:

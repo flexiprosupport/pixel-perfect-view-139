@@ -6,7 +6,7 @@ import { PageMeta } from "@/components/seo/PageMeta";
 export default function TermsOfService() {
   return (
     <>
-      <PageMeta title="Terms of Service | Extips Panel" description="Read the Terms of Service for Extips Panel platform." canonicalPath="/terms" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Terms of Service", path: "/terms" }]} />
+      <PageMeta title="Terms of Service | FlexiPro" description="Read the Terms of Service for FlexiPro platform." canonicalPath="/terms" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Terms of Service", path: "/terms" }]} />
       <div className="min-h-screen bg-background text-foreground">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <Link to="/"><Button variant="ghost" size="sm" className="mb-8 gap-2"><ArrowLeft className="h-4 w-4" /> Back to Home</Button></Link>
@@ -18,7 +18,7 @@ export default function TermsOfService() {
           <div className="flex gap-3 p-4 mb-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400/90">
             <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
             <p className="text-sm leading-relaxed">
-              <strong className="text-amber-400">Important:</strong> By accessing or using Extips Panel, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree, you must immediately cease using the Platform.
+              <strong className="text-amber-400">Important:</strong> By accessing or using FlexiPro, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree, you must immediately cease using the Platform.
             </p>
           </div>
 
@@ -26,12 +26,12 @@ export default function TermsOfService() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">1. Acceptance of Terms</h2>
-              <p>By accessing or using Extips Panel ("the Platform," "we," "us," or "our"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you must not use our services. These Terms constitute a legally binding agreement between you ("User," "you," or "your") and Extips Panel. Your use of this Platform constitutes your full, unconditional acceptance of these Terms.</p>
+              <p>By accessing or using FlexiPro ("the Platform," "we," "us," or "our"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you must not use our services. These Terms constitute a legally binding agreement between you ("User," "you," or "your") and FlexiPro. Your use of this Platform constitutes your full, unconditional acceptance of these Terms.</p>
             </section>
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">2. Nature of Services — Digital Services Disclaimer</h2>
-              <p>Extips Panel provides <strong className="text-foreground">digital social media engagement services</strong> — including but not limited to views, likes, comments, followers, and other engagement metrics across social media platforms. By their very nature, these are <strong className="text-foreground">intangible digital services</strong> that are delivered electronically and consumed immediately upon delivery.</p>
+              <p>FlexiPro provides <strong className="text-foreground">digital social media engagement services</strong> — including but not limited to views, likes, comments, followers, and other engagement metrics across social media platforms. By their very nature, these are <strong className="text-foreground">intangible digital services</strong> that are delivered electronically and consumed immediately upon delivery.</p>
               <ul className="list-disc pl-6 space-y-1">
                 <li>Digital services cannot be "returned" once delivered</li>
                 <li>Engagement metrics are subject to natural fluctuation on third-party platforms</li>
@@ -65,7 +65,7 @@ export default function TermsOfService() {
               <h2 className="text-xl font-semibold text-foreground">7. Chargeback & Payment Dispute Policy</h2>
               <div className="p-4 rounded-xl bg-red-500/8 border border-red-500/15 space-y-2">
                 <p className="text-foreground font-semibold">IMPORTANT — Please read carefully:</p>
-                <p>By making a payment to Extips Panel, you explicitly agree that:</p>
+                <p>By making a payment to FlexiPro, you explicitly agree that:</p>
                 <ul className="list-disc pl-6 space-y-1">
                   <li><strong className="text-foreground">Initiating a chargeback</strong> or payment dispute with your bank/card issuer without first contacting us and giving us the opportunity to resolve your issue constitutes a breach of these Terms</li>
                   <li>You acknowledge that our services are <strong className="text-foreground">digital, non-tangible</strong> and are consumed upon delivery, making chargebacks inappropriate under most payment network rules</li>
@@ -94,12 +94,12 @@ export default function TermsOfService() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">9. User Responsibility & Legal Compliance</h2>
-              <p>By using Extips Panel, you acknowledge and agree that:</p>
+              <p>By using FlexiPro, you acknowledge and agree that:</p>
               <ul className="list-disc pl-6 space-y-1">
                 <li>You are solely responsible for ensuring that your use of our services complies with all applicable laws and regulations in your jurisdiction</li>
                 <li>You use our services at your own risk regarding compliance with third-party social media platform policies</li>
-                <li>Extips Panel is not responsible for any action taken by social media platforms against your account as a result of your use of our services</li>
-                <li>You will not hold Extips Panel liable for any legal consequences arising from your use of our services</li>
+                <li>FlexiPro is not responsible for any action taken by social media platforms against your account as a result of your use of our services</li>
+                <li>You will not hold FlexiPro liable for any legal consequences arising from your use of our services</li>
                 <li>Social media engagement services operate in a dynamic environment, and we make no guarantees about permanent results</li>
               </ul>
             </section>
@@ -122,12 +122,12 @@ export default function TermsOfService() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">12. Intellectual Property</h2>
-              <p>All content, features, and functionality of the Platform—including but not limited to text, graphics, logos, icons, software, and algorithms—are the exclusive property of Extips Panel and are protected by international copyright, trademark, and other intellectual property laws.</p>
+              <p>All content, features, and functionality of the Platform—including but not limited to text, graphics, logos, icons, software, and algorithms—are the exclusive property of FlexiPro and are protected by international copyright, trademark, and other intellectual property laws.</p>
             </section>
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">13. Limitation of Liability</h2>
-              <p>To the maximum extent permitted by law, Extips Panel shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to:</p>
+              <p>To the maximum extent permitted by law, FlexiPro shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to:</p>
               <ul className="list-disc pl-6 space-y-1">
                 <li>Loss of profits, revenue, or business opportunities</li>
                 <li>Loss of data or account access on third-party platforms</li>
@@ -145,7 +145,7 @@ export default function TermsOfService() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">15. Indemnification</h2>
-              <p>You agree to indemnify, defend, and hold harmless Extips Panel and its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses arising from:</p>
+              <p>You agree to indemnify, defend, and hold harmless FlexiPro and its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses arising from:</p>
               <ul className="list-disc pl-6 space-y-1">
                 <li>Your use of the Platform or violation of these Terms</li>
                 <li>Your violation of any rights of a third party</li>
@@ -172,7 +172,7 @@ export default function TermsOfService() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">19. Contact Information</h2>
-              <p>If you have any questions about these Terms, please contact us through our Support page or email us at <strong className="text-foreground">support@extipspanel.com</strong>. We are committed to resolving disputes amicably before any legal action is considered by either party.</p>
+              <p>If you have any questions about these Terms, please contact us through our Support page or email us at <strong className="text-foreground">support@flexipro.com</strong>. We are committed to resolving disputes amicably before any legal action is considered by either party.</p>
             </section>
 
           </div>

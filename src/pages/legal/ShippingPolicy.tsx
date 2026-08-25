@@ -7,8 +7,8 @@ export default function ShippingPolicy() {
   return (
     <>
       <PageMeta
-        title="Shipping & Delivery Policy | Extips Panel"
-        description="Extips Panel delivers digital services electronically. Learn about our delivery timelines and process."
+        title="Shipping & Delivery Policy | FlexiPro"
+        description="FlexiPro delivers digital services electronically. Learn about our delivery timelines and process."
         canonicalPath="/shipping"
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Shipping Policy", path: "/shipping" }]}
       />
@@ -26,14 +26,14 @@ export default function ShippingPolicy() {
           <div className="flex gap-3 p-4 mb-8 rounded-xl bg-orange-500/10 border border-orange-500/20">
             <Zap className="h-5 w-5 shrink-0 mt-0.5 text-orange-500" />
             <p className="text-sm leading-relaxed text-foreground/90">
-              Extips Panel provides <strong>100% digital services</strong>. No physical products are shipped. All deliveries are electronic and happen directly on the target social media account/link provided at the time of order.
+              FlexiPro provides <strong>100% digital services</strong>. No physical products are shipped. All deliveries are electronic and happen directly on the target social media account/link provided at the time of order.
             </p>
           </div>
 
           <div className="prose prose-invert max-w-none space-y-6 text-muted-foreground">
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">1. Nature of Delivery</h2>
-              <p>All services offered by Extips Panel (followers, likes, views, comments, etc.) are digital, intangible services that are fulfilled by our automated system and partner providers directly on the user's social media account or link. There is no physical shipment, courier or postal delivery involved.</p>
+              <p>All services offered by FlexiPro (followers, likes, views, comments, etc.) are digital, intangible services that are fulfilled by our automated system and partner providers directly on the user's social media account or link. There is no physical shipment, courier or postal delivery involved.</p>
             </section>
 
             <section className="space-y-3">
@@ -63,7 +63,7 @@ export default function ShippingPolicy() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">6. Contact</h2>
-              <p>For any delivery related queries, contact us at <a className="text-orange-500 hover:underline" href="mailto:support@extipspanel.com">support@extipspanel.com</a> or WhatsApp <a className="text-orange-500 hover:underline" href="https://wa.me/13678288027" target="_blank" rel="noreferrer">+1 (367) 828-8027</a>.</p>
+              <p>For any delivery related queries, contact us at <a className="text-orange-500 hover:underline" href="mailto:support@flexipro.com">support@flexipro.com</a> or WhatsApp <a className="text-orange-500 hover:underline" href="https://wa.me/13678288027" target="_blank" rel="noreferrer">+1 (367) 828-8027</a>.</p>
             </section>
           </div>
         </div>

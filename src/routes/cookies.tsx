@@ -5,10 +5,10 @@ export const Route = createFileRoute("/cookies")({
   
   head: () => ({
     meta: [
-      { title: "Cookie Policy | Extips Panel" },
-      { name: "description", content: "How Extips Panel uses cookies and similar technologies on this site." },
-      { property: "og:title", content: "Cookie Policy | Extips Panel" },
-      { property: "og:description", content: "How Extips Panel uses cookies and similar technologies on this site." },
+      { title: "Cookie Policy | FlexiPro" },
+      { name: "description", content: "How FlexiPro uses cookies and similar technologies on this site." },
+      { property: "og:title", content: "Cookie Policy | FlexiPro" },
+      { property: "og:description", content: "How FlexiPro uses cookies and similar technologies on this site." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

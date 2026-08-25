@@ -7,8 +7,8 @@ export default function ContactUs() {
   return (
     <>
       <PageMeta
-        title="Contact Us | Extips Panel"
-        description="Get in touch with Extips Panel support team. Email, WhatsApp and business address for customer support."
+        title="Contact Us | FlexiPro"
+        description="Get in touch with FlexiPro support team. Email, WhatsApp and business address for customer support."
         canonicalPath="/contact"
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Contact Us", path: "/contact" }]}
       />
@@ -33,8 +33,8 @@ export default function ContactUs() {
                 </div>
                 <h2 className="font-semibold text-base">Email Support</h2>
               </div>
-              <a href="mailto:support@extipspanel.com" className="text-sm text-orange-500 hover:underline break-all">
-                support@extipspanel.com
+              <a href="mailto:support@flexipro.com" className="text-sm text-orange-500 hover:underline break-all">
+                support@flexipro.com
               </a>
               <p className="text-xs text-muted-foreground mt-2">For all general queries, billing & technical support.</p>
             </div>
@@ -86,7 +86,7 @@ export default function ContactUs() {
               <div>
                 <h2 className="font-semibold mb-2 text-base">Registered Business Address</h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Extips Panel LLC<br />
+                  FlexiPro LLC<br />
                   8 The Green, Suite #14490,<br />
                   Dover, DE 19901,<br />
                   United States of America
@@ -97,7 +97,7 @@ export default function ContactUs() {
 
           <div className="mt-10 text-sm text-muted-foreground">
             <p>
-              For grievances, please email <a className="text-orange-500 hover:underline" href="mailto:support@extipspanel.com">support@extipspanel.com</a> with subject line "Grievance" — our grievance officer will respond within 48 hours.
+              For grievances, please email <a className="text-orange-500 hover:underline" href="mailto:support@flexipro.com">support@flexipro.com</a> with subject line "Grievance" — our grievance officer will respond within 48 hours.
             </p>
           </div>
         </div>
@@ -108,9 +108,9 @@ export default function ContactUs() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
-            name: "Extips Panel LLC",
-            url: "https://extipspanel.com/",
-            email: "support@extipspanel.com",
+            name: "FlexiPro LLC",
+            url: "https://flexipro.com/",
+            email: "support@flexipro.com",
             telephone: "+1-367-828-8027",
             address: {
               "@type": "PostalAddress",

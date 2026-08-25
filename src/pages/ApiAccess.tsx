@@ -76,7 +76,7 @@ export default function ApiAccess() {
 
     return (
         <DashboardLayout>
-            <PageMeta title="API Access & Reseller Docs" description="Generate your Extips Panel API key and integrate our SMM services into your own panel or workflow." canonicalPath="/api-access" noIndex />
+            <PageMeta title="API Access & Reseller Docs" description="Generate your FlexiPro API key and integrate our SMM services into your own panel or workflow." canonicalPath="/api-access" noIndex />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 pb-10">
                 {/* Header */}
                 <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-950/80 via-zinc-900 to-zinc-950 border border-white/[0.07] p-6 sm:p-8">

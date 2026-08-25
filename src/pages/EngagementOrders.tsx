@@ -106,7 +106,7 @@ export default function EngagementOrders() {
 
   return (
     <DashboardLayout>
-      <PageMeta title="Engagement Orders" description="Track your Extips Panel engagement deliveries — live progress, per-type breakdown, and organic growth stats." canonicalPath="/engagement-orders" noIndex />
+      <PageMeta title="Engagement Orders" description="Track your FlexiPro engagement deliveries — live progress, per-type breakdown, and organic growth stats." canonicalPath="/engagement-orders" noIndex />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

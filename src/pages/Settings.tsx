@@ -311,7 +311,7 @@ export default function Settings() {
 
   return (
     <DashboardLayout>
-      <PageMeta title="Account Settings" description="Update your Extips Panel profile, password, currency, and preferences." canonicalPath="/settings" noIndex />
+      <PageMeta title="Account Settings" description="Update your FlexiPro profile, password, currency, and preferences." canonicalPath="/settings" noIndex />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 pb-8">
         {/* Header */}
         <div className="relative overflow-hidden glass-card p-6 sm:p-8 bg-gradient-to-r from-primary/5 via-transparent to-primary/10">

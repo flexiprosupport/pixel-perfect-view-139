@@ -7,8 +7,8 @@ export default function AboutUs() {
   return (
     <>
       <PageMeta
-        title="About Us | Extips Panel"
-        description="Extips Panel is an Indian digital social media growth platform providing organic, natural delivery patterns for creators and businesses."
+        title="About Us | FlexiPro"
+        description="FlexiPro is an Indian digital social media growth platform providing organic, natural delivery patterns for creators and businesses."
         canonicalPath="/about"
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "About Us", path: "/about" }]}
       />
@@ -20,7 +20,7 @@ export default function AboutUs() {
             </Button>
           </Link>
 
-          <h1 className="text-3xl font-bold mb-2">About Extips Panel</h1>
+          <h1 className="text-3xl font-bold mb-2">About FlexiPro</h1>
           <p className="text-muted-foreground mb-8">
             India's trusted organic social media growth platform.
           </p>
@@ -29,7 +29,7 @@ export default function AboutUs() {
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">Who We Are</h2>
               <p>
-                Extips Panel is a Delaware, USA based digital marketing platform that helps creators, small businesses and agencies grow their social media presence through natural, organic-style engagement delivery. We serve customers across the United States and globally with reliable, transparent and affordable digital promotion services.
+                FlexiPro is a Delaware, USA based digital marketing platform that helps creators, small businesses and agencies grow their social media presence through natural, organic-style engagement delivery. We serve customers across the United States and globally with reliable, transparent and affordable digital promotion services.
               </p>
             </section>
 
@@ -71,12 +71,12 @@ export default function AboutUs() {
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">Business Information</h2>
               <p>
-                <strong className="text-foreground">Brand Name:</strong> Extips Panel<br />
+                <strong className="text-foreground">Brand Name:</strong> FlexiPro<br />
                 
                 <strong className="text-foreground">Registered Address:</strong> 8 The Green, Suite #14490, Dover, DE 19901, United States<br />
-                <strong className="text-foreground">Email:</strong> support@extipspanel.com<br />
+                <strong className="text-foreground">Email:</strong> support@flexipro.com<br />
                 <strong className="text-foreground">WhatsApp / Phone:</strong> +1 (367) 828-8027<br />
-                <strong className="text-foreground">Website:</strong> https://extipspanel.com
+                <strong className="text-foreground">Website:</strong> https://flexipro.com
               </p>
             </section>
           </div>

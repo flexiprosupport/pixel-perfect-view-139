@@ -6,7 +6,7 @@ import { PageMeta } from "@/components/seo/PageMeta";
 export default function RefundPolicy() {
   return (
     <>
-      <PageMeta title="Refund Policy | Extips Panel" description="Understand Extips Panel's refund and cancellation policies." canonicalPath="/refund" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Refund Policy", path: "/refund" }]} />
+      <PageMeta title="Refund Policy | FlexiPro" description="Understand FlexiPro's refund and cancellation policies." canonicalPath="/refund" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Refund Policy", path: "/refund" }]} />
       <div className="min-h-screen bg-background text-foreground">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <Link to="/"><Button variant="ghost" size="sm" className="mb-8 gap-2"><ArrowLeft className="h-4 w-4" /> Back to Home</Button></Link>
@@ -18,7 +18,7 @@ export default function RefundPolicy() {
           <div className="flex gap-3 p-4 mb-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400/90">
             <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
             <p className="text-sm leading-relaxed">
-              <strong className="text-amber-400">Notice:</strong> Extips Panel provides <strong>intangible digital services</strong>. Once services are delivered, they cannot be reversed or returned. Please read this policy carefully before making a purchase.
+              <strong className="text-amber-400">Notice:</strong> FlexiPro provides <strong>intangible digital services</strong>. Once services are delivered, they cannot be reversed or returned. Please read this policy carefully before making a purchase.
             </p>
           </div>
 
@@ -26,7 +26,7 @@ export default function RefundPolicy() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">1. Overview</h2>
-              <p>At Extips Panel, we provide digital social media engagement services. Due to the intangible, immediately-consumable nature of digital services, our refund policy is necessarily limited. By using our services, you confirm that you have read and agreed to this Refund Policy and our Terms of Service before making any purchase.</p>
+              <p>At FlexiPro, we provide digital social media engagement services. Due to the intangible, immediately-consumable nature of digital services, our refund policy is necessarily limited. By using our services, you confirm that you have read and agreed to this Refund Policy and our Terms of Service before making any purchase.</p>
             </section>
 
             <section className="space-y-3">
@@ -42,7 +42,7 @@ export default function RefundPolicy() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">3. Wallet Deposits</h2>
-              <p>Funds added to your Extips Panel wallet are considered <strong className="text-foreground">service credits</strong> and are generally non-refundable. Refunds for wallet deposits may be considered only under:</p>
+              <p>Funds added to your FlexiPro wallet are considered <strong className="text-foreground">service credits</strong> and are generally non-refundable. Refunds for wallet deposits may be considered only under:</p>
               <ul className="list-disc pl-6 space-y-1">
                 <li>Duplicate charges caused by a verified payment processing error</li>
                 <li>Unauthorized transactions reported within <strong className="text-foreground">48 hours</strong> of occurrence with supporting evidence</li>
@@ -117,7 +117,7 @@ export default function RefundPolicy() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">10. Disputes</h2>
-              <p>If you disagree with a refund decision, you may escalate by emailing <strong className="text-foreground">support@extipspanel.com</strong> with additional evidence. We will review escalated cases within 7 business days. Our decision on escalated cases is final.</p>
+              <p>If you disagree with a refund decision, you may escalate by emailing <strong className="text-foreground">support@flexipro.com</strong> with additional evidence. We will review escalated cases within 7 business days. Our decision on escalated cases is final.</p>
             </section>
 
             <section className="space-y-3">

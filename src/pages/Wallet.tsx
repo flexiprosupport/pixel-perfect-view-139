@@ -285,7 +285,7 @@ export default function Wallet() {
 
   return (
     <DashboardLayout>
-      <PageMeta title="Wallet & Top-up" description="Add funds via UPI or crypto and review your Extips Panel wallet balance and transaction history." canonicalPath="/wallet" noIndex />
+      <PageMeta title="Wallet & Top-up" description="Add funds via UPI or crypto and review your FlexiPro wallet balance and transaction history." canonicalPath="/wallet" noIndex />
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: '#1a1a2e' }}>Wallet</h1>

@@ -712,7 +712,7 @@ export default function EngagementOrderDetail() {
 
   return (
     <DashboardLayout>
-      <PageMeta title="Engagement Order Detail" description="Live progress, delivery timeline, and per-run breakdown for your Extips Panel engagement order." noIndex />
+      <PageMeta title="Engagement Order Detail" description="Live progress, delivery timeline, and per-run breakdown for your FlexiPro engagement order." noIndex />
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
