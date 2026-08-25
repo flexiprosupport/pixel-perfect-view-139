@@ -490,7 +490,7 @@ export function PopupAdDialog() {
             <div className="relative px-3 sm:px-6 pb-3 sm:pb-4 pt-1 flex items-center justify-between gap-2 sm:gap-3">
               <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-400 min-w-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-                <span className="font-semibold tracking-wider uppercase truncate">Extips Panel Promo</span>
+                <span className="font-semibold tracking-wider uppercase truncate">FlexiPro Promo</span>
               </div>
               <span className="text-[10px] sm:text-[11px] font-medium text-slate-300 shrink-0">
                 {canSkip ? (

@@ -188,8 +188,8 @@ export default function Support() {
   return (
     <DashboardLayout>
       <PageMeta
-        title="Support & FAQ — Extips Panel"
-        description="Extips Panel support: open tickets, browse FAQs about delivery times, payments, refunds and Organic Mode. We respond within 24 hours."
+        title="Support & FAQ — FlexiPro"
+        description="FlexiPro support: open tickets, browse FAQs about delivery times, payments, refunds and Organic Mode. We respond within 24 hours."
         canonicalPath="/support"
         breadcrumbs={[
           { name: 'Home', path: '/' },

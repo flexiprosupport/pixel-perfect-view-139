@@ -6,7 +6,7 @@ import { PageMeta } from "@/components/seo/PageMeta";
 export default function PrivacyPolicy() {
   return (
     <>
-      <PageMeta title="Privacy Policy | Extips Panel" description="Learn how Extips Panel collects, uses, and protects your personal data." canonicalPath="/privacy" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Privacy Policy", path: "/privacy" }]} />
+      <PageMeta title="Privacy Policy | FlexiPro" description="Learn how FlexiPro collects, uses, and protects your personal data." canonicalPath="/privacy" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Privacy Policy", path: "/privacy" }]} />
       <div className="min-h-screen bg-background text-foreground">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <Link to="/">
@@ -21,7 +21,7 @@ export default function PrivacyPolicy() {
           <div className="prose prose-invert max-w-none space-y-6 text-muted-foreground">
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">1. Introduction</h2>
-              <p>Extips Panel ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform and services. Please read this policy carefully to understand our practices regarding your personal data.</p>
+              <p>FlexiPro ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform and services. Please read this policy carefully to understand our practices regarding your personal data.</p>
             </section>
 
             <section className="space-y-3">
@@ -110,7 +110,7 @@ export default function PrivacyPolicy() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">11. Contact Us</h2>
-              <p>If you have questions or concerns about this Privacy Policy or our data practices, please contact us through our Support page or email us at privacy@extipspanel.com.</p>
+              <p>If you have questions or concerns about this Privacy Policy or our data practices, please contact us through our Support page or email us at privacy@flexipro.com.</p>
             </section>
           </div>
         </div>

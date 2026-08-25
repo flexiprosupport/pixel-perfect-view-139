@@ -10,7 +10,7 @@ import logo from '@/assets/logo.jpg';
 import { PageMeta } from '@/components/seo/PageMeta';
 
 /**
- * Extips Panel — clean sky-blue landing.
+ * FlexiPro — clean sky-blue landing.
  * Palette: soft blue gradient background, deep navy text, vivid blue CTA.
  */
 
@@ -37,7 +37,7 @@ const Index = () => {
       style={{ color: C.ink, fontFamily: "'Inter', system-ui, sans-serif" }}
     >
       <PageMeta
-        title="Extips Panel — Best SMM Panel for Organic Social Growth"
+        title="FlexiPro — Best SMM Panel for Organic Social Growth"
         description="AI-powered SMM panel for Instagram, YouTube & TikTok. Real engagement, natural delivery, safe accounts."
         canonicalPath="/"
         breadcrumbs={[{ name: 'Home', path: '/' }]}
@@ -74,12 +74,12 @@ const Index = () => {
           <Link to="/" className="flex items-center gap-2.5">
             <img
               src={logo}
-              alt="Extips Panel"
+              alt="FlexiPro"
               className="w-8 h-8 rounded-xl object-cover"
               style={{ border: `1px solid ${C.line}` }}
             />
             <span className="text-[15px] font-bold tracking-tight" style={{ color: C.ink }}>
-              Extips Panel
+              FlexiPro
             </span>
             <span
               className="ml-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-md"
@@ -156,7 +156,7 @@ const Index = () => {
               className="text-[2.75rem] sm:text-[4rem] lg:text-[5rem] font-black leading-[1.02] tracking-[-0.03em]"
               style={{ color: C.ink }}
             >
-              Extips Panel
+              FlexiPro
             </motion.h1>
 
             <motion.h2
@@ -284,7 +284,7 @@ const Index = () => {
         <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-10">
           <div className="max-w-5xl mx-auto">
             <a
-              href="https://extipsinghtpro.store/"
+              href="https://flexiproinghtpro.store/"
               target="_blank"
               rel="noopener noreferrer"
               className="group block rounded-[28px] overflow-hidden relative transition-transform hover:-translate-y-1"
@@ -392,7 +392,7 @@ const Index = () => {
                        style={{ background: '#fff', border: `1px solid ${C.line}` }}>
                     <CheckCircle2 className="w-4 h-4" style={{ color: C.blue }} />
                   </div>
-                  <span className="text-[14px] font-semibold" style={{ color: C.ink }}>Extips Panel</span>
+                  <span className="text-[14px] font-semibold" style={{ color: C.ink }}>FlexiPro</span>
                 </div>
                 {[
                   'Every drop is a fresh shape — reads like real fans',
@@ -561,8 +561,8 @@ const Index = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
             <div className="col-span-2 sm:col-span-1">
               <div className="flex items-center gap-2.5 mb-4">
-                <img src={logo} alt="Extips Panel" className="w-9 h-9 rounded-xl object-cover" style={{ border: `1px solid ${C.line}` }} />
-                <span className="text-[15px] font-bold" style={{ color: C.ink }}>Extips Panel</span>
+                <img src={logo} alt="FlexiPro" className="w-9 h-9 rounded-xl object-cover" style={{ border: `1px solid ${C.line}` }} />
+                <span className="text-[15px] font-bold" style={{ color: C.ink }}>FlexiPro</span>
               </div>
               <p className="text-[13px] leading-relaxed" style={{ color: C.slate }}>
                 Organic social growth for creators. Human-pattern delivery, calibrated for every platform.
@@ -608,7 +608,7 @@ const Index = () => {
           </div>
           <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px]"
                style={{ borderTop: `1px solid ${C.line}`, color: C.slateLight }}>
-            <span>© {new Date().getFullYear()} Extips Panel. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} FlexiPro. All rights reserved.</span>
             <span>Made for creators who care about their reach.</span>
           </div>
         </div>

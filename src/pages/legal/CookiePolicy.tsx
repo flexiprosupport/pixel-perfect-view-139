@@ -6,7 +6,7 @@ import { PageMeta } from "@/components/seo/PageMeta";
 export default function CookiePolicy() {
   return (
     <>
-      <PageMeta title="Cookie Policy | Extips Panel" description="Learn about how Extips Panel uses cookies and similar technologies." canonicalPath="/cookies" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Cookie Policy", path: "/cookies" }]} />
+      <PageMeta title="Cookie Policy | FlexiPro" description="Learn about how FlexiPro uses cookies and similar technologies." canonicalPath="/cookies" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Cookie Policy", path: "/cookies" }]} />
       <div className="min-h-screen bg-background text-foreground">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <Link to="/">
@@ -26,7 +26,7 @@ export default function CookiePolicy() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">2. How We Use Cookies</h2>
-              <p>Extips Panel uses cookies and similar technologies for the following purposes:</p>
+              <p>FlexiPro uses cookies and similar technologies for the following purposes:</p>
               <ul className="list-disc pl-6 space-y-1">
                 <li><strong className="text-foreground">Authentication:</strong> To identify you when you log in and maintain your session securely</li>
                 <li><strong className="text-foreground">Security:</strong> To protect your account from unauthorized access and detect suspicious activity</li>
@@ -96,7 +96,7 @@ export default function CookiePolicy() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">9. Contact Us</h2>
-              <p>If you have any questions about our use of cookies, please contact us through our Support page or email us at privacy@extipspanel.com.</p>
+              <p>If you have any questions about our use of cookies, please contact us through our Support page or email us at privacy@flexipro.com.</p>
             </section>
           </div>
         </div>

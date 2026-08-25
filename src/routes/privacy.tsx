@@ -5,10 +5,10 @@ export const Route = createFileRoute("/privacy")({
   
   head: () => ({
     meta: [
-      { title: "Privacy Policy | Extips Panel" },
-      { name: "description", content: "How Extips Panel collects, uses and protects your personal data." },
-      { property: "og:title", content: "Privacy Policy | Extips Panel" },
-      { property: "og:description", content: "How Extips Panel collects, uses and protects your personal data." },
+      { title: "Privacy Policy | FlexiPro" },
+      { name: "description", content: "How FlexiPro collects, uses and protects your personal data." },
+      { property: "og:title", content: "Privacy Policy | FlexiPro" },
+      { property: "og:description", content: "How FlexiPro collects, uses and protects your personal data." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

@@ -297,7 +297,7 @@ export default function Orders() {
 
   return (
     <DashboardLayout>
-      <PageMeta title="Your Orders" description="View and manage your Extips Panel social media orders — track delivery, refills, and status in real-time." canonicalPath="/orders" noIndex />
+      <PageMeta title="Your Orders" description="View and manage your FlexiPro social media orders — track delivery, refills, and status in real-time." canonicalPath="/orders" noIndex />
       <div className="space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">

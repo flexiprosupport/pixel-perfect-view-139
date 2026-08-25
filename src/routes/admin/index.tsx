@@ -6,10 +6,10 @@ export const Route = createFileRoute("/admin/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Admin Overview | Extips Panel" },
-      { name: "description", content: "Extips Panel admin tools — internal use only." },
-      { property: "og:title", content: "Admin Overview | Extips Panel" },
-      { property: "og:description", content: "Extips Panel admin tools — internal use only." },
+      { title: "Admin Overview | FlexiPro" },
+      { name: "description", content: "FlexiPro admin tools — internal use only." },
+      { property: "og:title", content: "Admin Overview | FlexiPro" },
+      { property: "og:description", content: "FlexiPro admin tools — internal use only." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex, nofollow" },

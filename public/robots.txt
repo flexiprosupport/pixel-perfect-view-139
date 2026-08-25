@@ -1,5 +1,5 @@
-# Extips Panel — robots.txt
-# Site:    https://extipspanel.com
+# FlexiPro — robots.txt
+# Site:    https://flexipro.com
 # Updated: 2026-05-05
 
 # ───────────────────────────── Default rule ─────────────────────────────
@@ -98,5 +98,5 @@ User-agent: DotBot
 Disallow: /
 
 # ───────────────────────────── Sitemap & host ─────────────────────────────
-Sitemap: https://extipspanel.com/sitemap.xml
-Host: https://extipspanel.com
+Sitemap: https://flexipro.com/sitemap.xml
+Host: https://flexipro.com
