@@ -39,7 +39,7 @@ CREATE POLICY "Users can update own pending order runs" ON public.organic_run_sc
    FROM public.orders
   WHERE ((orders.id = organic_run_schedule.order_id) AND (orders.user_id = auth.uid()))))));
 CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE TO authenticated USING ((auth.uid() = user_id)) WITH CHECK ((auth.uid() = user_id));
-COMMENT ON POLICY "Users can update own profile" ON public.profiles IS 'Users may only update non-sensitive profile columns. Column-level privileges revoke UPDATE on user_id/email/api_key/is_banned/banned_at/banned_reason/created_at;
+COMMENT ON POLICY "Users can update own profile" ON public.profiles IS 'Users may only update non-sensitive profile columns. Column-level privileges revoke UPDATE on user_id/email/api_key/is_banned/banned_at/banned_reason/created_at; trg_profiles_lock_user_columns provides an additional trigger-level guard.';
 CREATE POLICY "Users can view own conversation messages" ON public.chat_messages FOR SELECT TO authenticated USING ((EXISTS ( SELECT 1
    FROM public.chat_conversations
   WHERE ((chat_conversations.id = chat_messages.conversation_id) AND ((chat_conversations.user_id = auth.uid()) OR public.has_role(auth.uid(), 'admin'::public.app_role))))));
