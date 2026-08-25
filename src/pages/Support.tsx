@@ -335,7 +335,7 @@ export default function Support() {
 
         {/* Telegram Support */}
         <a
-          href="https://t.me/Extipsguide"
+          href="https://t.me/BMG009"
           target="_blank"
           rel="noopener noreferrer"
           className="block rounded-xl p-4 sm:p-5 transition-transform hover:scale-[1.01]"
