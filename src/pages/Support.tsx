@@ -361,6 +361,29 @@ export default function Support() {
           </div>
         </a>
 
+        {/* Email Support */}
+        <a
+          href="mailto:flexipro.support@gmail.com"
+          className="block rounded-xl p-4 sm:p-5 transition-transform hover:scale-[1.01]"
+          style={{
+            background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+            boxShadow: '0 10px 28px rgba(217,119,6,.35)',
+          }}
+        >
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(255,255,255,.2)', border: '2px solid #fff' }}>
+              <Mail className="h-6 w-6 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-bold text-sm sm:text-base">Email Support</p>
+              <p className="text-white/85 text-xs sm:text-sm">flexipro.support@gmail.com — we reply within 24 hours</p>
+            </div>
+            <div className="hidden sm:block text-white text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: 'rgba(255,255,255,.2)' }}>
+              Mail →
+            </div>
+          </div>
+        </a>
+
         {/* Tickets List */}
 
         <h2 className="sr-only">Your Support Tickets</h2>
