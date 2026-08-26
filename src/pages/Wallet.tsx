@@ -4,7 +4,6 @@ import { useWallet } from '@/hooks/useWallet';
 import { useTransactions, type TransactionFilter } from '@/hooks/useTransactions';
 import { useCurrency } from '@/hooks/useCurrency';
 import ZapUpiDepositCard from '@/components/wallet/ZapUpiDepositCard';
-import OxaPayAddFunds from '@/components/wallet/OxaPayAddFunds';
 import { supabase } from '@/integrations/supabase/client';
 import { useServerFn } from '@tanstack/react-start';
 import { syncZapupiDeposit } from '@/lib/zapupi.functions';
@@ -419,10 +418,37 @@ export default function Wallet() {
                 boxShadow: depositMethod === 'crypto' ? '0 4px 12px -4px rgba(217,119,6,.4)' : 'none',
               }}
             >
-              🪙 Crypto
+              🪙 Crypto · Maintenance
             </button>
           </div>
-          {depositMethod === 'upi' ? <ZapUpiDepositCard /> : <OxaPayAddFunds />}
+          {depositMethod === 'upi' ? (
+            <ZapUpiDepositCard />
+          ) : (
+            <div
+              className="rounded-3xl p-8 text-center"
+              style={{ background: 'white', border: '1px solid #eef1f6', boxShadow: '0 4px 24px -8px rgba(15,23,42,.08)' }}
+            >
+              <div
+                className="mx-auto mb-4 w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
+                style={{ background: 'rgba(217,119,6,.10)' }}
+              >
+                🛠️
+              </div>
+              <h3 className="text-[17px] font-bold mb-1" style={{ color: '#0f172a' }}>
+                Crypto deposits are under maintenance
+              </h3>
+              <p className="text-[13px] mb-5" style={{ color: '#64748b' }}>
+                We are upgrading our crypto gateway. Please use UPI (INR) — it is fully functional and credits instantly.
+              </p>
+              <button
+                onClick={() => setDepositMethod('upi')}
+                className="px-5 py-2.5 rounded-xl text-[13px] font-bold"
+                style={{ background: 'linear-gradient(135deg, #ff8a3d, #ea580c)', color: 'white' }}
+              >
+                Pay with UPI (INR)
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Transaction History */}
