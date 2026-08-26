@@ -7,9 +7,15 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Suspense, lazy, useEffect, type ReactNode } from "react";
+
+// Non-critical UI: kept out of the initial home-page bundle.
+const Toaster = lazy(() =>
+  import("@/components/ui/toaster").then((m) => ({ default: m.Toaster })),
+);
+const Sonner = lazy(() =>
+  import("@/components/ui/sonner").then((m) => ({ default: m.Toaster })),
+);
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -19,6 +25,9 @@ import { AppErrorBoundary } from "@/components/app/AppErrorBoundary";
 import { GlobalSubscriptionGuard } from "@/components/subscription/GlobalSubscriptionGuard";
 
 import appCss from "../styles.css?url";
+
+const FONTS_HREF =
+  "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -108,8 +117,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
+        rel: "preload",
+        as: "style",
+        href: FONTS_HREF,
+      },
+      {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700;800&display=swap",
+        href: FONTS_HREF,
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/icon-192x192.png" },
@@ -148,11 +162,35 @@ function RootComponent() {
     const handleError = (e: ErrorEvent) => {
       console.error("Unhandled error:", e.error || e.message);
     };
+    // LCP / hydration measurement (dev only) — logs the real bottleneck element.
+    let lcpObserver: PerformanceObserver | undefined;
+    if (import.meta.env.DEV && "PerformanceObserver" in window) {
+      try {
+        lcpObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          const last = entries[entries.length - 1] as PerformanceEntry & {
+            element?: Element;
+            url?: string;
+          };
+          console.info(
+            "[perf] LCP",
+            Math.round(last.startTime),
+            "ms",
+            last.element?.tagName ?? last.url ?? "",
+          );
+        });
+        lcpObserver.observe({ type: "largest-contentful-paint", buffered: true });
+      } catch {
+        /* not supported */
+      }
+    }
+
     window.addEventListener("unhandledrejection", handleRejection);
     window.addEventListener("error", handleError);
     return () => {
       window.removeEventListener("unhandledrejection", handleRejection);
       window.removeEventListener("error", handleError);
+      lcpObserver?.disconnect();
     };
   }, []);
 
@@ -161,8 +199,10 @@ function RootComponent() {
       <AuthProvider>
         <CurrencyProvider>
           <TooltipProvider>
-            <Toaster />
-            <Sonner />
+            <Suspense fallback={null}>
+              <Toaster />
+              <Sonner />
+            </Suspense>
             <AppErrorBoundary>
               <ScrollToTop />
               <GlobalSubscriptionGuard>
