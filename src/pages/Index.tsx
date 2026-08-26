@@ -131,9 +131,9 @@ const Index = () => {
               { top: '22%', left: '55%', d: 1.5 },
               { top: '78%', left: '48%', d: 2.0 },
             ].map((s, i) => (
-              <motion.span
+              <span
                 key={i}
-                className="absolute rounded-full"
+                className="absolute rounded-full pulse"
                 style={{
                   top: s.top,
                   left: s.left,
@@ -141,70 +141,51 @@ const Index = () => {
                   height: 4,
                   background: '#fff',
                   boxShadow: '0 0 12px rgba(255,255,255,.9)',
+                  animationDelay: `${s.d}s`,
                 }}
-                animate={{ opacity: [0.2, 1, 0.2], scale: [0.8, 1.2, 0.8] }}
-                transition={{ duration: 3, repeat: Infinity, delay: s.d, ease: 'easeInOut' }}
               />
             ))}
           </div>
 
           <div className="relative max-w-4xl mx-auto text-center">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: 'easeOut' }}
-              className="text-[2.75rem] sm:text-[4rem] lg:text-[5rem] font-black leading-[1.02] tracking-[-0.03em]"
+            <h1
+              className="animate-fade-in text-[2.75rem] sm:text-[4rem] lg:text-[5rem] font-black leading-[1.02] tracking-[-0.03em]"
               style={{ color: C.ink }}
             >
               FlexiPro
-            </motion.h1>
+            </h1>
 
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: 'easeOut', delay: 0.15 }}
-              className="mt-4 sm:mt-6 text-[1.75rem] sm:text-[2.5rem] lg:text-[3rem] font-bold leading-[1.15] tracking-[-0.02em]"
-              style={{ color: C.ink2 }}
+            <h2
+              className="animate-fade-in mt-4 sm:mt-6 text-[1.75rem] sm:text-[2.5rem] lg:text-[3rem] font-bold leading-[1.15] tracking-[-0.02em]"
+              style={{ color: C.ink2, animationDelay: '60ms' }}
             >
               Best SMM Panel for<br />
               Organic Social Growth
-            </motion.h2>
+            </h2>
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: 'easeOut', delay: 0.3 }}
-              className="mt-8 text-[13.5px] sm:text-[15px]"
-              style={{ color: C.slate }}
+            <p
+              className="animate-fade-in mt-8 text-[13.5px] sm:text-[15px]"
+              style={{ color: C.slate, animationDelay: '120ms' }}
             >
               AI-powered for Instagram, YouTube &amp; TikTok · Real engagement &amp; natural delivery ·
               Safe accounts.
-            </motion.p>
+            </p>
 
             {/* Platform dots */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.5 }}
-              className="mt-8 flex items-center justify-center gap-2"
+            <div
+              className="animate-fade-in mt-8 flex items-center justify-center gap-2"
+              style={{ animationDelay: '160ms' }}
             >
               {['#E4405F', '#2563EB', '#000000'].map((c, i) => (
-                <motion.span
+                <span
                   key={i}
-                  className="rounded-full"
-                  style={{ width: 10, height: 10, background: c, opacity: 0.75 }}
-                  animate={{ scale: [1, 1.25, 1] }}
-                  transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.3, ease: 'easeInOut' }}
+                  className="rounded-full pulse"
+                  style={{ width: 10, height: 10, background: c, opacity: 0.75, animationDelay: `${i * 0.3}s` }}
                 />
               ))}
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.45 }}
-              className="mt-10"
-            >
+            <div className="animate-fade-in mt-10" style={{ animationDelay: '200ms' }}>
               <Link
                 to="/auth"
                 className="inline-flex h-12 px-8 rounded-full text-[14px] font-bold items-center gap-2 transition-transform hover:-translate-y-0.5"
@@ -216,7 +197,8 @@ const Index = () => {
               >
                 Sign Up Free <ArrowRight className="w-4 h-4" />
               </Link>
-            </motion.div>
+            </div>
+
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12px]" style={{ color: C.slate }}>
               {['No card needed', 'Every tool unlocked', 'Ready in 60 seconds'].map(t => (
