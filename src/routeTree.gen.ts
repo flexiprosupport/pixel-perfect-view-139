@@ -41,6 +41,7 @@ import { Route as AdminSubscriptionsRouteImport } from './routes/admin/subscript
 import { Route as AdminTopupPlanRouteImport } from './routes/admin/topup-plan'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as EngagementOrdersOrderNumberRouteImport } from './routes/engagement-orders.$orderNumber'
+import { Route as ApiPublicZapupiReturnRouteImport } from './routes/api/public/zapupi-return'
 import { Route as ApiPublicZapupiWebhookRouteImport } from './routes/api/public/zapupi-webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -205,6 +206,11 @@ const EngagementOrdersOrderNumberRoute =
     path: '/$orderNumber',
     getParentRoute: () => EngagementOrdersRoute,
   } as any)
+const ApiPublicZapupiReturnRoute = ApiPublicZapupiReturnRouteImport.update({
+  id: '/api/public/zapupi-return',
+  path: '/api/public/zapupi-return',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicZapupiWebhookRoute = ApiPublicZapupiWebhookRouteImport.update({
   id: '/api/public/zapupi-webhook',
   path: '/api/public/zapupi-webhook',
@@ -244,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -279,6 +286,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
   '/admin': typeof AdminIndexRoute
+  '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
 }
 export interface FileRoutesById {
@@ -315,6 +323,7 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
 }
 export interface FileRouteTypes {
@@ -352,6 +361,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/engagement-orders/$orderNumber'
     | '/admin/'
+    | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/engagement-orders/$orderNumber'
     | '/admin'
+    | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
   id:
     | '__root__'
@@ -422,6 +433,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/engagement-orders/$orderNumber'
     | '/admin/'
+    | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
   fileRoutesById: FileRoutesById
 }
@@ -457,6 +469,7 @@ export interface RootRouteChildren {
   AdminTopupPlanRoute: typeof AdminTopupPlanRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  ApiPublicZapupiReturnRoute: typeof ApiPublicZapupiReturnRoute
   ApiPublicZapupiWebhookRoute: typeof ApiPublicZapupiWebhookRoute
 }
 
@@ -686,6 +699,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EngagementOrdersOrderNumberRouteImport
       parentRoute: typeof EngagementOrdersRoute
     }
+    '/api/public/zapupi-return': {
+      id: '/api/public/zapupi-return'
+      path: '/api/public/zapupi-return'
+      fullPath: '/api/public/zapupi-return'
+      preLoaderRoute: typeof ApiPublicZapupiReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/zapupi-webhook': {
       id: '/api/public/zapupi-webhook'
       path: '/api/public/zapupi-webhook'
@@ -739,6 +759,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminTopupPlanRoute: AdminTopupPlanRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
+  ApiPublicZapupiReturnRoute: ApiPublicZapupiReturnRoute,
   ApiPublicZapupiWebhookRoute: ApiPublicZapupiWebhookRoute,
 }
 export const routeTree = rootRouteImport
