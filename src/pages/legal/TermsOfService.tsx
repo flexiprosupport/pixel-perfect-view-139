@@ -172,7 +172,7 @@ export default function TermsOfService() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">19. Contact Information</h2>
-              <p>If you have any questions about these Terms, please contact us through our Support page or email us at <strong className="text-foreground">support@flexipro.com</strong>. We are committed to resolving disputes amicably before any legal action is considered by either party.</p>
+              <p>If you have any questions about these Terms, please contact us through our Support page or email us at <strong className="text-foreground">flexipro.support@gmail.com</strong>. We are committed to resolving disputes amicably before any legal action is considered by either party.</p>
             </section>
 
           </div>
