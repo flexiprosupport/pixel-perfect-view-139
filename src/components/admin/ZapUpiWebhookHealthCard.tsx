@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useServerFn } from '@tanstack/react-start';
+import { zapupiWebhookHealth } from '@/lib/zapupi.functions';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,14 +19,17 @@ type HealthResult = {
     last_received_at: string | null;
     last_received_minutes_ago: number | null;
   };
+  configured?: boolean;
   recent?: Array<{
-    created_at: string;
+    received_at: string;
     order_id: string;
     status: string | null;
+    source: string | null;
     source_ip: string | null;
-    processed: boolean;
+    processed: boolean | null;
     amount_match: boolean | null;
   }>;
+  errors?: Array<{ order_id: string; at: string; message: string }>;
   server_time?: string;
   error?: string;
 };
@@ -32,17 +37,18 @@ type HealthResult = {
 export function ZapUpiWebhookHealthCard() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<HealthResult | null>(null);
-  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-  const canonicalUrl = `https://${projectId}.supabase.co/functions/v1/zapupi-webhook`;
+  const fetchHealth = useServerFn(zapupiWebhookHealth);
+  const canonicalUrl =
+    data?.canonical_webhook_url ??
+    (typeof window !== 'undefined' ? `${window.location.origin}/api/public/zapupi-webhook` : '');
 
   const runCheck = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${canonicalUrl}?health=1`, { method: 'GET' });
-      const json = (await res.json()) as HealthResult;
+      const json = (await fetchHealth({})) as HealthResult;
       setData(json);
-      if (!res.ok || !json.ok) {
-        toast({ title: 'Health check failed', description: json.error || `HTTP ${res.status}`, variant: 'destructive' });
+      if (!json.ok) {
+        toast({ title: 'Health check failed', description: json.error || 'Unknown error', variant: 'destructive' });
       }
     } catch (e) {
       toast({ title: 'Cannot reach webhook', description: String((e as Error).message), variant: 'destructive' });
@@ -50,6 +56,11 @@ export function ZapUpiWebhookHealthCard() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    void runCheck();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const copyUrl = () => {
     navigator.clipboard.writeText(canonicalUrl);
@@ -108,7 +119,7 @@ export function ZapUpiWebhookHealthCard() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <Stat label="Last 1h" value={stats?.webhooks_last_1h ?? 0} />
               <Stat label="Last 24h" value={stats?.webhooks_last_24h ?? 0} />
-              <Stat label="Endpoint" value={data.ok ? 'Online' : 'Down'} tone={data.ok ? 'good' : 'bad'} />
+              <Stat label="API key" value={data.configured ? 'Set' : 'Missing'} tone={data.configured ? 'good' : 'bad'} />
               <Stat label="Status" value={healthy ? 'Healthy' : 'Idle'} tone={healthy ? 'good' : 'warn'} />
             </div>
 
@@ -118,15 +129,29 @@ export function ZapUpiWebhookHealthCard() {
               </div>
             )}
 
+            {data.errors && data.errors.length > 0 && (
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-xs space-y-1">
+                <p className="font-semibold text-red-600">Recent errors</p>
+                {data.errors.map((e, i) => (
+                  <div key={i} className="flex items-center justify-between gap-2">
+                    <code className="truncate">{e.order_id}</code>
+                    <span className="text-red-600 truncate">{e.message}</span>
+                    <span className="text-muted-foreground">{new Date(e.at).toLocaleTimeString()}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {data.recent && data.recent.length > 0 && (
               <details className="text-xs">
-                <summary className="cursor-pointer text-muted-foreground hover:text-foreground">Recent 5 webhook receipts</summary>
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground">Recent webhook receipts</summary>
                 <div className="mt-2 space-y-1">
                   {data.recent.map((r, i) => (
                     <div key={i} className="flex items-center justify-between gap-2 rounded bg-muted/40 px-2 py-1">
                       <code className="truncate">{r.order_id}</code>
                       <span className="text-muted-foreground">{r.status ?? '—'}</span>
-                      <span className="text-muted-foreground">{new Date(r.created_at).toLocaleTimeString()}</span>
+                      <span className="text-muted-foreground">{r.source ?? '—'}</span>
+                      <span className="text-muted-foreground">{new Date(r.received_at).toLocaleTimeString()}</span>
                     </div>
                   ))}
                 </div>
