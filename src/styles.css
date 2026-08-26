@@ -395,3 +395,31 @@ input:-webkit-autofill:active {
     transform: rotate(360deg);
   }
 }
+
+/* Scroll-reveal without JS animation libraries */
+.reveal-up {
+  animation: lp-fade-in 0.5s ease-out both;
+  animation-timeline: view();
+  animation-range: entry 0% cover 22%;
+}
+
+@supports not (animation-timeline: view()) {
+  .reveal-up {
+    animation: lp-fade-in 0.5s ease-out both;
+  }
+}
+
+.hover-lift {
+  transition: transform 0.2s ease-out;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up,
+  .animate-fade-in,
+  .pulse {
+    animation: none !important;
+  }
+}
