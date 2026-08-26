@@ -148,10 +148,10 @@ const Index = () => {
 
           <div className="relative max-w-4xl mx-auto text-center">
             <h1
-              className="animate-fade-in text-[2.75rem] sm:text-[4rem] lg:text-[5rem] font-black leading-[1.02] tracking-[-0.03em]"
+              className="animate-fade-in text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-black leading-[1.05] tracking-[-0.03em]"
               style={{ color: C.ink }}
             >
-              FlexiPro
+              FlexiPro — AI-Powered Social Media Growth Panel
             </h1>
 
             <h2
