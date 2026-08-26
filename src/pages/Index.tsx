@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from "@/lib/router-compat";
-import { motion } from 'framer-motion';
 import {
   ArrowRight, Sparkles, Shield, Zap, Eye, TrendingUp, Shuffle, Clock,
   Moon, Timer, Brain, Link2, CheckCircle2, FileText, Lock, HelpCircle,
@@ -234,15 +233,11 @@ const Index = () => {
                 { icon: Timer, title: '±5min Jitter', desc: 'Timing no bot can fake' },
                 { icon: Eye, title: 'Live Preview', desc: 'See the plan before you pay' },
               ].map((f, i) => (
-                <motion.div
+                <div
                   key={f.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.4, delay: i * 0.06 }}
-                  whileHover={{ y: -4 }}
-                  className="group rounded-2xl p-4 sm:p-5"
+                  className="group rounded-2xl p-4 sm:p-5 reveal-up hover-lift"
                   style={{
+                    animationDelay: `${i * 60}ms`,
                     background: C.paper,
                     border: `1px solid ${C.line}`,
                     boxShadow: '0 4px 20px rgba(15,23,42,.04)',
@@ -256,7 +251,7 @@ const Index = () => {
                   </div>
                   <h3 className="text-[13px] font-bold mb-1" style={{ color: C.ink }}>{f.title}</h3>
                   <p className="text-[11px] leading-relaxed" style={{ color: C.slate }}>{f.desc}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -347,14 +342,11 @@ const Index = () => {
                 { step: '03', icon: Brain, title: 'Engine plans it', desc: 'S-curve pacing, ±50% variance, peak-hour lifts.' },
                 { step: '04', icon: TrendingUp, title: 'Watch it unfold', desc: 'Rolls in gradually, tracked live, safe.' },
               ].map((s, i) => (
-                <motion.div
+                <div
                   key={s.step}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.5, delay: i * 0.08 }}
-                  className="relative rounded-2xl p-5"
+                  className="relative rounded-2xl p-5 reveal-up"
                   style={{
+                    animationDelay: `${i * 80}ms`,
                     background: C.paper,
                     border: `1px solid ${C.line}`,
                     boxShadow: '0 8px 24px rgba(15,23,42,.05)',
@@ -368,7 +360,7 @@ const Index = () => {
                   </div>
                   <h3 className="text-[14.5px] font-bold mb-1.5" style={{ color: C.ink }}>{s.title}</h3>
                   <p className="text-[12.5px] leading-relaxed" style={{ color: C.slate }}>{s.desc}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
