@@ -83,11 +83,8 @@ export default function Wallet() {
       if (cancelled) return;
       attempts++;
       try {
-        const { data, error } = await supabase.functions.invoke('zapupi-sync-deposit', {
-          body: { order_id: orderId },
-        });
-        if (error) throw new Error(error.message);
-        const res = data as any;
+        const res = (await syncDeposit({ data: { order_id: orderId } })) as any;
+        if (res?.error && !res?.credited) throw new Error(res.error);
         const credited = res?.credited;
         const already = res?.already || res?.result?.duplicate;
         if (credited || already) {
