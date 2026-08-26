@@ -27,7 +27,7 @@ import { GlobalSubscriptionGuard } from "@/components/subscription/GlobalSubscri
 import appCss from "../styles.css?url";
 
 const FONTS_HREF =
-  "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap";
+  "https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {

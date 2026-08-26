@@ -38,7 +38,7 @@ const C = {
 };
 
 
-const displayFont = "'Fraunces', 'Times New Roman', serif";
+const displayFont = "'Manrope', system-ui, sans-serif";
 
 /* Tiny animated scene for the brand panel */
 const BrandScene = () => (
@@ -199,10 +199,6 @@ export default function Auth() {
         canonicalPath="/auth"
       />
 
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&display=swap"
-      />
 
       {/* Ambient wash */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">

@@ -62,7 +62,7 @@ export default function OxaPayAddFunds() {
             <Bitcoin className="h-5 w-5 text-white" strokeWidth={2.5} />
           </div>
           <div>
-            <h2 className="text-[17px] font-bold tracking-tight" style={{ color: '#0f172a', fontFamily: 'Sora, system-ui, sans-serif' }}>
+            <h2 className="text-[17px] font-bold tracking-tight" style={{ color: '#0f172a', fontFamily: 'Manrope, system-ui, sans-serif' }}>
               Crypto Add Funds
             </h2>
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] mt-0.5" style={{ color: '#d97706' }}>
@@ -97,7 +97,7 @@ export default function OxaPayAddFunds() {
           onChange={(e) => setInr(e.target.value)}
           placeholder="500"
           className="w-full pl-14 pr-4 h-14 text-2xl font-bold border-2 rounded-xl outline-none"
-          style={{ color: '#0f172a', borderColor: '#e2e8f0', background: '#f8fafc', fontFamily: 'Sora, system-ui, sans-serif' }}
+          style={{ color: '#0f172a', borderColor: '#e2e8f0', background: '#f8fafc', fontFamily: 'Manrope, system-ui, sans-serif' }}
         />
       </div>
       <p className="text-[11px] mt-1.5" style={{ color: '#94a3b8' }}>
@@ -130,7 +130,7 @@ export default function OxaPayAddFunds() {
           background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%)',
           color: 'white',
           boxShadow: '0 10px 24px -8px rgba(217,119,6,.55)',
-          fontFamily: 'Sora, system-ui, sans-serif',
+          fontFamily: 'Manrope, system-ui, sans-serif',
         }}
       >
         {loading ? <><Loader2 className="h-5 w-5 animate-spin" /> Opening payment page…</>
