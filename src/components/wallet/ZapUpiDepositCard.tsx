@@ -1,42 +1,47 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
+import { useServerFn } from '@tanstack/react-start';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Loader2, Zap, IndianRupee, ShieldCheck, ArrowRight, Send, MessageCircle, Lock } from 'lucide-react';
+import {
+  Loader2, Zap, IndianRupee, ShieldCheck, ArrowRight, ExternalLink, RefreshCw, Clock, CheckCircle2, XCircle,
+} from 'lucide-react';
+import { createZapupiOrder, syncZapupiDeposit, listMyZapupiDeposits } from '@/lib/zapupi.functions';
 
 const QUICK = [100, 500, 1000, 2000, 5000];
+
+type Deposit = {
+  order_id: string;
+  amount_inr: number;
+  status: string;
+  credited: boolean;
+  payment_url: string | null;
+  created_at: string;
+};
 
 export default function ZapUpiDepositCard() {
   const [amount, setAmount] = useState<string>('500');
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState<string | null>(null);
+  const [recent, setRecent] = useState<Deposit[]>([]);
 
-  // Warm up the edge function on mount so the cold start doesn't happen on Pay click.
-  useEffect(() => {
-    let cancelled = false;
-    const warm = async () => {
-      try {
-        const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/zapupi-create-order`;
-        await fetch(url, { method: 'OPTIONS', mode: 'cors' });
-      } catch { /* ignore */ }
-    };
-    warm();
-    return () => { cancelled = true; void cancelled; };
-  }, []);
+  const createOrder = useServerFn(createZapupiOrder);
+  const syncDeposit = useServerFn(syncZapupiDeposit);
+  const listDeposits = useServerFn(listMyZapupiDeposits);
 
-  const buildReturnUrl = () => {
-    const current = new URL(window.location.href);
-    const returnUrl = new URL('/wallet', window.location.origin);
-
-    current.searchParams.forEach((value, key) => {
-      if (key.startsWith('__lovable_')) {
-        returnUrl.searchParams.set(key, value);
-      }
-    });
-
-    return returnUrl.toString();
+  const refreshRecent = async () => {
+    try {
+      const res = await listDeposits({});
+      setRecent(res.deposits ?? []);
+    } catch {
+      /* silent — status list is informational */
+    }
   };
+
+  useEffect(() => {
+    void refreshRecent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const openPaymentPage = (payUrl: string) => {
     const isEmbedded = (() => {
@@ -57,43 +62,52 @@ export default function ZapUpiDepositCard() {
           return;
         }
       }
-
       if (window.top && window.top !== window) {
         window.top.location.href = payUrl;
         return;
       }
     } catch {
-      // If iframe top navigation is blocked, fall back to same-frame navigation.
+      /* iframe top navigation blocked — fall through */
     }
     window.location.href = payUrl;
   };
 
   const handlePay = async () => {
     const amt = Number(amount);
-    if (!Number.isFinite(amt) || amt < 50) {
-      toast.error('Minimum ₹50');
-      return;
-    }
-    if (amt > 100000) {
-      toast.error('Maximum ₹1,00,000 per transaction');
-      return;
-    }
+    if (!Number.isFinite(amt) || amt < 50) return toast.error('Minimum ₹50');
+    if (amt > 100000) return toast.error('Maximum ₹1,00,000 per transaction');
+
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('zapupi-create-order', {
-        body: {
-          amount_inr: amt,
-          origin: window.location.origin,
-          return_url: buildReturnUrl(),
-        },
-      });
-      if (error) throw new Error(error.message || 'Failed to create order');
-      const payUrl = (data as any)?.payment_url;
-      if (!payUrl) throw new Error('Gateway did not return a payment URL');
-      openPaymentPage(payUrl);
+      const res = await createOrder({ data: { amount_inr: amt } });
+      if (!res.ok || !('payment_url' in res) || !res.payment_url) {
+        throw new Error(('error' in res && res.error) || 'Gateway did not return a payment link');
+      }
+      void refreshRecent();
+      openPaymentPage(res.payment_url);
     } catch (e: any) {
       toast.error(e?.message || 'Could not start payment');
       setLoading(false);
+    }
+  };
+
+  const handleCheck = async (orderId: string) => {
+    setChecking(orderId);
+    const id = toast.loading('Checking payment status…');
+    try {
+      const res: any = await syncDeposit({ data: { order_id: orderId } });
+      if (res?.credited) {
+        toast.success(res.already ? 'Already credited to your wallet.' : 'Payment confirmed — wallet credited', { id });
+      } else if (res?.mismatch) {
+        toast.error('Paid amount does not match the order. Contact support.', { id });
+      } else {
+        toast.info('Payment not confirmed yet. If you paid, try again in a moment.', { id });
+      }
+      await refreshRecent();
+    } catch {
+      toast.error('Could not check the payment right now.', { id });
+    } finally {
+      setChecking(null);
     }
   };
 
@@ -107,13 +121,10 @@ export default function ZapUpiDepositCard() {
         fontFamily: 'Manrope, system-ui, sans-serif',
       }}
     >
-      {/* accent orb */}
       <div
         className="absolute -top-16 -right-16 w-56 h-56 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(closest-side, rgba(234,88,12,.10), transparent 70%)' }}
       />
-
-      {/* Maintenance overlay removed — ZapUPI is live again */}
 
       <div className="relative flex items-start justify-between mb-5">
         <div className="flex items-center gap-3">
@@ -220,14 +231,89 @@ export default function ZapUpiDepositCard() {
         )}
       </button>
 
+      {recent.length > 0 && (
+        <div className="mt-6 space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#64748b' }}>
+              Recent payments
+            </p>
+            <button
+              type="button"
+              onClick={() => void refreshRecent()}
+              className="text-[11px] font-semibold flex items-center gap-1"
+              style={{ color: '#2563EB' }}
+            >
+              <RefreshCw className="h-3 w-3" /> Refresh
+            </button>
+          </div>
+
+          {recent.map((d) => {
+            const done = d.credited || d.status === 'completed';
+            const failed = d.status === 'failed' || d.status === 'mismatch';
+            return (
+              <div
+                key={d.order_id}
+                className="flex items-center justify-between gap-2 rounded-xl px-3 py-2.5"
+                style={{ border: '1px solid #eef1f6', background: '#f8fafc' }}
+              >
+                <div className="min-w-0">
+                  <p className="text-[13px] font-bold" style={{ color: '#0f172a' }}>
+                    ₹{Number(d.amount_inr).toLocaleString('en-IN')}
+                  </p>
+                  <p className="text-[10px] truncate" style={{ color: '#94a3b8' }}>
+                    {new Date(d.created_at).toLocaleString('en-IN')}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <span
+                    className="flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold"
+                    style={{
+                      background: done ? 'rgba(22,163,74,.10)' : failed ? 'rgba(220,38,38,.10)' : 'rgba(234,88,12,.10)',
+                      color: done ? '#16a34a' : failed ? '#dc2626' : '#ea580c',
+                    }}
+                  >
+                    {done ? <CheckCircle2 className="h-3 w-3" /> : failed ? <XCircle className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                    {done ? 'Credited' : failed ? (d.status === 'mismatch' ? 'Mismatch' : 'Failed') : 'Pending'}
+                  </span>
+
+                  {!done && !failed && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => void handleCheck(d.order_id)}
+                        disabled={checking === d.order_id}
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-bold disabled:opacity-60"
+                        style={{ background: '#2563EB', color: 'white' }}
+                      >
+                        {checking === d.order_id ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Check'}
+                      </button>
+                      {d.payment_url && (
+                        <a
+                          href={d.payment_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1"
+                          style={{ border: '1px solid #e2e8f0', color: '#475569' }}
+                        >
+                          <ExternalLink className="h-3 w-3" /> Pay
+                        </a>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       <div className="flex items-center justify-center gap-1.5 mt-4">
         <ShieldCheck className="h-3 w-3" style={{ color: '#94a3b8' }} />
         <p className="text-[11px]" style={{ color: '#94a3b8' }}>
           Auto-verified by server · No refresh needed
         </p>
       </div>
-
-      {/* Support links hidden temporarily — will re-enable after subscription is taken */}
     </div>
   );
 }

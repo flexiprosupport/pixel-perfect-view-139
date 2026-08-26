@@ -6,6 +6,8 @@ import { useCurrency } from '@/hooks/useCurrency';
 import ZapUpiDepositCard from '@/components/wallet/ZapUpiDepositCard';
 import OxaPayAddFunds from '@/components/wallet/OxaPayAddFunds';
 import { supabase } from '@/integrations/supabase/client';
+import { useServerFn } from '@tanstack/react-start';
+import { syncZapupiDeposit } from '@/lib/zapupi.functions';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +30,7 @@ export default function Wallet() {
   const { data: transactions } = useTransactions(filter);
   const qc = useQueryClient();
   const [depositMethod, setDepositMethod] = useState<'upi' | 'crypto'>('upi');
+  const syncDeposit = useServerFn(syncZapupiDeposit);
 
   // Handle ZapUPI return — poll server-verify until the order is credited (or give up after ~3 min).
   useEffect(() => {
@@ -83,11 +86,8 @@ export default function Wallet() {
       if (cancelled) return;
       attempts++;
       try {
-        const { data, error } = await supabase.functions.invoke('zapupi-sync-deposit', {
-          body: { order_id: orderId },
-        });
-        if (error) throw new Error(error.message);
-        const res = data as any;
+        const res = (await syncDeposit({ data: { order_id: orderId } })) as any;
+        if (res?.error && !res?.credited) throw new Error(res.error);
         const credited = res?.credited;
         const already = res?.already || res?.result?.duplicate;
         if (credited || already) {
