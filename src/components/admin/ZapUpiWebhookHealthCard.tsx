@@ -17,7 +17,7 @@ type HealthResult = {
     webhooks_last_1h: number;
     webhooks_last_24h: number;
     last_received_at: string | null;
-    last_received_minutes_ago: number | null;
+    last_received_minutes_ago?: number | null;
   };
   configured?: boolean;
   recent?: Array<{
