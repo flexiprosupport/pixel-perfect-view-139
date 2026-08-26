@@ -28,6 +28,7 @@ export default function Wallet() {
   const { data: transactions } = useTransactions(filter);
   const qc = useQueryClient();
   const [depositMethod, setDepositMethod] = useState<'upi' | 'crypto'>('upi');
+  const syncDeposit = useServerFn(syncZapupiDeposit);
 
   // Handle ZapUPI return — poll server-verify until the order is credited (or give up after ~3 min).
   useEffect(() => {
