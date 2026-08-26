@@ -1,5 +1,5 @@
 # FlexiPro — robots.txt
-# Site:    https://flexipro.com
+# Site:    https://flexipro.in
 # Updated: 2026-05-05
 
 # ───────────────────────────── Default rule ─────────────────────────────
@@ -98,5 +98,5 @@ User-agent: DotBot
 Disallow: /
 
 # ───────────────────────────── Sitemap & host ─────────────────────────────
-Sitemap: https://flexipro.com/sitemap.xml
-Host: https://flexipro.com
+Sitemap: https://flexipro.in/sitemap.xml
+Host: https://flexipro.in
