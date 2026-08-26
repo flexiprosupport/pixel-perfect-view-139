@@ -102,6 +102,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "FlexiPro — real Instagram, YouTube & TikTok engagement with natural, human-like delivery. Safe, fast and fully automated.",
       },
       { name: "author", content: "FlexiPro" },
+      {
+        name: "google-site-verification",
+        content: "oCsWPKuOj9ptrMboKhizX4h1na3bYDjObWqDfKACMwM",
+      },
       { property: "og:title", content: "FlexiPro — AI Social Media Growth Panel" },
       {
         property: "og:description",

@@ -4,98 +4,68 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-    <loc>https://flexipro.com/</loc>
+    <loc>https://flexipro.in/</loc>
     <lastmod>2026-05-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://flexipro.com/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://flexipro.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://flexipro.in/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://flexipro.in/" />
     <image:image>
-      <image:loc>https://flexipro.com/og-image.jpg</image:loc>
+      <image:loc>https://flexipro.in/og-image.jpg</image:loc>
       <image:title>FlexiPro — Organic Social Media Growth Platform</image:title>
       <image:caption>AI-powered SMM panel for organic social growth</image:caption>
     </image:image>
   </url>
 
   <url>
-    <loc>https://flexipro.com/auth</loc>
+    <loc>https://flexipro.in/auth</loc>
     <lastmod>2026-05-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://flexipro.com/terms</loc>
+    <loc>https://flexipro.in/about</loc>
     <lastmod>2026-05-05</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://flexipro.com/privacy</loc>
+    <loc>https://flexipro.in/contact</loc>
     <lastmod>2026-05-05</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://flexipro.com/refund</loc>
-    <lastmod>2026-05-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://flexipro.com/cookies</loc>
-    <lastmod>2026-05-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
+    <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://flexipro.com/about</loc>
-    <lastmod>2026-05-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://flexipro.com/contact</loc>
-    <lastmod>2026-05-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://flexipro.com/shipping</loc>
-    <lastmod>2026-05-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://flexipro.com/dashboard</loc>
-    <lastmod>2026-05-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://flexipro.com/orders</loc>
-    <lastmod>2026-05-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://flexipro.com/wallet</loc>
-    <lastmod>2026-05-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://flexipro.com/settings</loc>
+    <loc>https://flexipro.in/terms</loc>
     <lastmod>2026-05-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://flexipro.com/support</loc>
+    <loc>https://flexipro.in/privacy</loc>
     <lastmod>2026-05-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://flexipro.in/refund</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://flexipro.in/shipping</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://flexipro.in/cookies</loc>
+    <lastmod>2026-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
   </url>
 
 </urlset>
