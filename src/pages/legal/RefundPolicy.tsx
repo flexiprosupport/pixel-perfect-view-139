@@ -117,7 +117,7 @@ export default function RefundPolicy() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">10. Disputes</h2>
-              <p>If you disagree with a refund decision, you may escalate by emailing <strong className="text-foreground">support@flexipro.com</strong> with additional evidence. We will review escalated cases within 7 business days. Our decision on escalated cases is final.</p>
+              <p>If you disagree with a refund decision, you may escalate by emailing <strong className="text-foreground">flexipro.support@gmail.com</strong> with additional evidence. We will review escalated cases within 7 business days. Our decision on escalated cases is final.</p>
             </section>
 
             <section className="space-y-3">

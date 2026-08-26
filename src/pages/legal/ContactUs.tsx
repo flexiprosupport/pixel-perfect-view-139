@@ -33,8 +33,8 @@ export default function ContactUs() {
                 </div>
                 <h2 className="font-semibold text-base">Email Support</h2>
               </div>
-              <a href="mailto:support@flexipro.com" className="text-sm text-orange-500 hover:underline break-all">
-                support@flexipro.com
+              <a href="mailto:flexipro.support@gmail.com" className="text-sm text-orange-500 hover:underline break-all">
+                flexipro.support@gmail.com
               </a>
               <p className="text-xs text-muted-foreground mt-2">For all general queries, billing & technical support.</p>
             </div>
@@ -97,7 +97,7 @@ export default function ContactUs() {
 
           <div className="mt-10 text-sm text-muted-foreground">
             <p>
-              For grievances, please email <a className="text-orange-500 hover:underline" href="mailto:support@flexipro.com">support@flexipro.com</a> with subject line "Grievance" — our grievance officer will respond within 48 hours.
+              For grievances, please email <a className="text-orange-500 hover:underline" href="mailto:flexipro.support@gmail.com">flexipro.support@gmail.com</a> with subject line "Grievance" — our grievance officer will respond within 48 hours.
             </p>
           </div>
         </div>
@@ -110,7 +110,7 @@ export default function ContactUs() {
             "@type": "LocalBusiness",
             name: "FlexiPro LLC",
             url: "https://flexipro.com/",
-            email: "support@flexipro.com",
+            email: "flexipro.support@gmail.com",
             telephone: "+1-367-828-8027",
             address: {
               "@type": "PostalAddress",

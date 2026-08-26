@@ -63,7 +63,7 @@ export default function ShippingPolicy() {
 
             <section className="space-y-3">
               <h2 className="text-xl font-semibold text-foreground">6. Contact</h2>
-              <p>For any delivery related queries, contact us at <a className="text-orange-500 hover:underline" href="mailto:support@flexipro.com">support@flexipro.com</a> or WhatsApp <a className="text-orange-500 hover:underline" href="https://wa.me/13678288027" target="_blank" rel="noreferrer">+1 (367) 828-8027</a>.</p>
+              <p>For any delivery related queries, contact us at <a className="text-orange-500 hover:underline" href="mailto:flexipro.support@gmail.com">flexipro.support@gmail.com</a> or WhatsApp <a className="text-orange-500 hover:underline" href="https://wa.me/13678288027" target="_blank" rel="noreferrer">+1 (367) 828-8027</a>.</p>
             </section>
           </div>
         </div>
