@@ -1,9 +1,18 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeader } from '@tanstack/react-start/server';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { z } from 'zod';
 
 const MIN_INR = 100;
 const MAX_INR = 100000;
+
+const createZapupiOrderSchema = z.object({
+  amount_inr: z
+    .number({ invalid_type_error: 'Please enter a valid amount in INR.' })
+    .min(MIN_INR, { message: `Minimum deposit amount is ₹${MIN_INR}.` })
+    .max(MAX_INR, { message: `Maximum deposit amount is ₹${MAX_INR}.` }),
+  customer_mobile: z.string().max(10).optional(),
+});
 
 function resolveOrigin(): string {
   const explicit = process.env['PUBLIC_SITE_URL'];
@@ -18,18 +27,15 @@ function resolveOrigin(): string {
 /** Create a ZapUPI order + a `pending` deposit row, return the hosted payment URL. */
 export const createZapupiOrder = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { amount_inr: number; customer_mobile?: string }) => input)
+  .inputValidator((input) => createZapupiOrderSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { getAdmin, createGatewayOrder } = await import('./zapupi.server');
     const userId = context.userId as string;
 
-    const amount = Number(data?.amount_inr);
-    if (!Number.isFinite(amount) || amount < MIN_INR || amount > MAX_INR) {
-      return { ok: false as const, error: `Amount must be between ₹${MIN_INR} and ₹${MAX_INR}` };
-    }
-    const amountInr = Math.round(amount * 100) / 100;
+    const amountInr = Math.round(data.amount_inr * 100) / 100;
     const orderId = 'ZAP_' + crypto.randomUUID().replace(/-/g, '');
     const origin = resolveOrigin();
+
 
     const admin = await getAdmin();
     const { error: insErr } = await admin.from('zapupi_deposits').insert({
