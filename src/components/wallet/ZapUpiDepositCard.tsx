@@ -136,7 +136,7 @@ export default function ZapUpiDepositCard() {
             <Zap className="h-5 w-5 text-white" strokeWidth={2.5} />
           </div>
           <div>
-            <h2 className="text-[17px] font-bold tracking-tight" style={{ color: '#0f172a', fontFamily: 'Sora, system-ui, sans-serif' }}>
+            <h2 className="text-[17px] font-bold tracking-tight" style={{ color: '#0f172a', fontFamily: 'Manrope, system-ui, sans-serif' }}>
               Add Funds
             </h2>
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] mt-0.5" style={{ color: '#ea580c' }}>
@@ -180,7 +180,7 @@ export default function ZapUpiDepositCard() {
             color: '#0f172a',
             borderColor: '#e2e8f0',
             background: '#f8fafc',
-            fontFamily: 'Sora, system-ui, sans-serif',
+            fontFamily: 'Manrope, system-ui, sans-serif',
           }}
         />
       </div>
@@ -215,7 +215,7 @@ export default function ZapUpiDepositCard() {
           background: 'linear-gradient(135deg, #ff8a3d 0%, #ea580c 50%, #c2410c 100%)',
           color: 'white',
           boxShadow: '0 10px 24px -8px rgba(234,88,12,.55), inset 0 1px 0 rgba(255,255,255,.25)',
-          fontFamily: 'Sora, system-ui, sans-serif',
+          fontFamily: 'Manrope, system-ui, sans-serif',
           letterSpacing: '-0.01em',
         }}
       >

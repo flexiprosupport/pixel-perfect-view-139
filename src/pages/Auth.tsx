@@ -38,7 +38,7 @@ const C = {
 };
 
 
-const displayFont = "'Fraunces', 'Times New Roman', serif";
+const displayFont = "'Manrope', system-ui, sans-serif";
 
 /* Tiny animated scene for the brand panel */
 const BrandScene = () => (

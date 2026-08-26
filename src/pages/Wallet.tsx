@@ -338,7 +338,7 @@ export default function Wallet() {
           <p
             className="relative z-10 mt-2 text-3xl md:text-4xl text-white"
             style={{
-              fontFamily: "'Sora', system-ui, sans-serif",
+              fontFamily: "'Manrope', system-ui, sans-serif",
               fontWeight: 700,
               letterSpacing: '-0.02em',
               lineHeight: 1.05,
@@ -365,7 +365,7 @@ export default function Wallet() {
                 </p>
                 <p
                   className="text-[13px] text-white truncate"
-                  style={{ fontFamily: "'Sora', system-ui, sans-serif", fontWeight: 600 }}
+                  style={{ fontFamily: "'Manrope', system-ui, sans-serif", fontWeight: 600 }}
                 >
                   {formatPrice(wallet?.total_deposited || 0)}
                 </p>
@@ -384,7 +384,7 @@ export default function Wallet() {
                 </p>
                 <p
                   className="text-[13px] text-white truncate"
-                  style={{ fontFamily: "'Sora', system-ui, sans-serif", fontWeight: 600 }}
+                  style={{ fontFamily: "'Manrope', system-ui, sans-serif", fontWeight: 600 }}
                 >
                   {formatPrice(wallet?.total_spent || 0)}
                 </p>
