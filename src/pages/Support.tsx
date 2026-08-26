@@ -46,7 +46,8 @@ import {
   Bug,
   Settings,
   Crown,
-  ChevronDown
+  ChevronDown,
+  Mail
 } from "lucide-react";
 import { PageMeta } from "@/components/seo/PageMeta";
 import { format } from "date-fns";
