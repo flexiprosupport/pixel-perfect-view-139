@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeader } from '@tanstack/react-start/server';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 
-const MIN_INR = 50;
+const MIN_INR = 100;
 const MAX_INR = 100000;
 
 function resolveOrigin(): string {

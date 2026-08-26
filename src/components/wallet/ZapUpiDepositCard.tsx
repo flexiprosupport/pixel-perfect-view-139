@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { createZapupiOrder, syncZapupiDeposit, listMyZapupiDeposits } from '@/lib/zapupi.functions';
 
+const MIN_INR = 100;
 const QUICK = [100, 500, 1000, 2000, 5000];
 
 type Deposit = {
@@ -74,7 +75,7 @@ export default function ZapUpiDepositCard() {
 
   const handlePay = async () => {
     const amt = Number(amount);
-    if (!Number.isFinite(amt) || amt < 50) return toast.error('Minimum ₹50');
+    if (!Number.isFinite(amt) || amt < MIN_INR) return toast.error(`Minimum ₹${MIN_INR}`);
     if (amt > 100000) return toast.error('Maximum ₹1,00,000 per transaction');
 
     setLoading(true);
@@ -169,7 +170,7 @@ export default function ZapUpiDepositCard() {
           id="zap-amount"
           type="number"
           inputMode="decimal"
-          min={50}
+          min={MIN_INR}
           max={100000}
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
