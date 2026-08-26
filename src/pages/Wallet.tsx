@@ -4,7 +4,6 @@ import { useWallet } from '@/hooks/useWallet';
 import { useTransactions, type TransactionFilter } from '@/hooks/useTransactions';
 import { useCurrency } from '@/hooks/useCurrency';
 import ZapUpiDepositCard from '@/components/wallet/ZapUpiDepositCard';
-import OxaPayAddFunds from '@/components/wallet/OxaPayAddFunds';
 import { supabase } from '@/integrations/supabase/client';
 import { useServerFn } from '@tanstack/react-start';
 import { syncZapupiDeposit } from '@/lib/zapupi.functions';
