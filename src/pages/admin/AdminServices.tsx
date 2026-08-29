@@ -266,12 +266,9 @@ export default function AdminServices() {
               onClick={async () => {
                 setIsSyncingPrices(true);
                 try {
-                  const { data, error } = await supabase.functions.invoke('sync-service-prices', {
-                    body: {},
-                  });
-                  if (error) throw error;
-                  if (data?.error) throw new Error(data.error);
+                  const data = await syncPricesFn({ data: {} });
                   toast.success(`${data.updated} service prices synced from providers!`);
+                  if (data.errors?.length) toast.error(data.errors[0]);
                   queryClient.invalidateQueries({ queryKey: ['admin-all-services'] });
                 } catch (err: any) {
                   toast.error(err.message || 'Sync failed');
