@@ -328,6 +328,8 @@ export default function Support() {
                   </div>
                 </DialogContent>
               </Dialog>
+              </div>
+
             </div>
           </div>
           <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-primary/10 to-transparent rounded-full blur-3xl" />
