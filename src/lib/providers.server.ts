@@ -258,8 +258,56 @@ async function linkMapping(
   );
 }
 
-/** Refresh prices/limits of every imported service from its provider catalogue. */
-export async function syncPricesCore(admin: any) {
+/** Retry an async call with exponential backoff (safe for flaky provider APIs). */
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  attempts = 3,
+  baseDelayMs = 500,
+): Promise<T> {
+  let lastErr: any;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      if (i < attempts - 1) {
+        await new Promise((r) => setTimeout(r, baseDelayMs * 2 ** i));
+      }
+    }
+  }
+  throw lastErr;
+}
+
+/** Write a provider-related entry to the admin audit log (best effort). */
+export async function logProviderAudit(
+  admin: any,
+  entry: {
+    action: string;
+    actor_id?: string | null;
+    actor_email?: string | null;
+    notes?: string | null;
+    metadata?: Record<string, unknown>;
+  },
+) {
+  try {
+    await admin.from('admin_audit_log').insert({
+      action: entry.action,
+      actor_id: entry.actor_id ?? null,
+      actor_email: entry.actor_email ?? null,
+      notes: entry.notes ?? null,
+      metadata: entry.metadata ?? {},
+    });
+  } catch {
+    /* auditing must never break the operation */
+  }
+}
+
+/**
+ * Refresh prices/limits of imported services from their provider catalogue.
+ * Pass `serviceIds` to refresh only a selection (bulk refresh from the UI).
+ * Each service records its own sync timestamp / status / error.
+ */
+export async function syncPricesCore(admin: any, serviceIds?: string[]) {
   const { data: accounts } = await admin
     .from('provider_accounts')
     .select('*')
@@ -268,30 +316,57 @@ export async function syncPricesCore(admin: any) {
 
   const seen = new Set<string>();
   let updated = 0;
+  let failed = 0;
   const errors: string[] = [];
+  const now = () => new Date().toISOString();
 
   for (const account of accounts ?? []) {
     if (seen.has(account.provider_id)) continue;
     seen.add(account.provider_id);
 
-    const { data: services } = await admin
+    let query = admin
       .from('services')
       .select('id, provider_service_id')
       .eq('provider_id', account.provider_id);
+    if (serviceIds?.length) query = query.in('id', serviceIds);
+
+    const { data: services } = await query;
     if (!services?.length) continue;
 
     let catalogue;
     try {
-      catalogue = await fetchCatalogue(account.api_url, account.api_key);
+      catalogue = await withRetry(() => fetchCatalogue(account.api_url, account.api_key));
     } catch (err: any) {
-      errors.push(`${account.provider_id}: ${err.message}`);
+      const message = String(err?.message ?? err).slice(0, 300);
+      errors.push(`${account.provider_id}: ${message}`);
+      failed += services.length;
+      await admin
+        .from('services')
+        .update({
+          last_price_sync_at: now(),
+          last_price_sync_status: 'failed',
+          last_price_sync_error: message,
+        })
+        .in('id', services.map((s: any) => s.id));
       continue;
     }
+
     const byId = new Map<string, NormalizedProviderService>(catalogue.map((s) => [s.service_id, s]));
 
     for (const svc of services) {
       const remote = byId.get(String(svc.provider_service_id));
-      if (!remote) continue;
+      if (!remote) {
+        failed++;
+        await admin
+          .from('services')
+          .update({
+            last_price_sync_at: now(),
+            last_price_sync_status: 'missing',
+            last_price_sync_error: `Service ID ${svc.provider_service_id} not found in provider catalogue`,
+          })
+          .eq('id', svc.id);
+        continue;
+      }
       const { error } = await admin
         .from('services')
         .update({
@@ -299,13 +374,21 @@ export async function syncPricesCore(admin: any) {
           min_quantity: remote.min,
           max_quantity: remote.max,
           drip_feed_enabled: remote.dripfeed,
+          last_price_sync_at: now(),
+          last_price_sync_status: 'ok',
+          last_price_sync_error: null,
         })
         .eq('id', svc.id);
-      if (!error) updated++;
+      if (error) {
+        failed++;
+        errors.push(`${svc.provider_service_id}: ${error.message}`);
+      } else {
+        updated++;
+      }
     }
   }
 
-  return { updated, errors };
+  return { updated, failed, errors };
 }
 
 /** Refresh provider_accounts.balance for every active account. */
