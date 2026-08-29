@@ -49,7 +49,7 @@ export async function writeRoleAudit(params: {
     target_email: targetProfile?.email ?? null,
     action: params.action,
     notes: params.notes,
-    metadata: params.metadata ?? {},
+    metadata: (params.metadata ?? {}) as never,
   });
 }
 
