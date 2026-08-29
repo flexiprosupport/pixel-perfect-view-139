@@ -368,47 +368,156 @@ async function afterDepositCredited(args: {
 }
 
 
+/** Exponential backoff between verification attempts (minutes). */
+const BACKOFF_MINUTES = [0.5, 1, 2, 5, 10, 20, 30, 60];
+const MAX_VERIFY_ATTEMPTS = 40;
+
+function backoffFor(attempt: number): number {
+  const idx = Math.min(attempt, BACKOFF_MINUTES.length - 1);
+  return (BACKOFF_MINUTES[idx] ?? 60) * 60_000;
+}
+
 /**
- * Auto-settle: picks recent uncredited deposits and verifies them against the
- * gateway, crediting the wallet when the payment is confirmed.
- * Runs from the scheduler so users never have to check manually.
+ * Auto-settle: picks recent uncredited deposits whose next retry is due,
+ * verifies them against the gateway, credits the wallet when confirmed and
+ * records the exact failure reason + next retry time on every miss.
+ * Bounded per run so the scheduler never fans out.
  */
 export async function settlePendingZapupiDeposits(limit = 25): Promise<{
   checked: number;
   credited: number;
   mismatched: number;
-  results: Array<{ order_id: string; credited?: boolean; status?: string; mismatch?: boolean }>;
+  results: Array<{
+    order_id: string;
+    credited?: boolean;
+    status?: string;
+    mismatch?: boolean;
+    error?: string;
+    next_verify_at?: string;
+  }>;
 }> {
   const admin = await getAdmin();
+  const nowIso = new Date().toISOString();
   const cutoff = new Date(Date.now() - 24 * 3600_000).toISOString();
 
   const { data: rows } = await admin
     .from('zapupi_deposits')
-    .select('order_id, created_at')
+    .select('order_id, created_at, verify_attempts, next_verify_at')
     .eq('credited', false)
     .in('status', ['pending', 'processing'])
     .gte('created_at', cutoff)
+    .lt('verify_attempts', MAX_VERIFY_ATTEMPTS)
+    .or(`next_verify_at.is.null,next_verify_at.lte.${nowIso}`)
     .order('created_at', { ascending: false })
     .limit(limit);
 
-  const results: Array<{ order_id: string; credited?: boolean; status?: string; mismatch?: boolean }> = [];
+  const results: Array<{
+    order_id: string;
+    credited?: boolean;
+    status?: string;
+    mismatch?: boolean;
+    error?: string;
+    next_verify_at?: string;
+  }> = [];
   let credited = 0;
   let mismatched = 0;
 
-  for (const row of (rows ?? []) as Array<{ order_id: string }>) {
+  for (const row of (rows ?? []) as Array<{ order_id: string; verify_attempts: number | null }>) {
+    const attempt = Number(row.verify_attempts ?? 0);
+    const nextAt = new Date(Date.now() + backoffFor(attempt)).toISOString();
+
     try {
       const r = await settleZapupiOrder({
         orderId: row.order_id,
         payload: { source: 'auto', order_id: row.order_id, at: new Date().toISOString() },
         source: 'sync',
       });
+
       if (r.credited) credited += 1;
       if (r.mismatch) mismatched += 1;
-      results.push({ order_id: row.order_id, credited: r.credited, status: r.status, mismatch: r.mismatch });
+
+      if (!r.credited && !r.mismatch) {
+        await admin
+          .from('zapupi_deposits')
+          .update({
+            verify_attempts: attempt + 1,
+            last_verify_at: new Date().toISOString(),
+            last_verify_error: r.error ?? (r.verified === false ? 'Gateway reports payment not completed yet' : null),
+            next_verify_at: nextAt,
+          })
+          .eq('order_id', row.order_id);
+      }
+
+      results.push({
+        order_id: row.order_id,
+        credited: r.credited,
+        status: r.status,
+        mismatch: r.mismatch,
+        ...(r.error ? { error: r.error } : {}),
+        next_verify_at: r.credited ? undefined : nextAt,
+      });
     } catch (err: any) {
-      results.push({ order_id: row.order_id, status: `error: ${String(err?.message ?? err)}` });
+      const message = String(err?.message ?? err);
+      await admin
+        .from('zapupi_deposits')
+        .update({
+          verify_attempts: attempt + 1,
+          last_verify_at: new Date().toISOString(),
+          last_verify_error: `Gateway error: ${message}`.slice(0, 500),
+          next_verify_at: nextAt,
+        })
+        .eq('order_id', row.order_id);
+      console.error('[zapupi] auto-verify failed', row.order_id, message);
+      results.push({ order_id: row.order_id, status: 'error', error: message, next_verify_at: nextAt });
     }
   }
 
   return { checked: (rows ?? []).length, credited, mismatched, results };
 }
+
+/** Full verification timeline for one deposit (owner-scoped read done by caller). */
+export async function getDepositTimeline(orderId: string): Promise<{
+  deposit: any | null;
+  events: Array<{
+    at: string;
+    source: string | null;
+    status: string | null;
+    utr: string | null;
+    txn_id: string | null;
+    processed: boolean | null;
+    amount_match: boolean | null;
+    note: string | null;
+  }>;
+}> {
+  const admin = await getAdmin();
+
+  const { data: deposit } = await admin
+    .from('zapupi_deposits')
+    .select(
+      'order_id, user_id, amount_inr, status, credited, credited_at, utr, txn_id, verify_attempts, last_verify_at, last_verify_error, next_verify_at, created_at, updated_at',
+    )
+    .eq('order_id', orderId)
+    .maybeSingle();
+
+  const { data: events } = await admin
+    .from('zapupi_webhook_events')
+    .select('received_at, source, status, utr, txn_id, processed, amount_match, credit_result, verification_notes')
+    .eq('order_id', orderId)
+    .order('received_at', { ascending: true })
+    .limit(50);
+
+  return {
+    deposit: deposit ?? null,
+    events: ((events ?? []) as any[]).map((e) => ({
+      at: e.received_at,
+      source: e.source ?? null,
+      status: e.status ?? null,
+      utr: e.utr ?? null,
+      txn_id: e.txn_id ?? null,
+      processed: e.processed ?? null,
+      amount_match: e.amount_match ?? null,
+      note: e.credit_result?.error ?? (e.processed ? 'Wallet credited' : null),
+    })),
+  };
+}
+
