@@ -40,6 +40,7 @@ import { Route as AdminProviderAccountsRouteImport } from './routes/admin/provid
 import { Route as AdminServiceProviderMappingRouteImport } from './routes/admin/service-provider-mapping'
 import { Route as AdminServicesRouteImport } from './routes/admin/services'
 import { Route as AdminSubscriptionsRouteImport } from './routes/admin/subscriptions'
+import { Route as AdminSupportRouteImport } from './routes/admin/support'
 import { Route as AdminTopupPlanRouteImport } from './routes/admin/topup-plan'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as EngagementOrdersOrderNumberRouteImport } from './routes/engagement-orders.$orderNumber'
@@ -206,6 +207,11 @@ const AdminSubscriptionsRoute = AdminSubscriptionsRouteImport.update({
   path: '/admin/subscriptions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSupportRoute = AdminSupportRouteImport.update({
+  id: '/admin/support',
+  path: '/admin/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminTopupPlanRoute = AdminTopupPlanRouteImport.update({
   id: '/admin/topup-plan',
   path: '/admin/topup-plan',
@@ -285,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/admin/service-provider-mapping': typeof AdminServiceProviderMappingRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/subscriptions': typeof AdminSubscriptionsRoute
+  '/admin/support': typeof AdminSupportRoute
   '/admin/topup-plan': typeof AdminTopupPlanRoute
   '/admin/users': typeof AdminUsersRoute
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
@@ -327,6 +334,7 @@ export interface FileRoutesByTo {
   '/admin/service-provider-mapping': typeof AdminServiceProviderMappingRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/subscriptions': typeof AdminSubscriptionsRoute
+  '/admin/support': typeof AdminSupportRoute
   '/admin/topup-plan': typeof AdminTopupPlanRoute
   '/admin/users': typeof AdminUsersRoute
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
@@ -370,6 +378,7 @@ export interface FileRoutesById {
   '/admin/service-provider-mapping': typeof AdminServiceProviderMappingRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/subscriptions': typeof AdminSubscriptionsRoute
+  '/admin/support': typeof AdminSupportRoute
   '/admin/topup-plan': typeof AdminTopupPlanRoute
   '/admin/users': typeof AdminUsersRoute
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
@@ -414,6 +423,7 @@ export interface FileRouteTypes {
     | '/admin/service-provider-mapping'
     | '/admin/services'
     | '/admin/subscriptions'
+    | '/admin/support'
     | '/admin/topup-plan'
     | '/admin/users'
     | '/engagement-orders/$orderNumber'
@@ -456,6 +466,7 @@ export interface FileRouteTypes {
     | '/admin/service-provider-mapping'
     | '/admin/services'
     | '/admin/subscriptions'
+    | '/admin/support'
     | '/admin/topup-plan'
     | '/admin/users'
     | '/engagement-orders/$orderNumber'
@@ -498,6 +509,7 @@ export interface FileRouteTypes {
     | '/admin/service-provider-mapping'
     | '/admin/services'
     | '/admin/subscriptions'
+    | '/admin/support'
     | '/admin/topup-plan'
     | '/admin/users'
     | '/engagement-orders/$orderNumber'
@@ -541,6 +553,7 @@ export interface RootRouteChildren {
   AdminServiceProviderMappingRoute: typeof AdminServiceProviderMappingRoute
   AdminServicesRoute: typeof AdminServicesRoute
   AdminSubscriptionsRoute: typeof AdminSubscriptionsRoute
+  AdminSupportRoute: typeof AdminSupportRoute
   AdminTopupPlanRoute: typeof AdminTopupPlanRoute
   AdminUsersRoute: typeof AdminUsersRoute
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
@@ -771,6 +784,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSubscriptionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/support': {
+      id: '/admin/support'
+      path: '/admin/support'
+      fullPath: '/admin/support'
+      preLoaderRoute: typeof AdminSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/topup-plan': {
       id: '/admin/topup-plan'
       path: '/admin/topup-plan'
@@ -879,6 +899,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminServiceProviderMappingRoute: AdminServiceProviderMappingRoute,
   AdminServicesRoute: AdminServicesRoute,
   AdminSubscriptionsRoute: AdminSubscriptionsRoute,
+  AdminSupportRoute: AdminSupportRoute,
   AdminTopupPlanRoute: AdminTopupPlanRoute,
   AdminUsersRoute: AdminUsersRoute,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
