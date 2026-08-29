@@ -25,7 +25,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </aside>
       <MobileBottomNav />
       <main className="lg:pl-[260px] w-full">
-       <div className="min-h-screen pt-16 lg:pt-0 px-3 sm:px-4 py-4 sm:py-5 lg:p-8">
+       <div className={`min-h-screen pt-16 lg:pt-0 px-3 sm:px-4 py-4 sm:py-5 lg:p-8 ${isAdmin ? 'text-sm' : ''}`}>
           <div className="max-w-7xl mx-auto w-full">{children}</div>
         </div>
       </main>
