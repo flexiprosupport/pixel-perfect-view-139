@@ -20,4 +20,6 @@ export interface TemplateEntry {
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'ticket-receipt': ticketReceiptTemplate,
   'ticket-status-update': ticketStatusUpdateTemplate,
+  'deposit-credited': depositCreditedTemplate,
 }
+
