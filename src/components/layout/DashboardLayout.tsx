@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { useNavigate } from "@/lib/router-compat";
+import { useNavigate, useLocation } from "@/lib/router-compat";
 import { useAuth } from '@/hooks/useAuth';
 import { Sidebar } from './Sidebar';
 import { MobileBottomNav } from './MobileBottomNav';
