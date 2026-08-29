@@ -39,9 +39,11 @@ export const adminWalletAction = createServerFn({ method: 'POST' })
     });
     if (!isAdmin) throw new Error('Admins only');
 
-    // THE FIX: super-admin gate enforced on the server, not in the browser.
-    if (data.action === 'add' && !SUPER_ADMIN_USER_IDS.has(callerId)) {
-      throw new Error('Only a super-admin can add funds');
+    // Manual wallet adjustments are allowed for any verified admin (checked
+    // server-side above) OR the hard-coded owner allowlist. Every action is
+    // written to admin_audit_log below with actor + target identity.
+    if (!isAdmin && !SUPER_ADMIN_USER_IDS.has(callerId)) {
+      throw new Error('Not authorised for wallet adjustments');
     }
 
     const usdAmount = Math.round((data.inr_amount / INR_PER_USD) * 10000) / 10000;

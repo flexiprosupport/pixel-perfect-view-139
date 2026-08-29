@@ -101,7 +101,8 @@ export default function AdminUsers() {
     '93369079-e17a-4df6-a4a6-1c2a832231b2', // bjkagrahaoamqnvs@gmail.com
   'e067c00a-4c77-4efc-89e1-0c0f814835c3', // flexipro.support@gmail.com (owner)
   ];
-  const isSuperAdmin = !!user?.id && SUPER_ADMIN_USER_IDS.includes(user.id);
+  // Any verified admin can adjust wallets manually; the server re-checks the role.
+  const isSuperAdmin = !!isAdmin || (!!user?.id && SUPER_ADMIN_USER_IDS.includes(user.id));
   const [removeSubUser, setRemoveSubUser] = useState<UserProfile | null>(null);
   const [pauseUser, setPauseUser] = useState<UserProfile | null>(null);
   const [cancelUser, setCancelUser] = useState<UserProfile | null>(null);
@@ -928,7 +929,7 @@ export default function AdminUsers() {
                   </div>
                 ) : (
                   <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
-                    🔒 Only a super-admin can add or subtract funds. All other credits come from ZapUPI.
+                    🔒 Only an admin can add or subtract funds. All other credits come from ZapUPI.
                   </div>
                 )}
 
