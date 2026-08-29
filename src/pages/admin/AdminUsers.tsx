@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { adminWalletAction } from '@/lib/admin-wallet.functions';
+import { adminSetUserRole, adminBanUser, adminUnbanUser } from '@/lib/admin-roles.functions';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -103,12 +105,18 @@ export default function AdminUsers() {
   ];
   // Any verified admin can adjust wallets manually; the server re-checks the role.
   const isSuperAdmin = !!isAdmin || (!!user?.id && SUPER_ADMIN_USER_IDS.includes(user.id));
+  // Role grant/revoke + ban is restricted to the true super-admin allowlist
+  // (server re-checks the same list).
+  const isTrueSuperAdmin = !!user?.id && SUPER_ADMIN_USER_IDS.includes(user.id);
   const [removeSubUser, setRemoveSubUser] = useState<UserProfile | null>(null);
   const [pauseUser, setPauseUser] = useState<UserProfile | null>(null);
   const [cancelUser, setCancelUser] = useState<UserProfile | null>(null);
   const [refundOnCancel, setRefundOnCancel] = useState(false);
   const [banUser, setBanUser] = useState<UserProfile | null>(null);
   const [banReason, setBanReason] = useState('');
+  const [roleUser, setRoleUser] = useState<UserProfile | null>(null);
+  const [roleReason, setRoleReason] = useState('');
+
 
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-all-users-with-subs'],
@@ -138,16 +146,18 @@ export default function AdminUsers() {
     },
   });
 
+  const callBanUser = useServerFn(adminBanUser);
+  const callUnbanUser = useServerFn(adminUnbanUser);
+  const callSetUserRole = useServerFn(adminSetUserRole);
+
   const banUserMutation = useMutation({
     mutationFn: async ({ targetUser, reason }: { targetUser: UserProfile; reason: string }) => {
-      const { data, error } = await supabase.rpc('admin_ban_user_and_cancel' as any, {
-        p_target_user_id: targetUser.user_id,
-        p_reason: reason || null,
+      if (reason.trim().length < 5) throw new Error('Ban reason must be at least 5 characters');
+      return await callBanUser({
+        data: { target_user_id: targetUser.user_id, reason: reason.trim() },
       });
-      if (error) throw error;
-      return data as any;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       const s = data?.single_orders_cancelled ?? 0;
       const e = data?.engagement_orders_cancelled ?? 0;
       const r = data?.pending_runs_cancelled ?? 0;
@@ -160,19 +170,15 @@ export default function AdminUsers() {
   });
 
   const unbanUserMutation = useMutation({
-    mutationFn: async (targetUser: UserProfile) => {
-      const { data, error } = await supabase.rpc('admin_unban_user' as any, {
-        p_target_user_id: targetUser.user_id,
-      });
-      if (error) throw error;
-      return data as any;
-    },
+    mutationFn: async (targetUser: UserProfile) =>
+      await callUnbanUser({ data: { target_user_id: targetUser.user_id } }),
     onSuccess: () => {
       toast.success('User unbanned ✅');
       queryClient.invalidateQueries({ queryKey: ['admin-all-users-with-subs'] });
     },
     onError: (err: Error) => toast.error(err.message),
   });
+
 
   const callAdminWalletAction = useServerFn(adminWalletAction);
   const [balanceReason, setBalanceReason] = useState('');
@@ -211,22 +217,26 @@ export default function AdminUsers() {
 
 
   const toggleAdminMutation = useMutation({
-    mutationFn: async (targetUser: UserProfile) => {
-      const newRole = targetUser.role === 'admin' ? 'user' : 'admin';
-      const { error } = await supabase
-        .from('user_roles')
-        .update({ role: newRole })
-        .eq('user_id', targetUser.user_id);
-      if (error) throw error;
+    mutationFn: async ({ targetUser, reason }: { targetUser: UserProfile; reason: string }) => {
+      const nextRole = targetUser.role === 'admin' ? 'user' : 'admin';
+      if (reason.trim().length < 5) throw new Error('Reason must be at least 5 characters');
+      return await callSetUserRole({
+        data: { target_user_id: targetUser.user_id, role: nextRole, reason: reason.trim() },
+      });
     },
-    onSuccess: () => {
-      toast.success('User role updated!');
+    onSuccess: (res) => {
+      toast.success(
+        res.role === 'admin' ? 'Admin role granted ✅' : 'Admin role removed ✅',
+      );
+      setRoleUser(null);
+      setRoleReason('');
       queryClient.invalidateQueries({ queryKey: ['admin-all-users-with-subs'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
     },
   });
+
 
   const removeSubscriptionMutation = useMutation({
     mutationFn: async (targetUser: UserProfile) => {
@@ -797,12 +807,20 @@ export default function AdminUsers() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => toggleAdminMutation.mutate(u)}
-                        className={`h-8 w-8 rounded-lg ${u.role === 'admin' ? 'text-foreground' : ''}`}
-                        title="Toggle Admin"
+                        onClick={() => {
+                          if (!isTrueSuperAdmin) {
+                            toast.error('Only a super-admin can change admin roles');
+                            return;
+                          }
+                          setRoleReason('');
+                          setRoleUser(u);
+                        }}
+                        className={`h-8 w-8 rounded-lg ${u.role === 'admin' ? 'text-primary' : ''}`}
+                        title={u.role === 'admin' ? 'Remove admin role' : 'Make admin'}
                       >
                         <Shield className="h-4 w-4" />
                       </Button>
+
                       {/* Pause/Resume Button */}
                       {hasPausedOrders(u) ? (
                         <Button
@@ -857,7 +875,14 @@ export default function AdminUsers() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => setBanUser(u)}
+                          onClick={() => {
+                            if (!isTrueSuperAdmin) {
+                              toast.error('Only a super-admin can ban users');
+                              return;
+                            }
+                            setBanReason('');
+                            setBanUser(u);
+                          }}
                           className="h-8 w-8 rounded-lg text-destructive hover:text-destructive"
                           title="Ban User (irreversible)"
                         >
@@ -869,6 +894,10 @@ export default function AdminUsers() {
                           variant="ghost"
                           size="icon"
                           onClick={() => {
+                            if (!isTrueSuperAdmin) {
+                              toast.error('Only a super-admin can unban users');
+                              return;
+                            }
                             if (confirm(`Unban ${u.email}?`)) unbanUserMutation.mutate(u);
                           }}
                           disabled={unbanUserMutation.isPending}
@@ -1020,7 +1049,61 @@ export default function AdminUsers() {
           </DialogContent>
         </Dialog>
 
+        {/* Admin Role Dialog */}
+        <Dialog open={!!roleUser} onOpenChange={(open) => !open && setRoleUser(null)}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                {roleUser?.role === 'admin' ? 'Remove Admin Role' : 'Grant Admin Role'}
+              </DialogTitle>
+            </DialogHeader>
+            {roleUser && (
+              <div className="space-y-4 py-2">
+                <div className="p-4 rounded-xl bg-muted/50 text-center">
+                  <p className="font-medium">{roleUser.full_name || roleUser.email}</p>
+                  <p className="text-xs text-muted-foreground">{roleUser.email}</p>
+                  <Badge variant={roleUser.role === 'admin' ? 'default' : 'secondary'} className="mt-2">
+                    Current: {roleUser.role === 'admin' ? 'Admin' : 'User'}
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {roleUser.role === 'admin'
+                    ? 'Is user ka admin access turant hat jayega.'
+                    : 'Is user ko poora admin panel access mil jayega.'}
+                </p>
+                <div className="space-y-2">
+                  <Label>Reason (required)</Label>
+                  <Input
+                    placeholder="e.g. Promoting support lead"
+                    value={roleReason}
+                    onChange={(e) => setRoleReason(e.target.value)}
+                    className="h-11 rounded-xl"
+                  />
+                </div>
+              </div>
+            )}
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setRoleUser(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant={roleUser?.role === 'admin' ? 'destructive' : 'default'}
+                disabled={toggleAdminMutation.isPending || roleReason.trim().length < 5}
+                onClick={() =>
+                  roleUser &&
+                  toggleAdminMutation.mutate({ targetUser: roleUser, reason: roleReason })
+                }
+              >
+                {toggleAdminMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                {roleUser?.role === 'admin' ? 'Remove Admin' : 'Make Admin'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Remove Subscription Dialog */}
+
         <Dialog
           open={!!removeSubUser}
           onOpenChange={(open) => !open && setRemoveSubUser(null)}
@@ -1227,7 +1310,7 @@ export default function AdminUsers() {
                 onClick={() =>
                   banUser && banUserMutation.mutate({ targetUser: banUser, reason: banReason })
                 }
-                disabled={banUserMutation.isPending}
+                disabled={banUserMutation.isPending || banReason.trim().length < 5}
               >
                 {banUserMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                 Ban &amp; Cancel All Orders
