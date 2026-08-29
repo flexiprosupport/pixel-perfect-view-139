@@ -807,12 +807,20 @@ export default function AdminUsers() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => toggleAdminMutation.mutate(u)}
-                        className={`h-8 w-8 rounded-lg ${u.role === 'admin' ? 'text-foreground' : ''}`}
-                        title="Toggle Admin"
+                        onClick={() => {
+                          if (!isTrueSuperAdmin) {
+                            toast.error('Only a super-admin can change admin roles');
+                            return;
+                          }
+                          setRoleReason('');
+                          setRoleUser(u);
+                        }}
+                        className={`h-8 w-8 rounded-lg ${u.role === 'admin' ? 'text-primary' : ''}`}
+                        title={u.role === 'admin' ? 'Remove admin role' : 'Make admin'}
                       >
                         <Shield className="h-4 w-4" />
                       </Button>
+
                       {/* Pause/Resume Button */}
                       {hasPausedOrders(u) ? (
                         <Button
