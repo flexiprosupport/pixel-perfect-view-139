@@ -60,7 +60,13 @@ export const adminBanUser = createServerFn({ method: 'POST' })
       metadata: { result: (result ?? null) as never },
     });
 
-    return { success: true, result: JSON.parse(JSON.stringify(result ?? {})) as unknown as string };
+    const r = (result ?? {}) as Record<string, number>;
+    return {
+      success: true,
+      single_orders_cancelled: Number(r['single_orders_cancelled'] ?? 0),
+      engagement_orders_cancelled: Number(r['engagement_orders_cancelled'] ?? 0),
+      pending_runs_cancelled: Number(r['pending_runs_cancelled'] ?? 0),
+    };
   });
 
 const unbanSchema = z.object({ target_user_id: z.string().uuid() });
@@ -86,5 +92,5 @@ export const adminUnbanUser = createServerFn({ method: 'POST' })
       notes: 'Ban lifted by super-admin',
     });
 
-    return { success: true, result: JSON.parse(JSON.stringify(result ?? {})) as unknown as string };
+    return { success: true };
   });
