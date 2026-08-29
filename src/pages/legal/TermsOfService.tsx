@@ -1,183 +1,196 @@
-import { Link } from "@/lib/router-compat";
-import { ArrowLeft, AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { PageMeta } from "@/components/seo/PageMeta";
+import { LegalLayout, Section, Bullets } from "@/components/legal/LegalLayout";
 
 export default function TermsOfService() {
   return (
-    <>
-      <PageMeta title="Terms of Service | FlexiPro" description="Read the Terms of Service for FlexiPro platform." canonicalPath="/terms" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Terms of Service", path: "/terms" }]} />
-      <div className="min-h-screen bg-background text-foreground">
-        <div className="max-w-4xl mx-auto px-4 py-12">
-          <Link to="/"><Button variant="ghost" size="sm" className="mb-8 gap-2"><ArrowLeft className="h-4 w-4" /> Back to Home</Button></Link>
+    <LegalLayout
+      title="Terms of Service"
+      metaTitle="Terms of Service | FlexiPro"
+      description="The terms and conditions that govern your use of FlexiPro's prepaid digital promotion services."
+      canonicalPath="/terms"
+      breadcrumbLabel="Terms of Service"
+      effectiveDate="29 August 2026"
+      summary={
+        <p>
+          <strong className="text-foreground">Plain-language summary:</strong> You buy prepaid digital
+          promotional services. Results, retention and third-party account safety are not guaranteed. You must
+          own or be authorized to promote the submitted account or content and must follow the law, these Terms
+          and platform rules.
+        </p>
+      }
+    >
+      <Section title="1. Agreement and operator">
+        <p>
+          These Terms of Service ("Terms") form an agreement between you and FlexiPro LLC ("FlexiPro", "we",
+          "us" or "our") concerning flexipro.in, its dashboard, wallet, API and related support (together, the
+          "Service"). By creating an account, adding funds, placing an order or using the API, you agree to
+          these Terms and the policies incorporated by reference. If you do not agree, do not use the Service.
+        </p>
+      </Section>
 
-          <h1 className="text-3xl font-bold mb-2">Terms of Service</h1>
-          <p className="text-muted-foreground mb-8">Last updated: February 22, 2026</p>
+      <Section title="2. Eligibility and authority">
+        <p>
+          You must be at least 18 years old and legally capable of entering a contract. If you act for a
+          business, agency, client or other organization, you confirm that you are authorized to bind it and to
+          submit every target account, profile, post or URL used in an order.
+        </p>
+      </Section>
 
-          {/* Important notice box */}
-          <div className="flex gap-3 p-4 mb-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400/90">
-            <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
-            <p className="text-sm leading-relaxed">
-              <strong className="text-amber-400">Important:</strong> By accessing or using FlexiPro, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree, you must immediately cease using the Platform.
-            </p>
-          </div>
+      <Section title="3. Nature of the Service">
+        <p>
+          FlexiPro provides prepaid digital promotion and campaign-delivery services for supported social-media
+          platforms. Service descriptions, quantities, estimated timing, refill or retention periods and prices
+          shown at checkout are part of the order. We do not own, control or represent any social-media platform
+          and are not endorsed by them.
+        </p>
+        <p>
+          Do not describe purchased metrics as organic audience demand, verified customer sentiment or
+          independent endorsement. FlexiPro does not guarantee monetization, ranking, reach, sales, revenue,
+          permanent retention, account safety or compliance with any third-party platform.
+        </p>
+      </Section>
 
-          <div className="prose prose-invert max-w-none space-y-6 text-muted-foreground">
+      <Section title="4. Account security">
+        <Bullets
+          items={[
+            "Provide accurate registration information and keep it current.",
+            "Protect your password and API key; notify support promptly of suspected compromise.",
+            "FlexiPro should never request your social-media password. Do not provide one.",
+            "You are responsible for authorized activity under your account until you notify us of unauthorized access.",
+          ]}
+        />
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">1. Acceptance of Terms</h2>
-              <p>By accessing or using FlexiPro ("the Platform," "we," "us," or "our"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you must not use our services. These Terms constitute a legally binding agreement between you ("User," "you," or "your") and FlexiPro. Your use of this Platform constitutes your full, unconditional acceptance of these Terms.</p>
-            </section>
+      <Section title="5. Wallet, UPI and cryptocurrency funding">
+        <p>
+          Wallet funds are prepaid credits used to buy Services; they are not a bank account, deposit, security,
+          stored-value product transferable between users, or investment. Minimum deposits, supported payment
+          routes, fees and exchange-rate treatment are displayed before payment.
+        </p>
+        <p>
+          UPI deposits may require a valid transaction reference and verification by the payment provider.
+          Crypto deposits are credited only after the stated network confirmations. You are responsible for
+          selecting the exact supported asset and network and for network fees. Transfers to an unsupported
+          asset, network or address may be unrecoverable, and FlexiPro cannot promise recovery where recovery is
+          technically impossible.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">2. Nature of Services — Digital Services Disclaimer</h2>
-              <p>FlexiPro provides <strong className="text-foreground">digital social media engagement services</strong> — including but not limited to views, likes, comments, followers, and other engagement metrics across social media platforms. By their very nature, these are <strong className="text-foreground">intangible digital services</strong> that are delivered electronically and consumed immediately upon delivery.</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>Digital services cannot be "returned" once delivered</li>
-                <li>Engagement metrics are subject to natural fluctuation on third-party platforms</li>
-                <li>We use proprietary algorithms to deliver organic-pattern engagement</li>
-                <li>Results depend partly on third-party platform conditions beyond our control</li>
-                <li>We make no guarantee of permanent retention of delivered engagement</li>
-              </ul>
-            </section>
+      <Section title="6. Orders">
+        <Bullets
+          items={[
+            "Review the target URL, account visibility, service, quantity, estimated start and price before submission.",
+            "An order may not be cancellable after processing begins. The dashboard displays whether cancellation remains available.",
+            "Do not place overlapping orders for the same metric and target while a prior order is active; measurement may become unreliable.",
+            "Keep the target public and unchanged for the delivery period when the service requires public access.",
+            "Order status, completion and delivered quantity may reflect third-party measurement delays or adjustments.",
+          ]}
+        />
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">3. Eligibility</h2>
-              <p>You must be at least 18 years of age to use this Platform. By using our services, you represent and warrant that you are of legal age to form a binding contract and meet all eligibility requirements. If you are using the Platform on behalf of a business entity, you represent that you have authority to bind that entity to these Terms.</p>
-            </section>
+      <Section title="7. Acceptable and ethical use">
+        <p>
+          You must comply with our Ethical Use and Acceptable Use Policy. Prohibited uses include bots or fake
+          identities used to misrepresent commercial influence, fake reviews or testimonials, deceptive political
+          or public-interest manipulation, harassment, impersonation, fraud, illegal content, unauthorized
+          targets, platform abuse, credential collection and attempts to evade enforcement.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">4. Account Registration</h2>
-              <p>To access our services, you must create an account by providing accurate, complete, and current information. You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account. You agree to notify us immediately of any unauthorized use of your account.</p>
-            </section>
+      <Section title="8. Third-party platforms">
+        <p>
+          Each social-media platform sets its own terms and enforcement rules. Your use of FlexiPro may be
+          restricted by those rules. Platforms may remove engagement, restrict reach, suspend accounts, withhold
+          monetization or change their systems without notice. You accept this independent third-party risk;
+          however, nothing in these Terms excludes remedies that applicable consumer law requires.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">5. Subscription & Payment</h2>
-              <p>Access to our services requires an active subscription. Subscription plans and pricing are displayed on the Platform. Payments are processed through secure payment gateways. All fees are non-refundable except as expressly stated in our Refund Policy. You agree to pay all charges associated with your account at the prices in effect when such charges are incurred.</p>
-            </section>
+      <Section title="9. Prices, tax and records">
+        <p>
+          Prices may change prospectively. The price confirmed at order submission applies to that order. The
+          checkout shows whether tax is included, and a transaction/order record is issued for each purchase. You
+          are responsible for taxes imposed on your use except taxes imposed on FlexiPro's income.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">6. Wallet System</h2>
-              <p>Our Platform uses an internal wallet system for transactions. Funds added to your wallet are used to pay for services. Wallet balances are non-transferable between accounts. We reserve the right to freeze wallet balances in cases of suspected fraud or Terms violations.</p>
-            </section>
+      <Section title="10. Refunds and service remedies">
+        <p>
+          The Refund Policy is incorporated into these Terms. In summary: verified duplicate or failed wallet
+          deposits may qualify for return to the original payment method; a failed or partially undelivered order
+          ordinarily qualifies for re-delivery or a proportional wallet credit. Delivered portions are not
+          refundable merely because results later change, subject always to mandatory law.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">7. Chargeback & Payment Dispute Policy</h2>
-              <div className="p-4 rounded-xl bg-red-500/8 border border-red-500/15 space-y-2">
-                <p className="text-foreground font-semibold">IMPORTANT — Please read carefully:</p>
-                <p>By making a payment to FlexiPro, you explicitly agree that:</p>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li><strong className="text-foreground">Initiating a chargeback</strong> or payment dispute with your bank/card issuer without first contacting us and giving us the opportunity to resolve your issue constitutes a breach of these Terms</li>
-                  <li>You acknowledge that our services are <strong className="text-foreground">digital, non-tangible</strong> and are consumed upon delivery, making chargebacks inappropriate under most payment network rules</li>
-                  <li>Fraudulent chargebacks will be vigorously contested with full transaction records, delivery logs, and IP evidence submitted to the payment processor</li>
-                  <li>In the event of a fraudulent chargeback, we reserve the right to permanently ban your account, report abuse to relevant platforms, and pursue legal remedies</li>
-                  <li>You must obtain a written response from us within 5 business days before initiating any payment dispute</li>
-                </ul>
-              </div>
-            </section>
+      <Section title="11. Availability and changes">
+        <p>
+          We may maintain, modify or discontinue a Service when suppliers, platforms, law, safety or technical
+          conditions change. We will not materially reduce an already-paid order without providing the remedy
+          stated in the Refund Policy. Estimates are not guaranteed deadlines unless expressly labelled
+          guaranteed.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">8. Acceptable Use Policy</h2>
-              <p>You agree not to:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>Use our services for any unlawful purpose or in violation of any applicable laws</li>
-                <li>Provide false, misleading, or inaccurate information</li>
-                <li>Attempt to gain unauthorized access to our systems or other users' accounts</li>
-                <li>Use automated tools, bots, or scripts to interact with the Platform without authorization</li>
-                <li>Resell or redistribute our services without prior written consent</li>
-                <li>Interfere with or disrupt the Platform's infrastructure</li>
-                <li>Use our services to violate any third-party platform's terms of service</li>
-                <li>Initiate fraudulent payment disputes or chargebacks</li>
-                <li>Use the Platform for any activity that may constitute a criminal offense in your jurisdiction</li>
-              </ul>
-            </section>
+      <Section title="12. Intellectual property and feedback">
+        <p>
+          FlexiPro and its licensors own the Service software, branding and original content. We grant you a
+          limited, revocable, non-transferable right to use the Service for its intended purpose. You retain
+          ownership of information you submit and grant us only the rights needed to process orders, prevent
+          abuse and provide support. Feedback may be used without obligation, but we will not publicly identify
+          you without permission.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">9. User Responsibility & Legal Compliance</h2>
-              <p>By using FlexiPro, you acknowledge and agree that:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>You are solely responsible for ensuring that your use of our services complies with all applicable laws and regulations in your jurisdiction</li>
-                <li>You use our services at your own risk regarding compliance with third-party social media platform policies</li>
-                <li>FlexiPro is not responsible for any action taken by social media platforms against your account as a result of your use of our services</li>
-                <li>You will not hold FlexiPro liable for any legal consequences arising from your use of our services</li>
-                <li>Social media engagement services operate in a dynamic environment, and we make no guarantees about permanent results</li>
-              </ul>
-            </section>
+      <Section title="13. Suspension and termination">
+        <p>
+          We may restrict or suspend an account when reasonably necessary for security, fraud prevention, legal
+          compliance, payment disputes, API abuse or material breach. Where lawful and safe, we will explain the
+          reason and offer an appeal. We will not automatically forfeit an unused wallet balance merely because
+          an account is closed; lawful deductions, fraud holds and non-refundable consumed services may apply.
+          Eligible remaining funds are handled under the Refund Policy.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">10. Service Delivery</h2>
-              <p>We strive to deliver services within estimated timeframes but do not guarantee exact delivery times. Delivery speeds vary based on order volume, service type, and third-party platform conditions. We are not liable for delays caused by factors beyond our control, including but not limited to third-party platform changes or outages.</p>
-            </section>
+      <Section title="14. Disclaimers">
+        <p>
+          To the extent permitted by law, the Service is provided "as available". We do not warrant uninterrupted
+          operation, permanent engagement, a particular algorithmic outcome, monetization or business results.
+          These disclaimers do not limit non-waivable consumer rights or liability that law does not permit us to
+          exclude.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">11. No Guarantee of Results</h2>
-              <p>While we make every effort to deliver services as described, we explicitly do not guarantee:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>Permanent retention of delivered engagement (e.g., followers may unfollow, views may decay)</li>
-                <li>Any specific business outcome, revenue, or growth as a result of our services</li>
-                <li>That our services will meet your specific expectations in every case</li>
-                <li>Uninterrupted or error-free service delivery at all times</li>
-              </ul>
-            </section>
+      <Section title="15. Liability">
+        <p>
+          To the extent permitted by law, neither party is liable for indirect, special or consequential loss
+          that was not reasonably foreseeable. FlexiPro's aggregate liability arising from the Service will not
+          exceed the greater of the amount you paid for the affected order or the amount paid by you during the
+          three months before the event giving rise to the claim. This limit does not apply to fraud, willful
+          misconduct, breach of confidentiality, infringement, or liability that cannot legally be limited.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">12. Intellectual Property</h2>
-              <p>All content, features, and functionality of the Platform—including but not limited to text, graphics, logos, icons, software, and algorithms—are the exclusive property of FlexiPro and are protected by international copyright, trademark, and other intellectual property laws.</p>
-            </section>
+      <Section title="16. Disputes and governing law">
+        <p>
+          These Terms are governed by the laws of the State of Delaware and applicable United States federal law,
+          without regard to conflicts rules. Before filing a claim, contact{" "}
+          <a className="text-orange-500 hover:underline" href="mailto:flexipro.support@gmail.com">
+            flexipro.support@gmail.com
+          </a>{" "}
+          and allow 30 days for good-faith resolution.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">13. Limitation of Liability</h2>
-              <p>To the maximum extent permitted by law, FlexiPro shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>Loss of profits, revenue, or business opportunities</li>
-                <li>Loss of data or account access on third-party platforms</li>
-                <li>Actions taken by social media platforms against user accounts</li>
-                <li>Any claims arising from user's violation of third-party platform terms</li>
-                <li>Any indirect results of social media engagement delivered</li>
-              </ul>
-              <p>Our total liability shall not exceed the amount paid by you in the 3 months preceding the claim.</p>
-            </section>
-
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">14. Disclaimer of Warranties</h2>
-              <p>Our services are provided "as is" and "as available" without warranties of any kind, whether express or implied. We do not warrant that services will be uninterrupted, error-free, or that results will meet your expectations. We disclaim all warranties, including merchantability, fitness for a particular purpose, and non-infringement.</p>
-            </section>
-
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">15. Indemnification</h2>
-              <p>You agree to indemnify, defend, and hold harmless FlexiPro and its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses arising from:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>Your use of the Platform or violation of these Terms</li>
-                <li>Your violation of any rights of a third party</li>
-                <li>Your violation of any applicable laws or regulations</li>
-                <li>Any fraudulent payment disputes or chargebacks you initiate</li>
-                <li>Any claim by a social media platform relating to your use of our services</li>
-              </ul>
-            </section>
-
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">16. Termination</h2>
-              <p>We reserve the right to suspend or terminate your account at any time, with or without notice, for conduct that we determine violates these Terms, is harmful to other users, or is otherwise objectionable. Upon termination, your right to use the Platform will immediately cease. Any unused wallet balance at the time of termination for ToS violations is forfeited.</p>
-            </section>
-
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">17. Governing Law & Dispute Resolution</h2>
-              <p>These Terms shall be governed by and construed in accordance with applicable laws. Any disputes arising from these Terms or your use of the Platform shall first be attempted to be resolved through direct communication with our support team. If unresolved, disputes shall be submitted to binding arbitration in accordance with applicable arbitration rules. You waive any right to a jury trial or class action proceeding.</p>
-            </section>
-
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">18. Changes to Terms</h2>
-              <p>We reserve the right to modify these Terms at any time. Changes will be effective immediately upon posting on the Platform. Your continued use of the Platform after changes constitutes acceptance of the modified Terms. We encourage you to review these Terms periodically.</p>
-            </section>
-
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">19. Contact Information</h2>
-              <p>If you have any questions about these Terms, please contact us through our Support page or email us at <strong className="text-foreground">flexipro.support@gmail.com</strong>. We are committed to resolving disputes amicably before any legal action is considered by either party.</p>
-            </section>
-
-          </div>
-        </div>
-      </div>
-    </>
+      <Section title="17. Changes and contact">
+        <p>
+          We may update these Terms prospectively. Material changes will be notified in the dashboard or by email
+          before they take effect where reasonably possible, and the effective date will be updated. Questions:{" "}
+          <a className="text-orange-500 hover:underline" href="mailto:flexipro.support@gmail.com">
+            flexipro.support@gmail.com
+          </a>
+          , FlexiPro LLC, 8 The Green, Suite #14490, Dover, Delaware 19901, USA.
+        </p>
+      </Section>
+    </LegalLayout>
   );
 }
