@@ -1,6 +1,8 @@
 import type { ComponentType } from 'react'
 import { template as ticketReceiptTemplate } from './ticket-receipt'
 import { template as ticketStatusUpdateTemplate } from './ticket-status-update'
+import { template as depositCreditedTemplate } from './deposit-credited'
+
 
 export interface TemplateEntry {
   component: ComponentType<any>
