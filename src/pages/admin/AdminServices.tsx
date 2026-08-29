@@ -36,8 +36,11 @@ import { Link, Navigate } from "@/lib/router-compat";
 import { toast } from 'sonner';
 import type { Service } from '@/lib/supabase';
 import { ImportServicesDialog } from '@/components/admin/ImportServicesDialog';
+import { useServerFn } from '@tanstack/react-start';
+import { syncProviderPrices } from '@/lib/providers.functions';
 
 export default function AdminServices() {
+  const syncPricesFn = useServerFn(syncProviderPrices);
   const { isAdmin, isLoading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');

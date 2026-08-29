@@ -137,7 +137,7 @@ export default function AdminTopupPlan() {
     let cancelled = false;
     const syncBalances = async () => {
       try {
-        await supabase.functions.invoke("check-provider-balance", { body: {} });
+        await syncBalancesFn({ data: {} });
         if (!cancelled) {
           queryClient.invalidateQueries({ queryKey: ["topup-plan-accounts"] });
         }
@@ -148,7 +148,7 @@ export default function AdminTopupPlan() {
     syncBalances();
     const id = setInterval(syncBalances, 60000);
     return () => { cancelled = true; clearInterval(id); };
-  }, [queryClient]);
+  }, [queryClient, syncBalancesFn]);
 
   // Group breakdown rows per provider
   const breakdownByProvider = useMemo(() => {
