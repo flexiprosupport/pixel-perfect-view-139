@@ -56,10 +56,16 @@
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://flexipro.in/shipping</loc>
-    <lastmod>2026-05-05</lastmod>
+    <loc>https://flexipro.in/delivery</loc>
+    <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://flexipro.in/ethical-use</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
   </url>
   <url>
     <loc>https://flexipro.in/cookies</loc>
@@ -67,5 +73,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
+
 
 </urlset>

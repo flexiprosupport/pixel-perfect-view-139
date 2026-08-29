@@ -78,30 +78,55 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }>
 
 const FAQ_ITEMS = [
   {
-    question: "How long does delivery take?",
-    answer: "Delivery typically starts within 0-1 hour of order placement. Organic mode orders are spread over 24-72 hours for natural growth patterns. You can track progress in real-time from your Orders page."
+    question: "Do you need my social-media password?",
+    answer: "No. FlexiPro only requires a supported public URL or username. Never send us a social-media password, OTP, recovery code or private crypto key."
   },
   {
-    question: "What payment methods do you accept?",
-    answer: "We accept INR payments via UPI, Net Banking, Cards and Wallets through Razorpay. All amounts on the platform are shown in Indian Rupees (₹)."
+    question: "Is engagement guaranteed to stay permanently?",
+    answer: "No. Third-party platforms and users may remove or adjust engagement. A refill applies only when the service page expressly states a refill period."
   },
   {
-    question: "Can I get a refund?",
-    answer: "Yes! If your order is not delivered or only partially delivered, you're eligible for a refund. Contact support with your order number and we'll process it within 24-48 hours."
+    question: "Can FlexiPro guarantee my account will be safe?",
+    answer: "No. Third-party platforms control enforcement. Review their rules before ordering and do not use FlexiPro to misrepresent influence or evade enforcement."
   },
   {
-    question: "What is Organic Mode?",
-    answer: "Organic Mode spreads your engagement over time with natural variance, mimicking real user behavior. This helps avoid detection and provides more sustainable growth for your content."
+    question: "Can I cancel an order?",
+    answer: "Only while the dashboard shows that cancellation is available. Processing or delivered work ordinarily cannot be reversed."
   },
   {
-    question: "How do I check my order status?",
-    answer: "Go to the Orders or Engagement Orders page from the sidebar. You'll see real-time status updates, progress tracking, and detailed timeline for each order."
+    question: "My payment was debited but my wallet was not credited. What now?",
+    answer: "Open a payment ticket with the UPI transaction reference or crypto transaction hash. We trace it and credit or refund a verified failed or duplicate payment under the Refund Policy."
   },
   {
-    question: "What happens if my order fails?",
-    answer: "If an order fails, your wallet is automatically refunded. You can view the error details on the order page and create a support ticket if you need further assistance."
+    question: "What if I used the wrong crypto network?",
+    answer: "Contact support immediately. Recovery may be impossible. Never send a recovery fee unless support confirms in writing that recovery is technically possible and states the fee."
+  },
+  {
+    question: "Why is my order delayed?",
+    answer: "Common reasons include target privacy, URL changes, platform outages, order review, supplier capacity or overlapping orders. Submit the order ID if it passes the stated completion estimate."
+  },
+  {
+    question: "Can I order for someone else?",
+    answer: "Only if you are authorized by the account or content owner and the use is lawful and ethical."
+  },
+  {
+    question: "Are purchased metrics organic?",
+    answer: "No. Paid or arranged promotion should not be described as independent organic audience demand. See our Ethical Use Policy."
+  },
+  {
+    question: "How do refunds work?",
+    answer: "Confirmed non-delivery or partial delivery qualifies for re-delivery or wallet credit; verified duplicate or failed funding may be returned to the original method. See the Refund Policy."
+  },
+  {
+    question: "Can I use FlexiPro for reviews or political content?",
+    answer: "Not to create fake reviews, testimonials, political support, public opinion or other deceptive influence. See the Ethical Use Policy."
+  },
+  {
+    question: "How do I delete my account or request my data?",
+    answer: "Email flexipro.support@gmail.com from your registered email with the subject 'Privacy Request'. We may verify identity and retain limited records where law requires."
   },
 ];
+
 
 export default function Support() {
   const { user } = useAuth();
@@ -190,7 +215,7 @@ export default function Support() {
     <DashboardLayout>
       <PageMeta
         title="Support & FAQ — FlexiPro"
-        description="FlexiPro support: open tickets, browse FAQs about delivery times, payments, refunds and Organic Mode. We respond within 24 hours."
+        description="FlexiPro support: open tickets, browse FAQs about delivery times, payments, refunds and Organic Mode. Typical first response within one business day."
         canonicalPath="/support"
         breadcrumbs={[
           { name: 'Home', path: '/' },

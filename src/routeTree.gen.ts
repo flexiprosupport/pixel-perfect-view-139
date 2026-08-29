@@ -16,8 +16,10 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DeliveryRouteImport } from './routes/delivery'
 import { Route as EngagementOrderRouteImport } from './routes/engagement-order'
 import { Route as EngagementOrdersRouteImport } from './routes/engagement-orders'
+import { Route as EthicalUseRouteImport } from './routes/ethical-use'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
@@ -79,6 +81,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DeliveryRoute = DeliveryRouteImport.update({
+  id: '/delivery',
+  path: '/delivery',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EngagementOrderRoute = EngagementOrderRouteImport.update({
   id: '/engagement-order',
   path: '/engagement-order',
@@ -87,6 +94,11 @@ const EngagementOrderRoute = EngagementOrderRouteImport.update({
 const EngagementOrdersRoute = EngagementOrdersRouteImport.update({
   id: '/engagement-orders',
   path: '/engagement-orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EthicalUseRoute = EthicalUseRouteImport.update({
+  id: '/ethical-use',
+  path: '/ethical-use',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrdersRoute = OrdersRouteImport.update({
@@ -225,8 +237,10 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRoute
+  '/delivery': typeof DeliveryRoute
   '/engagement-order': typeof EngagementOrderRoute
   '/engagement-orders': typeof EngagementOrdersRouteWithChildren
+  '/ethical-use': typeof EthicalUseRoute
   '/orders': typeof OrdersRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
@@ -261,8 +275,10 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRoute
+  '/delivery': typeof DeliveryRoute
   '/engagement-order': typeof EngagementOrderRoute
   '/engagement-orders': typeof EngagementOrdersRouteWithChildren
+  '/ethical-use': typeof EthicalUseRoute
   '/orders': typeof OrdersRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
@@ -298,8 +314,10 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRoute
+  '/delivery': typeof DeliveryRoute
   '/engagement-order': typeof EngagementOrderRoute
   '/engagement-orders': typeof EngagementOrdersRouteWithChildren
+  '/ethical-use': typeof EthicalUseRoute
   '/orders': typeof OrdersRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
@@ -336,8 +354,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/dashboard'
+    | '/delivery'
     | '/engagement-order'
     | '/engagement-orders'
+    | '/ethical-use'
     | '/orders'
     | '/privacy'
     | '/refund'
@@ -372,8 +392,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/dashboard'
+    | '/delivery'
     | '/engagement-order'
     | '/engagement-orders'
+    | '/ethical-use'
     | '/orders'
     | '/privacy'
     | '/refund'
@@ -408,8 +430,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/dashboard'
+    | '/delivery'
     | '/engagement-order'
     | '/engagement-orders'
+    | '/ethical-use'
     | '/orders'
     | '/privacy'
     | '/refund'
@@ -445,8 +469,10 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   DashboardRoute: typeof DashboardRoute
+  DeliveryRoute: typeof DeliveryRoute
   EngagementOrderRoute: typeof EngagementOrderRoute
   EngagementOrdersRoute: typeof EngagementOrdersRouteWithChildren
+  EthicalUseRoute: typeof EthicalUseRoute
   OrdersRoute: typeof OrdersRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundRoute: typeof RefundRoute
@@ -524,6 +550,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/delivery': {
+      id: '/delivery'
+      path: '/delivery'
+      fullPath: '/delivery'
+      preLoaderRoute: typeof DeliveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/engagement-order': {
       id: '/engagement-order'
       path: '/engagement-order'
@@ -536,6 +569,13 @@ declare module '@tanstack/react-router' {
       path: '/engagement-orders'
       fullPath: '/engagement-orders'
       preLoaderRoute: typeof EngagementOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ethical-use': {
+      id: '/ethical-use'
+      path: '/ethical-use'
+      fullPath: '/ethical-use'
+      preLoaderRoute: typeof EthicalUseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/orders': {
@@ -735,8 +775,10 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   DashboardRoute: DashboardRoute,
+  DeliveryRoute: DeliveryRoute,
   EngagementOrderRoute: EngagementOrderRoute,
   EngagementOrdersRoute: EngagementOrdersRouteWithChildren,
+  EthicalUseRoute: EthicalUseRoute,
   OrdersRoute: OrdersRoute,
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,
