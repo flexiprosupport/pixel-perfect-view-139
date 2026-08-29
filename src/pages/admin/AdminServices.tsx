@@ -645,7 +645,7 @@ function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, i
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              {categories.map((cat) => (
+              {Array.from(new Set([...(formData.category ? [formData.category] : []), ...categories])).map((cat) => (
                 <SelectItem key={cat} value={cat}>{cat}</SelectItem>
               ))}
             </SelectContent>
