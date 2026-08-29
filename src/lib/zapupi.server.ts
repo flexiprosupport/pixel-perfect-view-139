@@ -238,13 +238,135 @@ export async function settleZapupiOrder(opts: {
     .update({ processed: true, credit_result: data as any })
     .eq('event_key', eventKey);
 
+  const creditedNow = Boolean((data as any)?.credited ?? true);
+  const duplicate = Boolean((data as any)?.duplicate);
+
+  await admin
+    .from('zapupi_deposits')
+    .update({
+      credited_at: new Date().toISOString(),
+      last_verify_error: null,
+      next_verify_at: null,
+      last_verify_at: new Date().toISOString(),
+    })
+    .eq('order_id', orderId);
+
+  if (creditedNow && !duplicate) {
+    await afterDepositCredited({
+      admin,
+      orderId,
+      userId: dep.user_id,
+      amountInr: expected,
+      utr: verify.utr ?? null,
+      txnId: verify.txn_id ?? null,
+      eventKey,
+      source,
+      creditResult: data,
+      gatewayRaw: verify.raw,
+    });
+  }
+
   return {
     ok: true,
-    credited: Boolean((data as any)?.credited ?? true),
-    already: Boolean((data as any)?.duplicate),
+    credited: creditedNow,
+    already: duplicate,
     status: 'completed',
   };
 }
+
+/**
+ * Post-credit side effects: in-app notification, email receipt and an audit
+ * record carrying the gateway response + idempotency reference for disputes.
+ * Never throws — a failed notification must not undo a successful credit.
+ */
+async function afterDepositCredited(args: {
+  admin: any;
+  orderId: string;
+  userId: string;
+  amountInr: number;
+  utr: string | null;
+  txnId: string | null;
+  eventKey: string;
+  source: string;
+  creditResult: any;
+  gatewayRaw: unknown;
+}): Promise<void> {
+  const { admin, orderId, userId, amountInr, utr, txnId, eventKey, source } = args;
+  const creditedAt = new Date();
+
+  // 1. Audit trail (dispute-ready)
+  try {
+    const { data: profile } = await admin
+      .from('profiles')
+      .select('email')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    await admin.from('admin_audit_log').insert({
+      action: 'wallet_credit_upi',
+      target_user_id: userId,
+      target_email: profile?.email ?? null,
+      amount_inr: amountInr,
+      notes: `UPI deposit ${orderId} credited (UTR ${utr ?? 'n/a'})`,
+      metadata: {
+        order_id: orderId,
+        utr,
+        txn_id: txnId,
+        source,
+        idempotency_key: eventKey,
+        credit_result: args.creditResult ?? null,
+        gateway_response: args.gatewayRaw ?? null,
+      },
+    });
+  } catch (err) {
+    console.error('[zapupi] audit insert failed', err);
+  }
+
+  // 2. In-app notification
+  try {
+    await admin.from('notifications').insert({
+      user_id: userId,
+      title: `₹${amountInr.toFixed(2)} added to your wallet`,
+      body: `UPI payment confirmed${utr ? ` (UTR ${utr})` : ''}. Your balance has been updated.`,
+      link: '/wallet',
+    });
+  } catch (err) {
+    console.error('[zapupi] notification insert failed', err);
+  }
+
+  // 3. Email receipt
+  try {
+    const { data: profile } = await admin
+      .from('profiles')
+      .select('email')
+      .eq('user_id', userId)
+      .maybeSingle();
+    const email = profile?.email as string | undefined;
+    if (email) {
+      const { data: wallet } = await admin
+        .from('wallets')
+        .select('balance')
+        .eq('user_id', userId)
+        .maybeSingle();
+      const { sendTemplateEmail } = await import('@/lib/email-templates/send-email');
+      await sendTemplateEmail('deposit-credited', email, {
+        idempotencyKey: `deposit-credited-${orderId}`,
+        templateData: {
+          amountInr: amountInr.toFixed(2),
+          orderId,
+          utr: utr ?? '—',
+          txnId: txnId ?? '—',
+          creditedAt: creditedAt.toUTCString(),
+          balanceInr: wallet?.balance != null ? Number(wallet.balance).toFixed(2) : '',
+          walletUrl: 'https://flexipro.in/wallet',
+        },
+      });
+    }
+  } catch (err) {
+    console.error('[zapupi] receipt email failed', err);
+  }
+}
+
 
 /**
  * Auto-settle: picks recent uncredited deposits and verifies them against the
