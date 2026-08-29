@@ -39,6 +39,31 @@ import { ImportServicesDialog } from '@/components/admin/ImportServicesDialog';
 import { useServerFn } from '@tanstack/react-start';
 import { syncProviderPrices, lookupProviderService } from '@/lib/providers.functions';
 
+function validateServiceForm(f: {
+  provider_id: string;
+  provider_service_id: string;
+  name: string;
+  category: string;
+  price: string;
+  min_quantity: string;
+  max_quantity: string;
+}): string | null {
+  if (!f.name.trim()) return 'Service name is required';
+  if (!f.category) return 'Please select a category';
+  if (f.provider_service_id && !/^[0-9]{1,12}$/.test(f.provider_service_id.trim()))
+    return 'Provider Service ID must be a number (e.g. 1001) with no spaces or letters';
+  if (f.provider_service_id && !f.provider_id)
+    return 'Select a provider — without it prices cannot be synced for this service';
+  const price = parseFloat(f.price);
+  if (!Number.isFinite(price) || price <= 0) return 'Price per 1K must be a number greater than 0';
+  const min = parseInt(f.min_quantity, 10);
+  const max = parseInt(f.max_quantity, 10);
+  if (!Number.isFinite(min) || min < 1) return 'Min quantity must be at least 1';
+  if (!Number.isFinite(max) || max < 1) return 'Max quantity must be at least 1';
+  if (min > max) return 'Min quantity cannot be greater than Max quantity';
+  return null;
+}
+
 export default function AdminServices() {
   const syncPricesFn = useServerFn(syncProviderPrices);
   const { isAdmin, isLoading: authLoading } = useAuth();
@@ -63,6 +88,26 @@ export default function AdminServices() {
     is_active: true,
   });
 
+  const runSyncPrices = async () => {
+    setIsSyncingPrices(true);
+    try {
+      const data = await syncPricesFn({});
+      toast.success(`${data.updated} service price(s) synced from providers`);
+      for (const e of data.errors ?? []) {
+        toast.error(`Price sync failed — ${e}`, { duration: 10000 });
+      }
+      queryClient.invalidateQueries({ queryKey: ['admin-all-services'] });
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+    } catch (err: any) {
+      toast.error(err?.message || 'Price sync failed', {
+        duration: 12000,
+        action: { label: 'Retry', onClick: () => runSyncPrices() },
+      });
+    } finally {
+      setIsSyncingPrices(false);
+    }
+  };
+
   const { data: services, isLoading } = useQuery({
     queryKey: ['admin-all-services'],
     queryFn: async () => {
@@ -78,6 +123,8 @@ export default function AdminServices() {
 
   const addServiceMutation = useMutation({
     mutationFn: async () => {
+      const invalid = validateServiceForm(formData);
+      if (invalid) throw new Error(invalid);
       const { error } = await supabase
         .from('services')
         .insert({
@@ -111,6 +158,8 @@ export default function AdminServices() {
   const updateServiceMutation = useMutation({
     mutationFn: async () => {
       if (!editingService) return;
+      const invalid = validateServiceForm(formData);
+      if (invalid) throw new Error(invalid);
 
       const { error } = await supabase
         .from('services')
@@ -271,22 +320,10 @@ export default function AdminServices() {
               variant="outline"
               className="gap-2"
               disabled={isSyncingPrices}
-              onClick={async () => {
-                setIsSyncingPrices(true);
-                try {
-                  const data = await syncPricesFn({});
-                  toast.success(`${data.updated} service prices synced from providers!`);
-                  if (data.errors?.length) toast.error(data.errors[0]);
-                  queryClient.invalidateQueries({ queryKey: ['admin-all-services'] });
-                } catch (err: any) {
-                  toast.error(err.message || 'Sync failed');
-                } finally {
-                  setIsSyncingPrices(false);
-                }
-              }}
+              onClick={() => runSyncPrices()}
             >
               {isSyncingPrices ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-              Sync Prices
+              {isSyncingPrices ? 'Syncing…' : 'Refresh Prices'}
             </Button>
             <Button
               variant="outline"
@@ -456,6 +493,46 @@ interface ServiceFormProps {
 function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, isEdit }: ServiceFormProps) {
   const lookupFn = useServerFn(lookupProviderService);
   const [isFetchingRemote, setIsFetchingRemote] = useState(false);
+  const [lookupError, setLookupError] = useState<string | null>(null);
+  const [linked, setLinked] = useState<{ name: string; rate: number; min: number; max: number } | null>(null);
+  const idFormatError =
+    formData.provider_service_id && !/^[0-9]{1,12}$/.test(formData.provider_service_id.trim())
+      ? 'Only digits allowed (e.g. 1001)'
+      : null;
+  const runLookup = async () => {
+    const id = formData.provider_service_id.trim();
+    if (!formData.provider_id) {
+      setLookupError('Select a provider first');
+      return;
+    }
+    if (!/^[0-9]{1,12}$/.test(id)) {
+      setLookupError('Provider Service ID must be digits only (e.g. 1001)');
+      return;
+    }
+    setIsFetchingRemote(true);
+    setLookupError(null);
+    try {
+      const svc: any = await lookupFn({ data: { provider_id: formData.provider_id, service_id: id } });
+      setFormData({
+        ...formData,
+        provider_service_id: id,
+        name: svc.name,
+        category: formData.category || svc.category,
+        price: String(svc.rate),
+        min_quantity: String(svc.min),
+        max_quantity: String(svc.max),
+        drip_feed_enabled: !!svc.dripfeed,
+      });
+      setLinked({ name: svc.name, rate: svc.rate, min: svc.min, max: svc.max });
+      toast.success(`Fetched "${svc.name}" from ${formData.provider_id}`);
+    } catch (err: any) {
+      setLinked(null);
+      setLookupError(err?.message || 'Could not reach the provider API. Check the account credentials.');
+    } finally {
+      setIsFetchingRemote(false);
+    }
+  };
+
   const { data: providers } = useQuery({
     queryKey: ['admin-provider-ids'],
     queryFn: async () => {
@@ -475,7 +552,11 @@ function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, i
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Provider</Label>
-          <Select value={formData.provider_id} onValueChange={(v) => setFormData({ ...formData, provider_id: v })}>
+          <Select
+            value={formData.provider_id}
+            disabled={isFetchingRemote}
+            onValueChange={(v) => { setLinked(null); setFormData({ ...formData, provider_id: v }); }}
+          >
             <SelectTrigger className="input-glass">
               <SelectValue placeholder="Select provider" />
             </SelectTrigger>
@@ -491,41 +572,41 @@ function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, i
           <div className="flex gap-2">
             <Input
               placeholder="e.g., 1001"
+              inputMode="numeric"
+              disabled={isFetchingRemote}
               value={formData.provider_service_id}
-              onChange={(e) => setFormData({ ...formData, provider_service_id: e.target.value })}
+              onChange={(e) => {
+                setLinked(null);
+                setLookupError(null);
+                setFormData({ ...formData, provider_service_id: e.target.value.replace(/[^0-9]/g, '') });
+              }}
               className="input-glass"
             />
             <Button
               type="button"
               variant="outline"
-              disabled={isFetchingRemote || !formData.provider_id || !formData.provider_service_id}
-              onClick={async () => {
-                setIsFetchingRemote(true);
-                try {
-                  const svc: any = await lookupFn({
-                    data: { provider_id: formData.provider_id, service_id: formData.provider_service_id },
-                  });
-                  setFormData({
-                    ...formData,
-                    name: svc.name,
-                    category: formData.category || svc.category,
-                    price: String(svc.rate),
-                    min_quantity: String(svc.min),
-                    max_quantity: String(svc.max),
-                    drip_feed_enabled: !!svc.dripfeed,
-                  });
-                  toast.success('Fetched from provider');
-                } catch (err: any) {
-                  toast.error(err?.message || 'Could not fetch this service');
-                } finally {
-                  setIsFetchingRemote(false);
-                }
-              }}
+              disabled={isFetchingRemote || !formData.provider_id || !formData.provider_service_id || !!idFormatError}
+              onClick={() => runLookup()}
             >
               {isFetchingRemote ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Fetch'}
             </Button>
           </div>
+          {idFormatError && <p className="text-xs text-destructive">{idFormatError}</p>}
+          {lookupError && (
+            <div className="flex items-start justify-between gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2">
+              <p className="text-xs text-destructive">{lookupError}</p>
+              <Button type="button" size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => runLookup()}>
+                Retry
+              </Button>
+            </div>
+          )}
         </div>
+        {linked && (
+          <div className="col-span-2 rounded-md border border-primary/30 bg-primary/5 p-2 text-xs">
+            <span className="font-semibold">Linked:</span> {formData.provider_id} · #{formData.provider_service_id} —{' '}
+            {linked.name} · rate {linked.rate}/1K · {linked.min}–{linked.max}
+          </div>
+        )}
         <div className="space-y-2">
           <Label>Category</Label>
           <Select value={formData.category} onValueChange={(v) => setFormData({ ...formData, category: v })}>
