@@ -1232,14 +1232,22 @@ function ProviderMappingDialog({
         }
 
         if (importResult?.error) {
-          console.error('Auto-import edge function error:', importResult.error);
-          toast({ title: 'Service import failed', description: importResult.error, variant: 'destructive' });
+          console.error('Auto-import server function error:', importResult.error);
+          toast({ title: 'Service import failed', description: String(importResult.error), variant: 'destructive' });
           return;
         }
 
-        if (!importResult?.success) {
-          console.error('Auto-import unexpected response:', importResult);
-          toast({ title: 'Service import failed', description: 'Unexpected response from import function', variant: 'destructive' });
+        const importedCount = (importResult?.imported ?? 0) + (importResult?.updated ?? 0);
+        if (importedCount === 0) {
+          const missing = Array.isArray(importResult?.missing) ? importResult.missing.join(', ') : '';
+          console.error('Auto-import returned no services:', importResult);
+          toast({
+            title: 'Service import failed',
+            description: missing
+              ? `Provider did not return service ID(s): ${missing}`
+              : 'Provider returned no matching service. Check the Service ID.',
+            variant: 'destructive',
+          });
           return;
         }
 
