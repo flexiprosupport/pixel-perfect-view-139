@@ -483,8 +483,10 @@ const Index = () => {
                   { to: '/terms', icon: FileText, label: 'Terms' },
                   { to: '/privacy', icon: Lock, label: 'Privacy' },
                   { to: '/refund', icon: FileText, label: 'Refund' },
-                  { to: '/shipping', icon: FileText, label: 'Shipping' },
+                  { to: '/delivery', icon: FileText, label: 'Delivery' },
                   { to: '/cookies', icon: FileText, label: 'Cookies' },
+                  { to: '/ethical-use', icon: Shield, label: 'Ethical Use' },
+
                 ].map(l => (
                   <Link key={l.to} to={l.to} className="flex items-center gap-1.5 text-[13px]" style={{ color: C.slate }}>
                     <l.icon className="w-3 h-3" /> {l.label}
