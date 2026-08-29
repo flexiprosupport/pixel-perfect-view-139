@@ -70,6 +70,23 @@ export function RefundClaimDialog() {
   const [proof, setProof] = useState("");
   const [remedy, setRemedy] = useState("redelivery");
   const [details, setDetails] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [fileErrors, setFileErrors] = useState<string[]>([]);
+
+  const addFiles = (list: FileList | null) => {
+    if (!list) return;
+    const { accepted, errors } = validateProofFiles(Array.from(list), files);
+    if (accepted.length) setFiles((prev) => [...prev, ...accepted]);
+    setFileErrors(errors);
+    if (errors.length) {
+      toast({ title: "Some files were not added", description: errors[0], variant: "destructive" });
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+    setFileErrors([]);
+  };
 
   const reset = () => {
     setIssueType("non_delivery");
@@ -82,7 +99,10 @@ export function RefundClaimDialog() {
     setProof("");
     setRemedy("redelivery");
     setDetails("");
+    setFiles([]);
+    setFileErrors([]);
   };
+
 
   const isFundingIssue =
     issueType === "wallet_not_credited" || issueType === "duplicate_payment";
