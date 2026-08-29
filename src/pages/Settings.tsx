@@ -92,7 +92,7 @@ export default function Settings() {
     if (profile) {
       setFullName(profile.full_name || '');
       setEmail(profile.email || '');
-      setApiKey(profile.api_key || '');
+      
       setAvatarUrl((profile as any).avatar_url || null);
     }
     // Load organic settings from localStorage
