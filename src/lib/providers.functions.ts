@@ -144,3 +144,18 @@ export const syncProviderBalances = createServerFn({ method: 'POST' })
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     return syncBalancesCore(supabaseAdmin);
   });
+
+/** Resolve one provider service id into its live catalogue entry. */
+export const lookupProviderService = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z
+      .object({ provider_id: z.string().min(1), service_id: z.string().trim().min(1) })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId as string);
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+    const { lookupServiceCore } = await import('./providers.server');
+    return lookupServiceCore(supabaseAdmin, data);
+  });
