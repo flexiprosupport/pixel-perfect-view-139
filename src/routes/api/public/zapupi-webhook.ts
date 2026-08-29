@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { clientIp, logApiCall, rateLimit } from '@/lib/api-audit.server';
 
 /**
  * ZapUPI payment callback.
@@ -46,7 +47,32 @@ export const Route = createFileRoute('/api/public/zapupi-webhook')({
       POST: async ({ request }) => {
         const secret = process.env['ZAPUPI_WEBHOOK_SECRET'];
         const url = new URL(request.url);
+
+        const limit = await rateLimit(`zapupi-webhook:ip:${clientIp(request)}`, 120, 60);
+        if (!limit.allowed) {
+          await logApiCall(request, {
+            endpoint: '/api/public/zapupi-webhook',
+            method: 'POST',
+            action: 'webhook',
+            statusCode: 429,
+            success: false,
+            errorMessage: 'rate limit exceeded',
+          });
+          return new Response('Too many requests', {
+            status: 429,
+            headers: { 'Retry-After': String(limit.retryAfter) },
+          });
+        }
+
         if (secret && url.searchParams.get('token') !== secret) {
+          await logApiCall(request, {
+            endpoint: '/api/public/zapupi-webhook',
+            method: 'POST',
+            action: 'webhook',
+            statusCode: 401,
+            success: false,
+            errorMessage: 'invalid token',
+          });
           return new Response('Invalid token', { status: 401 });
         }
 
@@ -78,9 +104,26 @@ export const Route = createFileRoute('/api/public/zapupi-webhook')({
             },
           });
 
+          await logApiCall(request, {
+            endpoint: '/api/public/zapupi-webhook',
+            method: 'POST',
+            action: 'webhook',
+            statusCode: 200,
+            success: true,
+            metadata: { order_id: orderId },
+          });
+
           return json(result);
         } catch (e) {
           console.error('[zapupi] webhook error', e);
+          await logApiCall(request, {
+            endpoint: '/api/public/zapupi-webhook',
+            method: 'POST',
+            action: 'webhook',
+            statusCode: 200,
+            success: false,
+            errorMessage: String((e as Error).message ?? e),
+          });
           return json({ ok: true, error: String((e as Error).message ?? e) });
         }
       },
