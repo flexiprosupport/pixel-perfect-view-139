@@ -640,7 +640,7 @@ export default function AdminSubscriptions() {
                               <Mail className="h-3 w-3" />
                               {request.email}
                             </span>
-                            <span className="flex items-center gap-1">
+                            <span className="flex items-center gap-1 text-xs">
                               <Phone className="h-3 w-3" />
                               {request.phone}
                             </span>
