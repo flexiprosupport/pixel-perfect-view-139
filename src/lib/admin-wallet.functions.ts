@@ -2,15 +2,8 @@ import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { z } from 'zod';
 
-// Super-admin allowlist enforced SERVER-SIDE. The client-side list in
-// AdminUsers.tsx is UI-only; this gate is the authoritative one.
-const SUPER_ADMIN_USER_IDS = new Set([
-  '581a69bb-fe78-4da6-98cd-f36fdeff8f28', // zyrofit.my@gmail.com
-  '82f9bd93-1e39-47ef-bdc0-f579262a122a', // admin@gmail.com (legacy)
-  'ff8f0b43-4d5a-4887-b589-77047a3bc9ff', // admin@gmail.com
-  '93369079-e17a-4df6-a4a6-1c2a832231b2', // bjkagrahaoamqnvs@gmail.com
-  'e067c00a-4c77-4efc-89e1-0c0f814835c3', // flexipro.support@gmail.com (owner)
-]);
+
+
 
 const INR_PER_USD = 90;
 const MAX_INR_PER_ACTION = 100000;
@@ -22,108 +15,116 @@ const walletActionSchema = z.object({
     .number({ invalid_type_error: 'Enter a valid INR amount' })
     .positive('Amount must be greater than zero')
     .max(MAX_INR_PER_ACTION, `Maximum ₹${MAX_INR_PER_ACTION} per action`),
+  reason: z
+    .string()
+    .trim()
+    .min(5, 'Reason must be at least 5 characters')
+    .max(300, 'Reason is too long'),
 });
 
-/** Admin wallet adjustment. Adds are restricted to super-admins on the server. */
+async function assertAdmin(context: { userId: unknown; supabase: any }) {
+  const callerId = context.userId as string;
+  const { data: roleRow } = await context.supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', callerId)
+    .eq('role', 'admin')
+    .maybeSingle();
+  if (!roleRow) throw new Error('Admins only');
+  return callerId;
+}
+
+/** Admin wallet adjustment. Every change requires a stored reason. */
 export const adminWalletAction = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => walletActionSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const callerId = context.userId as string;
-    const callerClient = context.supabase;
-
-    // Must be an admin at all (checked server-side against the RLS-backed
-    // role table; the has_role RPC has ambiguous overloads over PostgREST).
-    const { data: roleRow } = await callerClient
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', callerId)
-      .eq('role', 'admin')
-      .maybeSingle();
-    const isAdmin = !!roleRow;
-    if (!isAdmin) throw new Error('Admins only');
-
-    // Manual wallet adjustments are allowed for any verified admin (checked
-    // server-side above) OR the hard-coded owner allowlist. Every action is
-    // written to admin_audit_log below with actor + target identity.
-    if (!isAdmin && !SUPER_ADMIN_USER_IDS.has(callerId)) {
-      throw new Error('Not authorised for wallet adjustments');
-    }
-
-    const usdAmount = Math.round((data.inr_amount / INR_PER_USD) * 10000) / 10000;
-    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-
-    const { data: wallet } = await supabaseAdmin
-      .from('wallets')
-      .select('balance, total_spent')
-      .eq('user_id', data.target_user_id)
-      .maybeSingle();
-    if (!wallet) throw new Error('Wallet not found for target user');
-
-    const balance = Number(wallet.balance ?? 0);
-    const spent = Number(wallet.total_spent ?? 0);
-    let newBalance: number;
-    if (data.action === 'add') {
-      newBalance = Math.round((balance + usdAmount) * 10000) / 10000;
-    } else {
-      if (usdAmount > balance) throw new Error('Amount exceeds current balance');
-      newBalance = Math.round((balance - usdAmount) * 10000) / 10000;
-    }
-
-    const { data: callerProfile } = await supabaseAdmin
-      .from('profiles')
-      .select('email')
-      .eq('user_id', callerId)
-      .maybeSingle();
-    const { data: targetProfile } = await supabaseAdmin
-      .from('profiles')
-      .select('email')
-      .eq('user_id', data.target_user_id)
-      .maybeSingle();
-
-    // Audit trail FIRST (wallet credit trigger requires a matching transaction row).
-    const { error: txErr } = await supabaseAdmin.from('transactions').insert({
-      user_id: data.target_user_id,
-      type: data.action === 'add' ? 'deposit' : 'admin_adjustment',
-      amount: data.action === 'add' ? usdAmount : -usdAmount,
-      balance_after: newBalance,
-      status: 'completed',
-      payment_method: data.action === 'add' ? 'manual_admin' : null,
-      description: `Admin wallet ${data.action} of ₹${data.inr_amount} ($${usdAmount}) by ${callerProfile?.email ?? callerId}`,
+    const callerId = await assertAdmin(context as any);
+    const { performWalletAdjustment } = await import('@/lib/admin-wallet.server');
+    return await performWalletAdjustment({
+      callerId,
+      targetUserId: data.target_user_id,
+      action: data.action,
+      inrAmount: data.inr_amount,
+      reason: data.reason,
     });
-    if (txErr) throw new Error(`Transaction record failed: ${txErr.message}`);
-
-    const { error: updErr } = await supabaseAdmin
-      .from('wallets')
-      .update({
-        balance: newBalance,
-        total_spent:
-          data.action === 'subtract'
-            ? Math.max(0, Math.round((spent - usdAmount) * 10000) / 10000)
-            : spent,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('user_id', data.target_user_id);
-    if (updErr) throw new Error(`Wallet update failed: ${updErr.message}`);
-
-    await supabaseAdmin.from('admin_audit_log').insert({
-      actor_id: callerId,
-      actor_email: callerProfile?.email ?? null,
-      target_user_id: data.target_user_id,
-      target_email: targetProfile?.email ?? null,
-      action: data.action === 'add' ? 'wallet_credit' : 'wallet_debit',
-      amount_inr: data.inr_amount,
-      amount_usd: usdAmount,
-      notes: `₹${data.inr_amount} ($${usdAmount})`,
-      metadata: {
-        inr_amount: data.inr_amount,
-        usd_amount: usdAmount,
-        new_balance: newBalance,
-      },
-    });
-
-    return { success: true, new_balance: newBalance };
   });
+
+const selfTestSchema = z.object({
+  inr_amount: z.number().positive().max(1000).optional(),
+});
+
+/** Live add/subtract self-test on the calling admin's own wallet. */
+export const adminWalletSelfTest = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => selfTestSchema.parse(input ?? {}))
+  .handler(async ({ data, context }) => {
+    const callerId = await assertAdmin(context as any);
+    const amount = data.inr_amount ?? 10;
+    const { performWalletAdjustment } = await import('@/lib/admin-wallet.server');
+
+    const steps: {
+      step: string;
+      expected_balance_inr: number;
+      actual_balance_inr: number;
+      audit_id: string | null;
+      passed: boolean;
+      error?: string;
+    }[] = [];
+
+    try {
+      const add = await performWalletAdjustment({
+        callerId,
+        targetUserId: callerId,
+        action: 'add',
+        inrAmount: amount,
+        reason: `Automated self-test: add ₹${amount}`,
+      });
+      const expectedAdd = Math.round((add.previous_balance * INR_PER_USD + amount) * 100) / 100;
+      const actualAdd = Math.round(add.new_balance * INR_PER_USD * 100) / 100;
+      steps.push({
+        step: `Add ₹${amount}`,
+        expected_balance_inr: expectedAdd,
+        actual_balance_inr: actualAdd,
+        audit_id: add.audit_id,
+        passed: Math.abs(expectedAdd - actualAdd) < 0.05,
+      });
+
+      const sub = await performWalletAdjustment({
+        callerId,
+        targetUserId: callerId,
+        action: 'subtract',
+        inrAmount: amount,
+        reason: `Automated self-test: subtract ₹${amount}`,
+      });
+      const expectedSub = Math.round((sub.previous_balance * INR_PER_USD - amount) * 100) / 100;
+      const actualSub = Math.round(sub.new_balance * INR_PER_USD * 100) / 100;
+      steps.push({
+        step: `Subtract ₹${amount}`,
+        expected_balance_inr: expectedSub,
+        actual_balance_inr: actualSub,
+        audit_id: sub.audit_id,
+        passed: Math.abs(expectedSub - actualSub) < 0.05,
+      });
+    } catch (e) {
+      steps.push({
+        step: 'Self-test aborted',
+        expected_balance_inr: 0,
+        actual_balance_inr: 0,
+        audit_id: null,
+        passed: false,
+        error: e instanceof Error ? e.message : String(e),
+      });
+    }
+
+    return {
+      ran_at: new Date().toISOString(),
+      amount_inr: amount,
+      passed: steps.every((s) => s.passed),
+      steps,
+    };
+  });
+
 
 const pendingDepositSchema = z.object({
   transaction_id: z.string().uuid(),
