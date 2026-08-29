@@ -1680,8 +1680,12 @@ export type Database = {
           amount_usd: number | null
           created_at: string
           credited: boolean
+          credited_at: string | null
           gateway_response: Json | null
           id: string
+          last_verify_at: string | null
+          last_verify_error: string | null
+          next_verify_at: string | null
           order_id: string
           payment_url: string | null
           status: string
@@ -1689,14 +1693,19 @@ export type Database = {
           updated_at: string
           user_id: string
           utr: string | null
+          verify_attempts: number
         }
         Insert: {
           amount_inr: number
           amount_usd?: number | null
           created_at?: string
           credited?: boolean
+          credited_at?: string | null
           gateway_response?: Json | null
           id?: string
+          last_verify_at?: string | null
+          last_verify_error?: string | null
+          next_verify_at?: string | null
           order_id: string
           payment_url?: string | null
           status?: string
@@ -1704,14 +1713,19 @@ export type Database = {
           updated_at?: string
           user_id: string
           utr?: string | null
+          verify_attempts?: number
         }
         Update: {
           amount_inr?: number
           amount_usd?: number | null
           created_at?: string
           credited?: boolean
+          credited_at?: string | null
           gateway_response?: Json | null
           id?: string
+          last_verify_at?: string | null
+          last_verify_error?: string | null
+          next_verify_at?: string | null
           order_id?: string
           payment_url?: string | null
           status?: string
@@ -1719,6 +1733,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
           utr?: string | null
+          verify_attempts?: number
         }
         Relationships: []
       }

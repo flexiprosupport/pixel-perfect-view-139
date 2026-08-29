@@ -130,7 +130,7 @@ export const listMyZapupiDeposits = createServerFn({ method: 'GET' })
     const admin = await getAdmin();
     const { data } = await admin
       .from('zapupi_deposits')
-      .select('order_id, amount_inr, status, credited, payment_url, created_at')
+      .select('order_id, amount_inr, status, credited, payment_url, created_at, credited_at, utr, verify_attempts, last_verify_error, next_verify_at')
       .eq('user_id', context.userId)
       .order('created_at', { ascending: false })
       .limit(5);
@@ -141,7 +141,30 @@ export const listMyZapupiDeposits = createServerFn({ method: 'GET' })
       credited: boolean;
       payment_url: string | null;
       created_at: string;
+      credited_at: string | null;
+      utr: string | null;
+      verify_attempts: number | null;
+      last_verify_error: string | null;
+      next_verify_at: string | null;
     }> };
+  });
+
+/** Full verification timeline for one of the caller's own deposits. */
+export const zapupiDepositTimeline = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { order_id: string }) => input)
+  .handler(async ({ data, context }) => {
+    const orderId = String(data?.order_id ?? '');
+    if (!/^ZAP_[a-f0-9]{16,64}$/i.test(orderId)) {
+      return { ok: false as const, error: 'Invalid order id' };
+    }
+    const { getDepositTimeline } = await import('./zapupi.server');
+    const result = await getDepositTimeline(orderId);
+    if (!result.deposit || result.deposit.user_id !== context.userId) {
+      return { ok: false as const, error: 'Order not found' };
+    }
+    const { user_id: _omit, ...deposit } = result.deposit;
+    return { ok: true as const, deposit, events: result.events };
   });
 
 /** Admin-only webhook health: URL, receipt stats, recent events and errors. */

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import {
   Loader2, Zap, IndianRupee, ShieldCheck, ArrowRight, ExternalLink, RefreshCw, Clock, CheckCircle2, XCircle,
 } from 'lucide-react';
-import { createZapupiOrder, syncZapupiDeposit, listMyZapupiDeposits } from '@/lib/zapupi.functions';
+import { createZapupiOrder, syncZapupiDeposit, listMyZapupiDeposits, zapupiDepositTimeline } from '@/lib/zapupi.functions';
 
 const MIN_INR = 100;
 const QUICK = [100, 500, 1000, 2000, 5000];
@@ -18,6 +18,22 @@ type Deposit = {
   credited: boolean;
   payment_url: string | null;
   created_at: string;
+  credited_at?: string | null;
+  utr?: string | null;
+  verify_attempts?: number | null;
+  last_verify_error?: string | null;
+  next_verify_at?: string | null;
+};
+
+type TimelineEntry = {
+  at: string;
+  source: string | null;
+  status: string | null;
+  utr: string | null;
+  txn_id: string | null;
+  processed: boolean | null;
+  amount_match: boolean | null;
+  note: string | null;
 };
 
 export default function ZapUpiDepositCard() {
@@ -25,10 +41,29 @@ export default function ZapUpiDepositCard() {
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState<string | null>(null);
   const [recent, setRecent] = useState<Deposit[]>([]);
+  const [openTimeline, setOpenTimeline] = useState<string | null>(null);
+  const [timelines, setTimelines] = useState<Record<string, TimelineEntry[]>>({});
+  const [timelineLoading, setTimelineLoading] = useState<string | null>(null);
 
   const createOrder = useServerFn(createZapupiOrder);
   const syncDeposit = useServerFn(syncZapupiDeposit);
   const listDeposits = useServerFn(listMyZapupiDeposits);
+  const loadTimeline = useServerFn(zapupiDepositTimeline);
+
+  const toggleTimeline = async (orderId: string) => {
+    if (openTimeline === orderId) return setOpenTimeline(null);
+    setOpenTimeline(orderId);
+    if (timelines[orderId]) return;
+    setTimelineLoading(orderId);
+    try {
+      const res: any = await loadTimeline({ data: { order_id: orderId } });
+      if (res?.ok) setTimelines((prev) => ({ ...prev, [orderId]: res.events ?? [] }));
+    } catch {
+      /* silent */
+    } finally {
+      setTimelineLoading(null);
+    }
+  };
 
   const refreshRecent = async (): Promise<Deposit[]> => {
     try {
@@ -283,18 +318,22 @@ export default function ZapUpiDepositCard() {
           {recent.map((d) => {
             const done = d.credited || d.status === 'completed';
             const failed = d.status === 'failed' || d.status === 'mismatch';
+            const entries = timelines[d.order_id] ?? [];
+            const isOpen = openTimeline === d.order_id;
             return (
               <div
                 key={d.order_id}
-                className="flex items-center justify-between gap-2 rounded-xl px-3 py-2.5"
+                className="rounded-xl px-3 py-2.5"
                 style={{ border: '1px solid #eef1f6', background: '#f8fafc' }}
               >
+                <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
                   <p className="text-[13px] font-bold" style={{ color: '#0f172a' }}>
                     ₹{Number(d.amount_inr).toLocaleString('en-IN')}
                   </p>
                   <p className="text-[10px] truncate" style={{ color: '#94a3b8' }}>
                     {new Date(d.created_at).toLocaleString('en-IN')}
+                    {d.utr ? ` · UTR ${d.utr}` : ''}
                   </p>
                 </div>
 
@@ -309,6 +348,15 @@ export default function ZapUpiDepositCard() {
                     {done ? <CheckCircle2 className="h-3 w-3" /> : failed ? <XCircle className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
                     {done ? 'Credited' : failed ? (d.status === 'mismatch' ? 'Mismatch' : 'Failed') : 'Pending'}
                   </span>
+
+                  <button
+                    type="button"
+                    onClick={() => void toggleTimeline(d.order_id)}
+                    className="px-2.5 py-1 rounded-lg text-[11px] font-bold"
+                    style={{ border: '1px solid #e2e8f0', color: '#475569' }}
+                  >
+                    {isOpen ? 'Hide' : 'Timeline'}
+                  </button>
 
                   {!done && !failed && (
                     <>
@@ -335,8 +383,60 @@ export default function ZapUpiDepositCard() {
                     </>
                   )}
                 </div>
+                </div>
+
+                {isOpen && (
+                  <div className="mt-3 pt-3 space-y-2" style={{ borderTop: '1px dashed #e2e8f0' }}>
+                    {timelineLoading === d.order_id && (
+                      <p className="text-[11px] flex items-center gap-1" style={{ color: '#94a3b8' }}>
+                        <Loader2 className="h-3 w-3 animate-spin" /> Loading timeline…
+                      </p>
+                    )}
+
+                    <div className="flex items-start gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full shrink-0" style={{ background: '#2563EB' }} />
+                      <p className="text-[11px]" style={{ color: '#475569' }}>
+                        Payment started · {new Date(d.created_at).toLocaleString('en-IN')}
+                      </p>
+                    </div>
+
+                    {entries.map((e, i) => (
+                      <div key={`${e.at}-${i}`} className="flex items-start gap-2">
+                        <span
+                          className="mt-1 h-1.5 w-1.5 rounded-full shrink-0"
+                          style={{ background: e.processed ? '#16a34a' : e.amount_match === false ? '#dc2626' : '#ea580c' }}
+                        />
+                        <p className="text-[11px]" style={{ color: '#475569' }}>
+                          {e.source === 'webhook' ? 'Gateway callback' : 'Verification attempt'}
+                          {e.status ? ` · ${e.status}` : ''}
+                          {e.utr ? ` · UTR ${e.utr}` : ''}
+                          {e.note ? ` · ${e.note}` : ''}
+                          <span style={{ color: '#94a3b8' }}> · {new Date(e.at).toLocaleString('en-IN')}</span>
+                        </p>
+                      </div>
+                    ))}
+
+                    {d.credited_at && (
+                      <div className="flex items-start gap-2">
+                        <span className="mt-1 h-1.5 w-1.5 rounded-full shrink-0" style={{ background: '#16a34a' }} />
+                        <p className="text-[11px] font-semibold" style={{ color: '#16a34a' }}>
+                          Wallet credited · {new Date(d.credited_at).toLocaleString('en-IN')}
+                        </p>
+                      </div>
+                    )}
+
+                    {!done && (
+                      <p className="text-[10px]" style={{ color: '#94a3b8' }}>
+                        Auto-checks so far: {d.verify_attempts ?? 0}
+                        {d.next_verify_at ? ` · next check ${new Date(d.next_verify_at).toLocaleTimeString('en-IN')}` : ''}
+                        {d.last_verify_error ? ` · last reason: ${d.last_verify_error}` : ''}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             );
+
           })}
         </div>
       )}
