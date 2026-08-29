@@ -44,6 +44,7 @@ import { Route as AdminTopupPlanRouteImport } from './routes/admin/topup-plan'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as EngagementOrdersOrderNumberRouteImport } from './routes/engagement-orders.$orderNumber'
 import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
+import { Route as ApiPublicV2RouteImport } from './routes/api/public/v2'
 import { Route as ApiPublicZapupiReturnRouteImport } from './routes/api/public/zapupi-return'
 import { Route as ApiPublicZapupiWebhookRouteImport } from './routes/api/public/zapupi-webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -225,6 +226,11 @@ const TicketsTicketIdRoute = TicketsTicketIdRouteImport.update({
   path: '/tickets/$ticketId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicV2Route = ApiPublicV2RouteImport.update({
+  id: '/api/public/v2',
+  path: '/api/public/v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicZapupiReturnRoute = ApiPublicZapupiReturnRouteImport.update({
   id: '/api/public/zapupi-return',
   path: '/api/public/zapupi-return',
@@ -278,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/v2': typeof ApiPublicV2Route
   '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -318,6 +325,7 @@ export interface FileRoutesByTo {
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/admin': typeof AdminIndexRoute
+  '/api/public/v2': typeof ApiPublicV2Route
   '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -359,6 +367,7 @@ export interface FileRoutesById {
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/v2': typeof ApiPublicV2Route
   '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -401,6 +410,7 @@ export interface FileRouteTypes {
     | '/engagement-orders/$orderNumber'
     | '/tickets/$ticketId'
     | '/admin/'
+    | '/api/public/v2'
     | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
     | '/lovable/email/transactional/preview'
@@ -441,6 +451,7 @@ export interface FileRouteTypes {
     | '/engagement-orders/$orderNumber'
     | '/tickets/$ticketId'
     | '/admin'
+    | '/api/public/v2'
     | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
     | '/lovable/email/transactional/preview'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/engagement-orders/$orderNumber'
     | '/tickets/$ticketId'
     | '/admin/'
+    | '/api/public/v2'
     | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
     | '/lovable/email/transactional/preview'
@@ -521,6 +533,7 @@ export interface RootRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  ApiPublicV2Route: typeof ApiPublicV2Route
   ApiPublicZapupiReturnRoute: typeof ApiPublicZapupiReturnRoute
   ApiPublicZapupiWebhookRoute: typeof ApiPublicZapupiWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -773,6 +786,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TicketsTicketIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v2': {
+      id: '/api/public/v2'
+      path: '/api/public/v2'
+      fullPath: '/api/public/v2'
+      preLoaderRoute: typeof ApiPublicV2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/zapupi-return': {
       id: '/api/public/zapupi-return'
       path: '/api/public/zapupi-return'
@@ -843,6 +863,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
   AdminIndexRoute: AdminIndexRoute,
+  ApiPublicV2Route: ApiPublicV2Route,
   ApiPublicZapupiReturnRoute: ApiPublicZapupiReturnRoute,
   ApiPublicZapupiWebhookRoute: ApiPublicZapupiWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
