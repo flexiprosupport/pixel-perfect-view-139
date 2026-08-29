@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "@/lib/router-compat";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { executeDueRunsFn, syncRunStatusFn } from "@/lib/engagement.functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -237,9 +239,7 @@ export default function EngagementOrderDetail() {
       // Trigger immediate execution
       setTimeout(async () => {
         console.log('⚡ Triggering execution for retried runs...');
-        await supabase.functions.invoke('execute-all-runs', {
-          body: { instant: true }
-        });
+        await executeRuns({ data: { limit: 50 } });
         refetch();
       }, 1000);
     },
