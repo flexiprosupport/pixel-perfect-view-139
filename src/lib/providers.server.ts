@@ -182,7 +182,7 @@ export async function importServicesCore(
   await ensureProviderRow(admin, account);
 
   const catalogue = await fetchCatalogue(account.api_url, account.api_key);
-  const byId = new Map(catalogue.map((s) => [s.service_id, s]));
+  const byId = new Map<string, NormalizedProviderService>(catalogue.map((s) => [s.service_id, s]));
   const markup = 1 + (opts.markup_percent ?? 0) / 100;
 
   const { data: existing } = await admin
@@ -287,7 +287,7 @@ export async function syncPricesCore(admin: any) {
       errors.push(`${account.provider_id}: ${err.message}`);
       continue;
     }
-    const byId = new Map(catalogue.map((s) => [s.service_id, s]));
+    const byId = new Map<string, NormalizedProviderService>(catalogue.map((s) => [s.service_id, s]));
 
     for (const svc of services) {
       const remote = byId.get(String(svc.provider_service_id));
