@@ -175,20 +175,23 @@ export default function AdminUsers() {
   });
 
   const callAdminWalletAction = useServerFn(adminWalletAction);
+  const [balanceReason, setBalanceReason] = useState('');
+  const [confirmBalance, setConfirmBalance] = useState(false);
   const updateBalanceMutation = useMutation({
     mutationFn: async () => {
       if (!selectedUser || !balanceAmount) return;
       const inrAmount = parseFloat(balanceAmount);
       if (!inrAmount || inrAmount <= 0) throw new Error('Enter a valid INR amount');
+      if (balanceReason.trim().length < 5) throw new Error('Reason must be at least 5 characters');
 
       // Wallet changes go through the authenticated server function, which
-      // re-checks admin + super-admin allowlist server-side. Direct client-side
-      // wallet/transaction writes are blocked at the RLS layer.
+      // re-checks admin server-side. Direct client-side writes are RLS-blocked.
       await callAdminWalletAction({
         data: {
           target_user_id: selectedUser.user_id,
           action: balanceAction, // 'add' | 'subtract'
           inr_amount: inrAmount,
+          reason: balanceReason.trim(),
         },
       });
     },
@@ -196,12 +199,16 @@ export default function AdminUsers() {
       toast.success('Balance updated successfully!');
       setSelectedUser(null);
       setBalanceAmount('');
+      setBalanceReason('');
+      setConfirmBalance(false);
       queryClient.invalidateQueries({ queryKey: ['admin-all-users-with-subs'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
+      setConfirmBalance(false);
     },
   });
+
 
   const toggleAdminMutation = useMutation({
     mutationFn: async (targetUser: UserProfile) => {
