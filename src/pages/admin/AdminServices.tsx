@@ -493,6 +493,12 @@ interface ServiceFormProps {
 function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, isEdit }: ServiceFormProps) {
   const lookupFn = useServerFn(lookupProviderService);
   const [isFetchingRemote, setIsFetchingRemote] = useState(false);
+  const [lookupError, setLookupError] = useState<string | null>(null);
+  const [linked, setLinked] = useState<{ name: string; rate: number; min: number; max: number } | null>(null);
+  const idFormatError =
+    formData.provider_service_id && !/^[0-9]{1,12}$/.test(formData.provider_service_id.trim())
+      ? 'Only digits allowed (e.g. 1001)'
+      : null;
   const { data: providers } = useQuery({
     queryKey: ['admin-provider-ids'],
     queryFn: async () => {
@@ -536,29 +542,25 @@ function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, i
               type="button"
               variant="outline"
               disabled={isFetchingRemote || !formData.provider_id || !formData.provider_service_id}
-              onClick={async () => {
-                setIsFetchingRemote(true);
-                try {
-                  const svc: any = await lookupFn({
-                    data: { provider_id: formData.provider_id, service_id: formData.provider_service_id },
-                  });
-                  setFormData({
-                    ...formData,
-                    name: svc.name,
-                    category: formData.category || svc.category,
-                    price: String(svc.rate),
-                    min_quantity: String(svc.min),
-                    max_quantity: String(svc.max),
-                    drip_feed_enabled: !!svc.dripfeed,
-                  });
-                  toast.success('Fetched from provider');
-                } catch (err: any) {
-                  toast.error(err?.message || 'Could not fetch this service');
-                } finally {
-                  setIsFetchingRemote(false);
-                }
-              }}
+              onClick={() => runLookup()}
             >
+              {isFetchingRemote ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Fetch'}
+            </Button>
+          </div>
+          {idFormatError && <p className="text-xs text-destructive">{idFormatError}</p>}
+          {lookupError && (
+            <div className="flex items-start justify-between gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2">
+              <p className="text-xs text-destructive">{lookupError}</p>
+              <Button type="button" size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => runLookup()}>
+                Retry
+              </Button>
+            </div>
+          )}
+        </div>
+        <div className="hidden">
+          <Button
+            type="button"
+            onClick={async () => {
               {isFetchingRemote ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Fetch'}
             </Button>
           </div>
