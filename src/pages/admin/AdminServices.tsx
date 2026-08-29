@@ -327,31 +327,6 @@ export default function AdminServices() {
             </Button>
             <Button
               variant="outline"
-              className="gap-2 hidden"
-              onClick={async () => {
-                setIsSyncingPrices(true);
-                try {
-                  const data = await syncPricesFn({});
-                  toast.success(`${data.updated} service price(s) synced from providers`);
-                  for (const e of data.errors ?? []) {
-                    toast.error(`Price sync failed — ${e}`, { duration: 10000 });
-                  }
-                  queryClient.invalidateQueries({ queryKey: ['admin-all-services'] });
-                  queryClient.invalidateQueries({ queryKey: ['services'] });
-                } catch (err: any) {
-                  toast.error(err?.message || 'Price sync failed', {
-                    duration: 12000,
-                    action: { label: 'Retry', onClick: () => runSyncPrices() },
-                  });
-                } finally {
-                  setIsSyncingPrices(false);
-                }
-              }}
-            >
-              hidden
-            </Button>
-            <Button
-              variant="outline"
               className="gap-2"
               onClick={() => setShowImportDialog(true)}
             >
