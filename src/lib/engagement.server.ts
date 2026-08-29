@@ -346,6 +346,7 @@ export async function executeDueRuns(limit = 25) {
           provider_account_id: resolved.account.id,
           provider_account_name: resolved.account.name,
           error_message: null,
+          next_attempt_at: null,
         })
         .eq('id', runId);
 
@@ -360,7 +361,8 @@ export async function executeDueRuns(limit = 25) {
     }
   }
 
-  return { due: ids.length, sent, failed: failures.length, errors: failures.slice(0, 10) };
+  return { due: ids.length, sent, retried, failed: failures.length, errors: failures.slice(0, 10) };
+
 }
 
 // ---------------------------------------------------------------------------
