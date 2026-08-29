@@ -87,7 +87,11 @@ export default function Admin() {
       queryClient.invalidateQueries({ queryKey: ['maintenance-mode'] });
 
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error, enabled) => {
+      setMaintenanceMode(!enabled); // revert optimistic switch
+      toast.error(err.message);
+    },
+
   });
 
   // INSTANT RENDER - No blocking loader, redirect in useEffect if needed
