@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from '@/lib/router-compat';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -29,7 +30,8 @@ const SITE_ORIGIN =
 const API_BASE = `${SITE_ORIGIN}/api/public/v2`;
 
 export default function ApiAccess() {
-    const { user } = useAuth();
+    const { user, isLoading } = useAuth();
+    const navigate = useNavigate();
     const [isGenerating, setIsGenerating] = useState(false);
     const [showKey, setShowKey] = useState(false);
     const [copied, setCopied] = useState(false);
