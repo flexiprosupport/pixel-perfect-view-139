@@ -127,13 +127,43 @@ export const importProviderServices = createServerFn({ method: 'POST' })
     return importServicesCore(supabaseAdmin, data);
   });
 
-/** Refresh prices/limits for all imported services. */
+/** Refresh prices/limits for all (or selected) imported services. */
 export const syncProviderPrices = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input) =>
+    z
+      .object({ service_ids: z.array(z.string().uuid()).optional() })
+      .optional()
+      .default({})
+      .parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId as string);
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-    return syncPricesCore(supabaseAdmin);
+    const { logProviderAudit } = await import('./providers.server');
+
+    const ids = data?.service_ids ?? [];
+    const started = Date.now();
+    try {
+      const result = await syncPricesCore(supabaseAdmin, ids.length ? ids : undefined);
+      await logProviderAudit(supabaseAdmin, {
+        action: 'provider_price_sync',
+        actor_id: context.userId as string,
+        actor_email: (context.claims as any)?.email ?? null,
+        notes: ids.length ? `Bulk refresh of ${ids.length} service(s)` : 'Full price sync',
+        metadata: { ...result, service_ids: ids, duration_ms: Date.now() - started },
+      });
+      return result;
+    } catch (err: any) {
+      await logProviderAudit(supabaseAdmin, {
+        action: 'provider_price_sync_failed',
+        actor_id: context.userId as string,
+        actor_email: (context.claims as any)?.email ?? null,
+        notes: String(err?.message ?? err).slice(0, 300),
+        metadata: { service_ids: ids },
+      });
+      throw err;
+    }
   });
 
 /** Refresh provider account balances. */
@@ -156,6 +186,25 @@ export const lookupProviderService = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId as string);
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-    const { lookupServiceCore } = await import('./providers.server');
-    return lookupServiceCore(supabaseAdmin, data);
+    const { lookupServiceCore, logProviderAudit } = await import('./providers.server');
+    try {
+      const svc = await lookupServiceCore(supabaseAdmin, data);
+      await logProviderAudit(supabaseAdmin, {
+        action: 'provider_service_lookup',
+        actor_id: context.userId as string,
+        actor_email: (context.claims as any)?.email ?? null,
+        notes: `Looked up ${data.provider_id} #${data.service_id}`,
+        metadata: { ...data, result: 'found', name: svc.name, rate: svc.rate },
+      });
+      return svc;
+    } catch (err: any) {
+      await logProviderAudit(supabaseAdmin, {
+        action: 'provider_service_lookup_failed',
+        actor_id: context.userId as string,
+        actor_email: (context.claims as any)?.email ?? null,
+        notes: String(err?.message ?? err).slice(0, 300),
+        metadata: { ...data, result: 'error' },
+      });
+      throw err;
+    }
   });
