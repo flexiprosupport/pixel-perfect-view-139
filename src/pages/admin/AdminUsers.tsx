@@ -947,25 +947,76 @@ export default function AdminUsers() {
                     step="1"
                     placeholder="e.g. 500"
                     value={balanceAmount}
-                    onChange={(e) => setBalanceAmount(e.target.value)}
+                    onChange={(e) => {
+                      setBalanceAmount(e.target.value);
+                      setConfirmBalance(false);
+                    }}
                     className="h-11 rounded-xl"
                   />
                   <p className="text-[10px] text-muted-foreground">Wallet credit converted at ₹90 / $1</p>
                 </div>
+
+                <div className="space-y-2">
+                  <Label>Reason (required)</Label>
+                  <Input
+                    placeholder="e.g. Manual refund for order #1234"
+                    value={balanceReason}
+                    onChange={(e) => {
+                      setBalanceReason(e.target.value);
+                      setConfirmBalance(false);
+                    }}
+                    className="h-11 rounded-xl"
+                  />
+                  <p className="text-[10px] text-muted-foreground">
+                    Minimum 5 characters. Audit log me permanently store hoga.
+                  </p>
+                </div>
+
+                {confirmBalance && (
+                  <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs">
+                    Confirm: <b>{balanceAction === 'add' ? 'Add' : 'Subtract'} ₹{balanceAmount}</b> for{' '}
+                    <b>{selectedUser.email}</b> — reason: “{balanceReason.trim()}”. Press Confirm again to apply.
+                  </div>
+                )}
               </div>
             )}
             <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setSelectedUser(null)}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSelectedUser(null);
+                  setConfirmBalance(false);
+                }}
+              >
                 Cancel
               </Button>
               <Button
-                onClick={() => updateBalanceMutation.mutate()}
-                disabled={updateBalanceMutation.isPending || !balanceAmount || !isSuperAdmin}
+                variant={confirmBalance ? 'destructive' : 'default'}
+                onClick={() => {
+                  if (!confirmBalance) {
+                    if (balanceReason.trim().length < 5) {
+                      toast.error('Reason must be at least 5 characters');
+                      return;
+                    }
+                    setConfirmBalance(true);
+                    return;
+                  }
+                  updateBalanceMutation.mutate();
+                }}
+                disabled={
+                  updateBalanceMutation.isPending ||
+                  !balanceAmount ||
+                  !isSuperAdmin ||
+                  balanceReason.trim().length < 5
+                }
               >
                 {updateBalanceMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                {balanceAction === 'add' ? 'Add' : 'Subtract'} ₹{balanceAmount || '0'}
+                {confirmBalance
+                  ? `Confirm ${balanceAction === 'add' ? 'Add' : 'Subtract'} ₹${balanceAmount || '0'}`
+                  : `${balanceAction === 'add' ? 'Add' : 'Subtract'} ₹${balanceAmount || '0'}`}
               </Button>
             </div>
+
           </DialogContent>
         </Dialog>
 
