@@ -137,7 +137,7 @@ export default function TicketStatus() {
                 </div>
                 <CardTitle className="text-xl">{ticket.subject}</CardTitle>
                 <p className="text-xs text-muted-foreground">
-                  Raised {new Date(ticket.created_at).toLocaleString()}
+                  Raised {new Date(ticket.created_at ?? Date.now()).toLocaleString()}
                 </p>
               </CardHeader>
               <CardContent>
