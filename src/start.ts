@@ -3,7 +3,12 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
-const errorMiddleware = createMiddleware().server(async ({ next }) => {
+// /lovable/* routes authenticate themselves (API key / signed webhook);
+// they must bypass app middleware entirely.
+const isLovableRoute = (url: string) => new URL(url).pathname.startsWith("/lovable/");
+
+const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
+  if (isLovableRoute(request.url)) return next();
   try {
     return await next();
   } catch (error) {
@@ -22,7 +27,7 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
 // file opts out, so re-add it explicitly to keep server functions protected
 // from cross-site requests.
 const csrfMiddleware = createCsrfMiddleware({
-  filter: (ctx) => ctx.handlerType === "serverFn",
+  filter: (ctx) => ctx.handlerType === "serverFn" && !isLovableRoute(ctx.request.url),
 });
 
 export const startInstance = createStart(() => ({
