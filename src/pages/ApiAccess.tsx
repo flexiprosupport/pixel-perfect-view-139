@@ -23,37 +23,39 @@ import {
     AlertCircle,
 } from 'lucide-react';
 
-// Detect Supabase project URL for showing API base URL
-const SUPABASE_URL = (import.meta as any).env?.VITE_SUPABASE_URL || 'https://YOUR_PROJECT.supabase.co';
-const API_BASE = `${SUPABASE_URL}/functions/v1/public-api`;
-
-function generateApiKey(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const array = new Uint8Array(48);
-    crypto.getRandomValues(array);
-    return Array.from(array, (b) => chars[b % chars.length]).join('');
-}
+// Customer API lives on the FlexiPro site itself (same origin as the panel)
+const SITE_ORIGIN =
+    typeof window !== 'undefined' ? window.location.origin : 'https://flexipro.in';
+const API_BASE = `${SITE_ORIGIN}/api/public/v2`;
 
 export default function ApiAccess() {
-    const { user, profile, refreshProfile } = useAuth();
+    const { user } = useAuth();
     const [isGenerating, setIsGenerating] = useState(false);
     const [showKey, setShowKey] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [apiKey, setApiKey] = useState<string | null>(null);
 
-    const apiKey: string | null = (profile as any)?.api_key ?? null;
+    useEffect(() => {
+        if (!user?.id) return;
+        let cancelled = false;
+        supabase
+            .from('user_api_keys')
+            .select('api_key')
+            .eq('user_id', user.id)
+            .maybeSingle()
+            .then(({ data }) => {
+                if (!cancelled) setApiKey(data?.api_key ?? null);
+            });
+        return () => { cancelled = true; };
+    }, [user?.id]);
 
     const handleGenerateKey = async () => {
         if (!user) return;
         setIsGenerating(true);
         try {
-            const newKey = generateApiKey();
-            const { error } = await supabase
-                .from('profiles')
-                .update({ api_key: newKey })
-                .eq('user_id', user.id);
-
+            const { data, error } = await supabase.rpc('rotate_my_api_key' as any);
             if (error) throw error;
-            await refreshProfile();
+            setApiKey(data as unknown as string);
             toast.success('API Key generated successfully!');
             setShowKey(true);
         } catch (err: any) {
