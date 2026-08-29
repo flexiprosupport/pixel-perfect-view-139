@@ -224,11 +224,11 @@ export default function ApiAccess() {
                             action="add"
                             label="Place Order"
                             description="Naya order place karein (wallet se amount deduct hoga)"
-                            request={`{\n  "key": "YOUR_API_KEY",\n  "action": "add",\n  "service": 1001,\n  "link": "https://instagram.com/p/...",\n  "quantity": 1000\n}`}
-                            response={`{\n  "status": "ok",\n  "order": 78432\n}`}
+                            request={`{\n  "key": "YOUR_API_KEY",\n  "action": "add",\n  "service": "SERVICE_ID",\n  "link": "https://instagram.com/p/...",\n  "quantity": 1000\n}`}
+                            response={`{\n  "status": "ok",\n  "order": 78432,\n  "charge": "0.5000"\n}`}
                             onCopyRequest={() =>
                                 handleCopy(
-                                    `{\n  "key": "${apiKey || 'YOUR_API_KEY'}",\n  "action": "add",\n  "service": 1001,\n  "link": "https://instagram.com/p/...",\n  "quantity": 1000\n}`
+                                    `{\n  "key": "${apiKey || 'YOUR_API_KEY'}",\n  "action": "add",\n  "service": "SERVICE_ID",\n  "link": "https://instagram.com/p/...",\n  "quantity": 1000\n}`
                                 )
                             }
                         />
