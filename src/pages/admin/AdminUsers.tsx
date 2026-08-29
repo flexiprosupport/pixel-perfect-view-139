@@ -211,22 +211,26 @@ export default function AdminUsers() {
 
 
   const toggleAdminMutation = useMutation({
-    mutationFn: async (targetUser: UserProfile) => {
-      const newRole = targetUser.role === 'admin' ? 'user' : 'admin';
-      const { error } = await supabase
-        .from('user_roles')
-        .update({ role: newRole })
-        .eq('user_id', targetUser.user_id);
-      if (error) throw error;
+    mutationFn: async ({ targetUser, reason }: { targetUser: UserProfile; reason: string }) => {
+      const nextRole = targetUser.role === 'admin' ? 'user' : 'admin';
+      if (reason.trim().length < 5) throw new Error('Reason must be at least 5 characters');
+      return await callSetUserRole({
+        data: { target_user_id: targetUser.user_id, role: nextRole, reason: reason.trim() },
+      });
     },
-    onSuccess: () => {
-      toast.success('User role updated!');
+    onSuccess: (res) => {
+      toast.success(
+        res.role === 'admin' ? 'Admin role granted ✅' : 'Admin role removed ✅',
+      );
+      setRoleUser(null);
+      setRoleReason('');
       queryClient.invalidateQueries({ queryKey: ['admin-all-users-with-subs'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);
     },
   });
+
 
   const removeSubscriptionMutation = useMutation({
     mutationFn: async (targetUser: UserProfile) => {
