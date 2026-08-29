@@ -96,6 +96,7 @@ export default function AdminServices() {
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [isSyncingPrices, setIsSyncingPrices] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     provider_id: '',
     provider_service_id: '',
@@ -111,11 +112,15 @@ export default function AdminServices() {
     is_active: true,
   });
 
-  const runSyncPrices = async () => {
+  const runSyncPrices = async (ids?: string[]) => {
     setIsSyncingPrices(true);
     try {
-      const data = await syncPricesFn({});
-      toast.success(`${data.updated} service price(s) synced from providers`);
+      const data = await syncPricesFn(
+        ids?.length ? { data: { service_ids: ids } } : ({} as any),
+      );
+      toast.success(
+        `${data.updated} service price(s) synced${data.failed ? ` · ${data.failed} failed` : ''}`,
+      );
       for (const e of data.errors ?? []) {
         toast.error(`Price sync failed — ${e}`, { duration: 10000 });
       }
@@ -124,7 +129,7 @@ export default function AdminServices() {
     } catch (err: any) {
       toast.error(err?.message || 'Price sync failed', {
         duration: 12000,
-        action: { label: 'Retry', onClick: () => runSyncPrices() },
+        action: { label: 'Retry', onClick: () => runSyncPrices(ids) },
       });
     } finally {
       setIsSyncingPrices(false);
@@ -347,6 +352,17 @@ export default function AdminServices() {
             </div>
           </div>
           <div className="flex gap-2">
+            {selectedIds.length > 0 && (
+              <Button
+                variant="secondary"
+                className="gap-2"
+                disabled={isSyncingPrices}
+                onClick={() => runSyncPrices(selectedIds)}
+              >
+                <RefreshCw className={`h-4 w-4 ${isSyncingPrices ? 'animate-spin' : ''}`} />
+                Refresh {selectedIds.length} selected
+              </Button>
+            )}
             <Button
               variant="outline"
               className="gap-2"
@@ -409,8 +425,20 @@ export default function AdminServices() {
               <table className="w-full">
                 <thead className="bg-secondary/50">
                   <tr>
+                    <th className="px-4 py-3 text-left">
+                      <input
+                        type="checkbox"
+                        aria-label="Select all services"
+                        className="h-4 w-4 accent-primary"
+                        checked={!!filteredServices?.length && selectedIds.length === filteredServices.length}
+                        onChange={(e) =>
+                          setSelectedIds(e.target.checked ? (filteredServices ?? []).map((s) => s.id) : [])
+                        }
+                      />
+                    </th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Service</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Category</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Provider / Last sync</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Min/Max</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Status</th>
                     <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
@@ -420,12 +448,30 @@ export default function AdminServices() {
                   {filteredServices.map((service) => (
                     <tr key={service.id} className="hover:bg-secondary/20 transition-colors">
                       <td className="px-4 py-4">
+                        <input
+                          type="checkbox"
+                          aria-label={`Select ${service.name}`}
+                          className="h-4 w-4 accent-primary"
+                          checked={selectedIds.includes(service.id)}
+                          onChange={(e) =>
+                            setSelectedIds((prev) =>
+                              e.target.checked
+                                ? [...prev, service.id]
+                                : prev.filter((id) => id !== service.id),
+                            )
+                          }
+                        />
+                      </td>
+                      <td className="px-4 py-4">
                         <div>
                           <p className="font-medium">{service.name}</p>
                           <p className="text-xs text-muted-foreground">ID: {service.provider_service_id}</p>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-sm text-muted-foreground">{service.category}</td>
+                      <td className="px-4 py-4">
+                        <SyncStatusCell service={service as any} />
+                      </td>
                       <td className="px-4 py-4 text-sm text-muted-foreground">
                         {service.min_quantity.toLocaleString()} / {service.max_quantity.toLocaleString()}
                       </td>
@@ -496,6 +542,49 @@ export default function AdminServices() {
         />
       </div>
     </DashboardLayout>
+  );
+}
+
+function SyncStatusCell({
+  service,
+}: {
+  service: {
+    provider_id: string | null;
+    last_price_sync_at: string | null;
+    last_price_sync_status: string | null;
+    last_price_sync_error: string | null;
+  };
+}) {
+  const status = service.last_price_sync_status;
+  const tone =
+    status === 'ok'
+      ? 'bg-success/15 text-success'
+      : status === 'failed' || status === 'missing'
+        ? 'bg-destructive/15 text-destructive'
+        : 'bg-muted text-muted-foreground';
+  const label = status === 'ok' ? 'Synced' : status === 'missing' ? 'Not on provider' : status === 'failed' ? 'Failed' : 'Never synced';
+
+  return (
+    <div className="space-y-1">
+      <p className="text-xs">
+        {service.provider_id ? (
+          <span className="font-medium">{service.provider_id}</span>
+        ) : (
+          <span className="text-muted-foreground">No provider linked</span>
+        )}
+      </p>
+      <span
+        className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-medium ${tone}`}
+        title={service.last_price_sync_error ?? undefined}
+      >
+        {label}
+      </span>
+      <p className="text-[10px] text-muted-foreground">
+        {service.last_price_sync_at
+          ? new Date(service.last_price_sync_at).toLocaleString()
+          : '—'}
+      </p>
+    </div>
   );
 }
 
