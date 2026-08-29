@@ -67,13 +67,20 @@ export default function Admin() {
   const toggleMaintenanceMutation = useMutation({
     mutationFn: async (enabled: boolean) => {
       const { data: existing } = await supabase.from('platform_settings').select('id').limit(1).maybeSingle();
-      if (!existing) throw new Error('No platform settings found');
-      const { error } = await supabase
-        .from('platform_settings')
-        .update({ maintenance_mode: enabled, updated_at: new Date().toISOString() } as any)
-        .eq('id', existing.id);
-      if (error) throw error;
+      if (existing) {
+        const { error } = await supabase
+          .from('platform_settings')
+          .update({ maintenance_mode: enabled, updated_at: new Date().toISOString() } as any)
+          .eq('id', existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('platform_settings')
+          .insert({ maintenance_mode: enabled } as any);
+        if (error) throw error;
+      }
     },
+
     onSuccess: (_, enabled) => {
       toast.success(enabled ? 'Maintenance mode enabled' : 'Maintenance mode disabled');
       queryClient.invalidateQueries({ queryKey: ['admin-dashboard-stats'] });
