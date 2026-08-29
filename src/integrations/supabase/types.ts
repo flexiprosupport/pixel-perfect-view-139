@@ -1255,6 +1255,9 @@ export type Database = {
           drop_type: string | null
           id: string
           is_active: boolean | null
+          last_price_sync_at: string | null
+          last_price_sync_error: string | null
+          last_price_sync_status: string | null
           max_quantity: number
           min_quantity: number
           name: string
@@ -1276,6 +1279,9 @@ export type Database = {
           drop_type?: string | null
           id?: string
           is_active?: boolean | null
+          last_price_sync_at?: string | null
+          last_price_sync_error?: string | null
+          last_price_sync_status?: string | null
           max_quantity?: number
           min_quantity?: number
           name: string
@@ -1297,6 +1303,9 @@ export type Database = {
           drop_type?: string | null
           id?: string
           is_active?: boolean | null
+          last_price_sync_at?: string | null
+          last_price_sync_error?: string | null
+          last_price_sync_status?: string | null
           max_quantity?: number
           min_quantity?: number
           name?: string
