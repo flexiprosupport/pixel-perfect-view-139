@@ -131,21 +131,29 @@ export default function Settings() {
       return;
     }
 
+    if (!/^image\/(png|jpe?g|webp|gif)$/i.test(file.type)) {
+      toast({ title: 'Unsupported file', description: 'Please upload a PNG, JPG, WEBP or GIF image', variant: 'destructive' });
+      return;
+    }
+
     setUploadingPhoto(true);
     try {
-      // Upload to Supabase Storage (avatars bucket)
-      const ext = file.name.split('.').pop();
-      const path = `${user.id}/avatar.${ext}`;
+      // Upload to Supabase Storage (private avatars bucket)
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = `${user.id}/avatar-${Date.now()}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(path, file, { upsert: true });
+        .upload(path, file, { upsert: true, contentType: file.type });
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
-      const publicUrl = urlData.publicUrl + '?t=' + Date.now();
+      // Signed URL (1 year) so private objects can still be displayed
+      const { data: urlData, error: signErr } = await supabase.storage
+        .from('avatars')
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (signErr) throw signErr;
+      const publicUrl = urlData.signedUrl;
 
       // Save URL to profile
       const { error: updateError } = await (supabase as any)
