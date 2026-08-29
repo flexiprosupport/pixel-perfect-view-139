@@ -71,6 +71,8 @@ import {
 } from 'lucide-react';
 import { Link, Navigate } from "@/lib/router-compat";
 import { Slider } from '@/components/ui/slider';
+import { useServerFn } from '@tanstack/react-start';
+import { importProviderServices } from '@/lib/providers.functions';
 import {
   PLATFORM_CONFIG,
   DEFAULT_RATIOS,
@@ -92,6 +94,7 @@ const ENGAGEMENT_ICONS: Record<EngagementType, any> = {
 };
 
 export default function AdminBundles() {
+  const importServicesFn = useServerFn(importProviderServices);
   const { user, isAdmin, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -1109,6 +1112,7 @@ function ProviderMappingDialog({
   platform?: string;
   onServiceLinked?: (bundleItemId: string, serviceId: string) => void;
 }) {
+  const importServicesFn = useServerFn(importProviderServices);
   const [serviceId, setServiceId] = useState(initialServiceId);
 
   // Sync with prop changes
