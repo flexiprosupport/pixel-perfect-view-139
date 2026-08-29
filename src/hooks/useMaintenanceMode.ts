@@ -12,11 +12,16 @@ export function useMaintenanceMode() {
       if (error) return false;
       return data ?? false;
     },
-    staleTime: 60000, // Cache for 60s - realtime handles instant updates
+    staleTime: 15_000,
     gcTime: 5 * 60 * 1000,
-    refetchOnMount: false, // Don't refetch on every component mount
-    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    // Fallback poll: realtime events are RLS-filtered, so non-admin clients
+    // may not receive the UPDATE payload. 30s keeps the switch effective.
+    refetchInterval: 30_000,
   });
+
 
   // Realtime subscription for INSTANT updates - no polling needed
   useEffect(() => {
