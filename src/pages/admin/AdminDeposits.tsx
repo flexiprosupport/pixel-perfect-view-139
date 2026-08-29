@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
+import { notifyUser } from '@/lib/notify.functions';
 import { adminPendingDepositAction } from '@/lib/admin-wallet.functions';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -86,6 +87,7 @@ export default function AdminDeposits() {
     });
 
     const callPendingDepositAction = useServerFn(adminPendingDepositAction);
+    const notify = useServerFn(notifyUser);
     const updateStatusMutation = useMutation({
         mutationFn: async ({ id, status, userId, amount }: { id: string, status: 'completed' | 'failed', userId: string, amount: number }) => {
             // Approvals/rejections go through the authenticated server function,
@@ -107,25 +109,21 @@ export default function AdminDeposits() {
                 description: 'The operation was processed successfully.',
             });
 
-            // Log to Telegram (with user photo if available)
+            // Notify the user in-app about the decision
             try {
-                const profile = deposit?.profiles as any;
-                const tgMessage = `<b>${statusText}: Deposit Request</b>\n\n` +
-                    `👤 <b>User:</b> ${profile?.full_name || 'Unknown'}\n` +
-                    `📧 <b>Email:</b> ${profile?.email}\n` +
-                    `💰 <b>Amount:</b> $${variables.amount}\n` +
-                    `🆔 <b>ID:</b> <code>${deposit?.payment_reference}</code>\n` +
-                    `📅 <b>Action Date:</b> ${new Date().toLocaleString()}`;
-
-                await supabase.functions.invoke('send-telegram-notification', {
-                    body: {
-                        message: tgMessage,
-                        // Send profile photo URL if user has one
-                        ...(profile?.avatar_url ? { photo_url: profile.avatar_url } : {}),
-                    },
-                });
+                const deposited = deposit?.profiles as any;
+                if (deposit?.user_id) {
+                    await notify({
+                        data: {
+                            target_user_id: deposit.user_id as string,
+                            title: `Deposit ${variables.status === 'completed' ? 'approved' : 'rejected'}`,
+                            body: `${statusText} — $${variables.amount} (${deposited?.email ?? ''})`.trim(),
+                            link: '/wallet',
+                        },
+                    });
+                }
             } catch (e) {
-                console.error('TG log failed:', e);
+                console.error('Notification failed:', e);
             }
 
             queryClient.invalidateQueries({ queryKey: ['admin-pending-deposits'] });
