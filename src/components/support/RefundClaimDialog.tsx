@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2, Paperclip, ReceiptText, Send, X } from "lucide-react";
 import type { Json } from "@/integrations/supabase/types";
+import { useServerFn } from "@tanstack/react-start";
+import { sendTicketReceipt } from "@/lib/support-email.functions";
 import {
   MAX_PROOF_FILES,
   PROOF_ACCEPT,
@@ -70,6 +72,7 @@ export function RefundClaimDialog() {
   const [proof, setProof] = useState("");
   const [remedy, setRemedy] = useState("redelivery");
   const [details, setDetails] = useState("");
+  const sendReceipt = useServerFn(sendTicketReceipt);
   const [files, setFiles] = useState<File[]>([]);
   const [fileErrors, setFileErrors] = useState<string[]>([]);
 
