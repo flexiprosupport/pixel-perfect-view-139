@@ -11,6 +11,8 @@ interface DashboardLayoutProps { children: ReactNode; }
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith('/admin');
 
   useEffect(() => {
     if (!isLoading && !user) navigate('/auth');
