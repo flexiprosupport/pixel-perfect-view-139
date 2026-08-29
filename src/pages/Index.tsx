@@ -344,7 +344,7 @@ const Index = () => {
               ].map((s, i) => (
                 <div
                   key={s.step}
-                  className="relative rounded-2xl p-5 reveal-up"
+                  className="relative rounded-2xl p-4 sm:p-5 reveal-up"
                   style={{
                     animationDelay: `${i * 80}ms`,
                     background: C.paper,
@@ -352,14 +352,15 @@ const Index = () => {
                     boxShadow: '0 8px 24px rgba(15,23,42,.05)',
                   }}
                 >
-                  <span className="absolute -top-3 -right-3 text-[10px] font-mono font-bold tracking-widest px-2.5 py-1 rounded-full"
+                  <span className="absolute -top-2.5 -right-2.5 sm:-top-3 sm:-right-3 text-[10px] font-mono font-bold tracking-widest px-2.5 py-1 rounded-full"
                         style={{ background: C.ink, color: '#fff' }}>{s.step}</span>
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl flex items-center justify-center mb-3 sm:mb-4"
                        style={{ background: C.blueSoft }}>
-                    <s.icon className="w-5 h-5" style={{ color: C.blue }} />
+                    <s.icon className="w-[18px] h-[18px] sm:w-5 sm:h-5" style={{ color: C.blue }} />
                   </div>
-                  <h3 className="text-[14.5px] font-bold mb-1.5" style={{ color: C.ink }}>{s.title}</h3>
-                  <p className="text-[12.5px] leading-relaxed" style={{ color: C.slate }}>{s.desc}</p>
+                  <h3 className="text-[15px] sm:text-[14.5px] font-bold mb-1.5 tracking-[-0.01em]" style={{ color: C.ink }}>{s.title}</h3>
+                  <p className="text-[13px] sm:text-[12.5px] leading-[1.55]" style={{ color: C.slate }}>{s.desc}</p>
+
                 </div>
               ))}
             </div>
