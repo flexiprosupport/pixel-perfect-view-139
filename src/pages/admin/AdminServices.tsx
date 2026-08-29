@@ -269,7 +269,7 @@ export default function AdminServices() {
               onClick={async () => {
                 setIsSyncingPrices(true);
                 try {
-                  const data = await syncPricesFn({ data: {} });
+                  const data = await syncPricesFn({});
                   toast.success(`${data.updated} service prices synced from providers!`);
                   if (data.errors?.length) toast.error(data.errors[0]);
                   queryClient.invalidateQueries({ queryKey: ['admin-all-services'] });

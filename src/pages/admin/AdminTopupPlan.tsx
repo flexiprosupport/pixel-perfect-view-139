@@ -140,7 +140,7 @@ export default function AdminTopupPlan() {
     let cancelled = false;
     const syncBalances = async () => {
       try {
-        await syncBalancesFn({ data: {} });
+        await syncBalancesFn({});
         if (!cancelled) {
           queryClient.invalidateQueries({ queryKey: ["topup-plan-accounts"] });
         }
