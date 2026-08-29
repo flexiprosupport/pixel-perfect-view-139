@@ -85,8 +85,8 @@ export function RefundClaimDialog() {
         throw new Error("Order ID is required");
       if (isFundingIssue && !paymentRef.trim())
         throw new Error("Payment reference / transaction hash is required");
-      if (!proof.trim())
-        throw new Error("Please add proof (screenshot link, transaction reference or timestamps)");
+      if (!proof.trim() && files.length === 0)
+        throw new Error("Please add proof — attach a file or describe your evidence");
 
       const issueLabel =
         ISSUE_TYPES.find((i) => i.value === issueType)?.label ?? issueType;
@@ -94,6 +94,8 @@ export function RefundClaimDialog() {
         PAYMENT_METHODS.find((p) => p.value === paymentMethod)?.label ?? paymentMethod;
       const remedyLabel =
         REMEDIES.find((r) => r.value === remedy)?.label ?? remedy;
+
+      const attachments = await uploadProofFiles(user.id, files);
 
       const message = [
         `Claim type: ${issueLabel}`,
@@ -106,7 +108,8 @@ export function RefundClaimDialog() {
         `Preferred remedy: ${remedyLabel}`,
         "",
         "Proof provided:",
-        proof.trim(),
+        proof.trim() || "—",
+        `Attached files: ${attachments.length ? attachments.map((a) => a.name).join(", ") : "none"}`,
         "",
         "Additional details:",
         details.trim() || "—",
@@ -121,6 +124,7 @@ export function RefundClaimDialog() {
           category: isFundingIssue ? "payment" : "order",
           priority: "high",
           status: "open",
+          attachments: attachments as unknown as Json,
         })
         .select()
         .single();
@@ -128,6 +132,7 @@ export function RefundClaimDialog() {
       if (error) throw error;
       return data;
     },
+
     onSuccess: () => {
       toast({
         title: "Refund claim submitted",
