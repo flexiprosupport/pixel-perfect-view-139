@@ -451,21 +451,18 @@ export default function AdminBundles() {
       let failCount = 0;
 
       for (const [providerId, serviceIds] of providers) {
-        const { data: result, error } = await supabase.functions.invoke('import-services', {
-          body: {
-            provider_id: providerId,
-            action: 'import',
-            service_ids: Array.from(serviceIds),
-            markup_percent: 0,
-          },
-        });
-
-        if (error || result?.error) {
-          console.error(`Sync failed for provider ${providerId}:`, error || result?.error);
-          failCount += serviceIds.size;
-        } else {
+        try {
+          await importServicesFn({
+            data: {
+              provider_id: providerId,
+              service_ids: Array.from(serviceIds),
+              markup_percent: 0,
+            },
+          });
           successCount += serviceIds.size;
-          console.log(`Synced ${serviceIds.size} services from provider ${providerId}`);
+        } catch (err) {
+          console.error(`Sync failed for provider ${providerId}:`, err);
+          failCount += serviceIds.size;
         }
       }
 
@@ -1206,15 +1203,20 @@ function ProviderMappingDialog({
           : undefined;
 
         // Auto-import the service
-        const { data: importResult, error: importError } = await supabase.functions.invoke('import-services', {
-          body: {
-            provider_id: acct.provider_id,
-            action: 'import',
-            service_ids: [data.serviceId.trim()],
-            category_override: categoryOverride,
-            markup_percent: 0,
-          },
-        });
+        let importResult: any = null;
+        let importError: Error | null = null;
+        try {
+          importResult = await importServicesFn({
+            data: {
+              provider_id: acct.provider_id,
+              service_ids: [data.serviceId.trim()],
+              ...(categoryOverride ? { category_override: categoryOverride } : {}),
+              markup_percent: 0,
+            },
+          });
+        } catch (err: any) {
+          importError = err instanceof Error ? err : new Error(String(err));
+        }
 
         console.log('[ProviderMapping] Import result:', importResult, 'Error:', importError);
 
@@ -1346,16 +1348,15 @@ function ProviderMappingDialog({
       // Reimport services from each provider (updates existing services with real prices)
       await Promise.all(
         Object.values(reimportByProvider).map(({ providerId, serviceIds }) =>
-          supabase.functions.invoke('import-services', {
-            body: {
+          importServicesFn({
+            data: {
               provider_id: providerId,
-              action: 'import',
               service_ids: Array.from(serviceIds),
-              category_override: categoryOverride,
+              ...(categoryOverride ? { category_override: categoryOverride } : {}),
               markup_percent: 0,
             },
           }).then(res => {
-            console.log(`[ProviderMapping] Price refresh for provider ${providerId}:`, res.data);
+            console.log(`[ProviderMapping] Price refresh for provider ${providerId}:`, res);
           }).catch(err => {
             console.warn(`[ProviderMapping] Price refresh failed for ${providerId}:`, err);
           })

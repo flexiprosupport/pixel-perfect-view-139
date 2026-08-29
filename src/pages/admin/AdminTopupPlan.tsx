@@ -11,6 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ArrowLeft, Copy, RefreshCw, Wallet, AlertCircle, CheckCircle2, ChevronDown, ChevronRight, Radio, AlertTriangle } from "lucide-react";
 import { useNavigate } from "@/lib/router-compat";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { syncProviderBalances } from "@/lib/providers.functions";
 
 interface PendingRow {
   provider_id: string;
@@ -52,6 +54,7 @@ interface TopUserRow {
 }
 
 export default function AdminTopupPlan() {
+  const syncBalancesFn = useServerFn(syncProviderBalances);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const usdToInr = 90; // fixed
