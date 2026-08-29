@@ -76,7 +76,33 @@ export default function ApiAccess() {
         ? apiKey.slice(0, 8) + '••••••••••••••••••••••••••••••••' + apiKey.slice(-6)
         : null;
 
+
+    if (isLoading) {
+        return (
+            <DashboardLayout>
+                <div className="max-w-4xl mx-auto px-4 py-20 text-center text-sm text-muted-foreground">Loading…</div>
+            </DashboardLayout>
+        );
+    }
+
+    if (!user) {
+        return (
+            <DashboardLayout>
+                <PageMeta title="API Access" description="Sign in to generate your FlexiPro API key." canonicalPath="/api-access" noIndex />
+                <div className="max-w-md mx-auto px-4 py-20 text-center space-y-4">
+                    <Shield className="h-8 w-8 mx-auto text-muted-foreground" />
+                    <h1 className="text-xl font-bold">Sign in required</h1>
+                    <p className="text-sm text-muted-foreground">
+                        API keys sirf registered accounts ke liye hain. Please sign in ya account banao.
+                    </p>
+                    <Button onClick={() => navigate('/auth')}>Sign in / Sign up</Button>
+                </div>
+            </DashboardLayout>
+        );
+    }
+
     return (
+
         <DashboardLayout>
             <PageMeta title="API Access & Reseller Docs" description="Generate your FlexiPro API key and integrate our SMM services into your own panel or workflow." canonicalPath="/api-access" noIndex />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 pb-10">
