@@ -50,6 +50,8 @@ import {
   Mail
 } from "lucide-react";
 import { PageMeta } from "@/components/seo/PageMeta";
+import { RefundClaimDialog } from "@/components/support/RefundClaimDialog";
+
 import { format } from "date-fns";
 
 const CATEGORIES = [
