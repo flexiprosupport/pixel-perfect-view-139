@@ -112,6 +112,8 @@ export const adminWalletAction = createServerFn({ method: 'POST' })
       target_user_id: data.target_user_id,
       target_email: targetProfile?.email ?? null,
       action: data.action === 'add' ? 'wallet_credit' : 'wallet_debit',
+      amount_inr: data.inr_amount,
+      amount_usd: usdAmount,
       notes: `₹${data.inr_amount} ($${usdAmount})`,
       metadata: {
         inr_amount: data.inr_amount,
