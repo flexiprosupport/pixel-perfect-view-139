@@ -211,7 +211,7 @@ export default function ApiAccess() {
                             label="Services List"
                             description="Sare available services aur unke rates dekkhein"
                             request={`{\n  "key": "YOUR_API_KEY",\n  "action": "services"\n}`}
-                            response={`{\n  "status": "ok",\n  "services": [\n    {\n      "service": 1001,\n      "name": "Instagram Followers",\n      "category": "Instagram",\n      "rate": "0.50",\n      "min": 100,\n      "max": 50000\n    }\n  ]\n}`}
+                            response={`{\n  "status": "ok",\n  "services": [\n    {\n      "service": "8f3c1b2e-...-service-id",\n      "name": "Instagram Followers",\n      "category": "Instagram",\n      "rate": "0.50",\n      "min": 100,\n      "max": 50000\n    }\n  ]\n}`}
                             onCopyRequest={() =>
                                 handleCopy(`{\n  "key": "${apiKey || 'YOUR_API_KEY'}",\n  "action": "services"\n}`)
                             }
