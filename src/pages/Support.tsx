@@ -237,9 +237,11 @@ export default function Support() {
                   <p className="text-sm text-muted-foreground">Get help with your orders and account</p>
                 </div>
               </div>
-              
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <RefundClaimDialog />
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
+
                   <Button className="gap-2 w-full sm:w-auto">
                     <Plus className="h-4 w-4" />
                     New Ticket
