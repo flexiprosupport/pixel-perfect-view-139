@@ -32,11 +32,15 @@ export const adminWalletAction = createServerFn({ method: 'POST' })
     const callerId = context.userId as string;
     const callerClient = context.supabase;
 
-    // Must be an admin at all (checked server-side via RLS-backed role table).
-    const { data: isAdmin } = await callerClient.rpc('has_role', {
-      _user_id: callerId,
-      _role: 'admin',
-    });
+    // Must be an admin at all (checked server-side against the RLS-backed
+    // role table; the has_role RPC has ambiguous overloads over PostgREST).
+    const { data: roleRow } = await callerClient
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', callerId)
+      .eq('role', 'admin')
+      .maybeSingle();
+    const isAdmin = !!roleRow;
     if (!isAdmin) throw new Error('Admins only');
 
     // Manual wallet adjustments are allowed for any verified admin (checked
@@ -130,11 +134,13 @@ export const adminPendingDepositAction = createServerFn({ method: 'POST' })
   .inputValidator((input) => pendingDepositSchema.parse(input))
   .handler(async ({ data, context }) => {
     const callerId = context.userId as string;
-    const { data: isAdmin } = await context.supabase.rpc('has_role', {
-      _user_id: callerId,
-      _role: 'admin',
-    });
-    if (!isAdmin) throw new Error('Admins only');
+    const { data: roleRow } = await context.supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', callerId)
+      .eq('role', 'admin')
+      .maybeSingle();
+    if (!roleRow) throw new Error('Admins only');
 
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { data: tx } = await supabaseAdmin
