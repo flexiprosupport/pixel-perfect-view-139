@@ -250,36 +250,25 @@ export default function Settings() {
     });
   };
 
-  const generateApiKey = () => {
+  const generateApiKey = async () => {
     if (!user) return;
 
-    const newKey = `sk_live_${crypto.randomUUID().replace(/-/g, '')}`;
+    const { data, error } = await supabase.rpc('rotate_my_api_key' as any);
 
-    // 🚀 INSTANT: Update UI and show success immediately
-    setApiKey(newKey);
+    if (error || !data) {
+      toast({
+        title: "Error",
+        description: error?.message || "Failed to generate API key",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setApiKey(data as unknown as string);
     toast({
       title: "API Key Generated",
       description: "Your new API key has been created. Keep it safe!",
     });
-
-    // Fire-and-forget: Process in background
-    supabase
-      .from('profiles')
-      .update({
-        api_key: newKey,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('user_id', user.id)
-      .then(({ error }) => {
-        if (error) {
-          toast({
-            title: "Error",
-            description: "Failed to save API key - please refresh",
-            variant: "destructive",
-          });
-        }
-        refreshProfile();
-      });
   };
 
   const copyApiKey = async () => {
