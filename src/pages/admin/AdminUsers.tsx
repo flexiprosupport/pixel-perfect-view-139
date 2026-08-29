@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { adminWalletAction } from '@/lib/admin-wallet.functions';
+import { adminSetUserRole, adminBanUser, adminUnbanUser } from '@/lib/admin-roles.functions';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
