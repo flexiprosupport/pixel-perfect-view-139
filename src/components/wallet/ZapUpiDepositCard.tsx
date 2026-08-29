@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import {
   Loader2, Zap, IndianRupee, ShieldCheck, ArrowRight, ExternalLink, RefreshCw, Clock, CheckCircle2, XCircle,
 } from 'lucide-react';
-import { createZapupiOrder, syncZapupiDeposit, listMyZapupiDeposits } from '@/lib/zapupi.functions';
+import { createZapupiOrder, syncZapupiDeposit, listMyZapupiDeposits, zapupiDepositTimeline } from '@/lib/zapupi.functions';
 
 const MIN_INR = 100;
 const QUICK = [100, 500, 1000, 2000, 5000];
@@ -18,6 +18,22 @@ type Deposit = {
   credited: boolean;
   payment_url: string | null;
   created_at: string;
+  credited_at?: string | null;
+  utr?: string | null;
+  verify_attempts?: number | null;
+  last_verify_error?: string | null;
+  next_verify_at?: string | null;
+};
+
+type TimelineEntry = {
+  at: string;
+  source: string | null;
+  status: string | null;
+  utr: string | null;
+  txn_id: string | null;
+  processed: boolean | null;
+  amount_match: boolean | null;
+  note: string | null;
 };
 
 export default function ZapUpiDepositCard() {
@@ -25,10 +41,29 @@ export default function ZapUpiDepositCard() {
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState<string | null>(null);
   const [recent, setRecent] = useState<Deposit[]>([]);
+  const [openTimeline, setOpenTimeline] = useState<string | null>(null);
+  const [timelines, setTimelines] = useState<Record<string, TimelineEntry[]>>({});
+  const [timelineLoading, setTimelineLoading] = useState<string | null>(null);
 
   const createOrder = useServerFn(createZapupiOrder);
   const syncDeposit = useServerFn(syncZapupiDeposit);
   const listDeposits = useServerFn(listMyZapupiDeposits);
+  const loadTimeline = useServerFn(zapupiDepositTimeline);
+
+  const toggleTimeline = async (orderId: string) => {
+    if (openTimeline === orderId) return setOpenTimeline(null);
+    setOpenTimeline(orderId);
+    if (timelines[orderId]) return;
+    setTimelineLoading(orderId);
+    try {
+      const res: any = await loadTimeline({ data: { order_id: orderId } });
+      if (res?.ok) setTimelines((prev) => ({ ...prev, [orderId]: res.events ?? [] }));
+    } catch {
+      /* silent */
+    } finally {
+      setTimelineLoading(null);
+    }
+  };
 
   const refreshRecent = async (): Promise<Deposit[]> => {
     try {
