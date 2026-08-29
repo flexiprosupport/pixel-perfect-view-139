@@ -36,8 +36,11 @@ import { Link, Navigate } from "@/lib/router-compat";
 import { toast } from 'sonner';
 import type { Service } from '@/lib/supabase';
 import { ImportServicesDialog } from '@/components/admin/ImportServicesDialog';
+import { useServerFn } from '@tanstack/react-start';
+import { syncProviderPrices } from '@/lib/providers.functions';
 
 export default function AdminServices() {
+  const syncPricesFn = useServerFn(syncProviderPrices);
   const { isAdmin, isLoading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
@@ -266,12 +269,9 @@ export default function AdminServices() {
               onClick={async () => {
                 setIsSyncingPrices(true);
                 try {
-                  const { data, error } = await supabase.functions.invoke('sync-service-prices', {
-                    body: {},
-                  });
-                  if (error) throw error;
-                  if (data?.error) throw new Error(data.error);
+                  const data = await syncPricesFn({});
                   toast.success(`${data.updated} service prices synced from providers!`);
+                  if (data.errors?.length) toast.error(data.errors[0]);
                   queryClient.invalidateQueries({ queryKey: ['admin-all-services'] });
                 } catch (err: any) {
                   toast.error(err.message || 'Sync failed');

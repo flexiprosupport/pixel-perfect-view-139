@@ -11,6 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ArrowLeft, Copy, RefreshCw, Wallet, AlertCircle, CheckCircle2, ChevronDown, ChevronRight, Radio, AlertTriangle } from "lucide-react";
 import { useNavigate } from "@/lib/router-compat";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { syncProviderBalances } from "@/lib/providers.functions";
 
 interface PendingRow {
   provider_id: string;
@@ -52,6 +54,7 @@ interface TopUserRow {
 }
 
 export default function AdminTopupPlan() {
+  const syncBalancesFn = useServerFn(syncProviderBalances);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const usdToInr = 90; // fixed
@@ -137,7 +140,7 @@ export default function AdminTopupPlan() {
     let cancelled = false;
     const syncBalances = async () => {
       try {
-        await supabase.functions.invoke("check-provider-balance", { body: {} });
+        await syncBalancesFn({});
         if (!cancelled) {
           queryClient.invalidateQueries({ queryKey: ["topup-plan-accounts"] });
         }
@@ -148,7 +151,7 @@ export default function AdminTopupPlan() {
     syncBalances();
     const id = setInterval(syncBalances, 60000);
     return () => { cancelled = true; clearInterval(id); };
-  }, [queryClient]);
+  }, [queryClient, syncBalancesFn]);
 
   // Group breakdown rows per provider
   const breakdownByProvider = useMemo(() => {

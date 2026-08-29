@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useServerFn } from '@tanstack/react-start';
+import { fetchProviderServices, importProviderServices } from '@/lib/providers.functions';
 import {
   Dialog,
   DialogContent,
@@ -50,6 +52,8 @@ export function ImportServicesDialog({ open, onOpenChange, onImportSuccess }: Im
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedServices, setSelectedServices] = useState<Set<string>>(new Set());
   const [markupPercent, setMarkupPercent] = useState(0);
+  const fetchServicesFn = useServerFn(fetchProviderServices);
+  const importServicesFn = useServerFn(importProviderServices);
 
   // Fetch unique providers from provider_accounts
   const { data: providers } = useQuery({
@@ -78,20 +82,10 @@ export function ImportServicesDialog({ open, onOpenChange, onImportSuccess }: Im
   const { data: providerServices, isLoading: loadingServices, refetch: fetchServices, isFetching } = useQuery({
     queryKey: ['provider-services', selectedProvider, searchQuery],
     queryFn: async () => {
-      const { data: session } = await supabase.auth.getSession();
-      if (!session.session) throw new Error('Not authenticated');
-
-      const response = await supabase.functions.invoke('import-services', {
-        body: {
-          provider_id: selectedProvider,
-          action: 'fetch',
-          search_query: searchQuery,
-          markup_percent: markupPercent,
-        },
+      const result = await fetchServicesFn({
+        data: { provider_id: selectedProvider, search_query: searchQuery },
       });
-
-      if (response.error) throw response.error;
-      return response.data as { services: ProviderService[]; total: number; filtered: number };
+      return result as { services: ProviderService[]; total: number; filtered: number };
     },
     enabled: !!selectedProvider,
   });
@@ -103,20 +97,13 @@ export function ImportServicesDialog({ open, onOpenChange, onImportSuccess }: Im
         throw new Error('No services selected');
       }
 
-      const { data: session } = await supabase.auth.getSession();
-      if (!session.session) throw new Error('Not authenticated');
-
-      const response = await supabase.functions.invoke('import-services', {
-        body: {
+      return await importServicesFn({
+        data: {
           provider_id: selectedProvider,
-          action: 'import',
           service_ids: Array.from(selectedServices),
           markup_percent: markupPercent,
         },
       });
-
-      if (response.error) throw response.error;
-      return response.data;
     },
     onSuccess: (data) => {
       toast.success(`Successfully imported ${data.imported} services${data.updated > 0 ? `, updated ${data.updated}` : ''}`);

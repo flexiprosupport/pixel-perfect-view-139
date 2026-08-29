@@ -71,6 +71,8 @@ import {
 } from 'lucide-react';
 import { Link, Navigate } from "@/lib/router-compat";
 import { Slider } from '@/components/ui/slider';
+import { useServerFn } from '@tanstack/react-start';
+import { importProviderServices } from '@/lib/providers.functions';
 import {
   PLATFORM_CONFIG,
   DEFAULT_RATIOS,
@@ -92,6 +94,7 @@ const ENGAGEMENT_ICONS: Record<EngagementType, any> = {
 };
 
 export default function AdminBundles() {
+  const importServicesFn = useServerFn(importProviderServices);
   const { user, isAdmin, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -451,21 +454,18 @@ export default function AdminBundles() {
       let failCount = 0;
 
       for (const [providerId, serviceIds] of providers) {
-        const { data: result, error } = await supabase.functions.invoke('import-services', {
-          body: {
-            provider_id: providerId,
-            action: 'import',
-            service_ids: Array.from(serviceIds),
-            markup_percent: 0,
-          },
-        });
-
-        if (error || result?.error) {
-          console.error(`Sync failed for provider ${providerId}:`, error || result?.error);
-          failCount += serviceIds.size;
-        } else {
+        try {
+          await importServicesFn({
+            data: {
+              provider_id: providerId,
+              service_ids: Array.from(serviceIds),
+              markup_percent: 0,
+            },
+          });
           successCount += serviceIds.size;
-          console.log(`Synced ${serviceIds.size} services from provider ${providerId}`);
+        } catch (err) {
+          console.error(`Sync failed for provider ${providerId}:`, err);
+          failCount += serviceIds.size;
         }
       }
 
@@ -1112,6 +1112,7 @@ function ProviderMappingDialog({
   platform?: string;
   onServiceLinked?: (bundleItemId: string, serviceId: string) => void;
 }) {
+  const importServicesFn = useServerFn(importProviderServices);
   const [serviceId, setServiceId] = useState(initialServiceId);
 
   // Sync with prop changes
@@ -1206,15 +1207,20 @@ function ProviderMappingDialog({
           : undefined;
 
         // Auto-import the service
-        const { data: importResult, error: importError } = await supabase.functions.invoke('import-services', {
-          body: {
-            provider_id: acct.provider_id,
-            action: 'import',
-            service_ids: [data.serviceId.trim()],
-            category_override: categoryOverride,
-            markup_percent: 0,
-          },
-        });
+        let importResult: any = null;
+        let importError: Error | null = null;
+        try {
+          importResult = await importServicesFn({
+            data: {
+              provider_id: acct.provider_id,
+              service_ids: [data.serviceId.trim()],
+              ...(categoryOverride ? { category_override: categoryOverride } : {}),
+              markup_percent: 0,
+            },
+          });
+        } catch (err: any) {
+          importError = err instanceof Error ? err : new Error(String(err));
+        }
 
         console.log('[ProviderMapping] Import result:', importResult, 'Error:', importError);
 
@@ -1346,16 +1352,15 @@ function ProviderMappingDialog({
       // Reimport services from each provider (updates existing services with real prices)
       await Promise.all(
         Object.values(reimportByProvider).map(({ providerId, serviceIds }) =>
-          supabase.functions.invoke('import-services', {
-            body: {
+          importServicesFn({
+            data: {
               provider_id: providerId,
-              action: 'import',
               service_ids: Array.from(serviceIds),
-              category_override: categoryOverride,
+              ...(categoryOverride ? { category_override: categoryOverride } : {}),
               markup_percent: 0,
             },
           }).then(res => {
-            console.log(`[ProviderMapping] Price refresh for provider ${providerId}:`, res.data);
+            console.log(`[ProviderMapping] Price refresh for provider ${providerId}:`, res);
           }).catch(err => {
             console.warn(`[ProviderMapping] Price refresh failed for ${providerId}:`, err);
           })

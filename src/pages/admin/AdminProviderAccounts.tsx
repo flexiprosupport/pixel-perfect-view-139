@@ -15,6 +15,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Edit, Trash2, Key, Clock, Link as LinkIcon, ArrowLeft } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "@/lib/router-compat";
+import { useServerFn } from "@tanstack/react-start";
+import { saveProviderAccount, testProviderAccount } from "@/lib/providers.functions";
 
 interface ProviderAccount {
   id: string;
@@ -38,6 +40,10 @@ interface Provider {
 
 export default function AdminProviderAccounts() {
   const navigate = useNavigate();
+  const saveAccountFn = useServerFn(saveProviderAccount);
+  const testAccountFn = useServerFn(testProviderAccount);
+  const [testResult, setTestResult] = useState<string | null>(null);
+  const [isTesting, setIsTesting] = useState(false);
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<ProviderAccount | null>(null);
@@ -83,40 +89,27 @@ export default function AdminProviderAccounts() {
   // Create/Update mutation
   const saveMutation = useMutation({
     mutationFn: async (data: typeof formData & { id?: string }) => {
-      if (data.id) {
-        // Update
-        const { error } = await supabase
-          .from("provider_accounts")
-          .update({
-            provider_id: data.provider_id,
-            name: data.name,
-            api_key: data.api_key,
-            api_url: data.api_url,
-            priority: data.priority,
-            is_active: data.is_active,
-            delivery_multiplier: data.delivery_multiplier,
-          })
-          .eq("id", data.id);
-        if (error) throw error;
-      } else {
-        // Create
-        const { error } = await supabase
-          .from("provider_accounts")
-          .insert({
-            provider_id: data.provider_id,
-            name: data.name,
-            api_key: data.api_key,
-            api_url: data.api_url,
-            priority: data.priority,
-            is_active: data.is_active,
-            delivery_multiplier: data.delivery_multiplier,
-          });
-        if (error) throw error;
-      }
+      // Server function verifies the provider credentials, registers the
+      // provider row (services.provider_id FK) and saves the account.
+      return await saveAccountFn({
+        data: {
+          ...(data.id ? { id: data.id } : {}),
+          provider_id: data.provider_id.trim(),
+          name: data.name.trim(),
+          api_key: data.api_key.trim(),
+          api_url: data.api_url.trim(),
+          priority: Number(data.priority) || 1,
+          is_active: data.is_active,
+          delivery_multiplier: Number(data.delivery_multiplier) || 1,
+        },
+      });
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["provider-accounts"] });
-      toast.success(editingAccount ? "Account updated!" : "Account created!");
+      queryClient.invalidateQueries({ queryKey: ["providers"] });
+      toast.success(
+        `${editingAccount ? "Account updated" : "Account connected"} — balance ${result.balance} ${result.currency}`,
+      );
       setIsDialogOpen(false);
       resetForm();
     },
@@ -124,6 +117,23 @@ export default function AdminProviderAccounts() {
       toast.error(error.message || "Failed to save account");
     },
   });
+
+  const handleTestConnection = async () => {
+    setIsTesting(true);
+    setTestResult(null);
+    try {
+      const res = await testAccountFn({
+        data: { api_url: formData.api_url.trim(), api_key: formData.api_key.trim() },
+      });
+      setTestResult(`Connected — balance ${res.balance} ${res.currency}`);
+      toast.success("Provider connection successful");
+    } catch (err: any) {
+      setTestResult(err?.message || "Connection failed");
+      toast.error(err?.message || "Connection failed");
+    } finally {
+      setIsTesting(false);
+    }
+  };
 
   // Delete mutation
   const deleteMutation = useMutation({
@@ -215,6 +225,7 @@ export default function AdminProviderAccounts() {
       is_active: true,
       delivery_multiplier: 1,
     });
+    setTestResult(null);
     setEditingAccount(null);
   };
 
@@ -380,7 +391,19 @@ export default function AdminProviderAccounts() {
                   </div>
                 </div>
                 
+                {testResult && (
+                  <p className="text-xs text-muted-foreground pb-2">{testResult}</p>
+                )}
+
                 <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isTesting || !formData.api_url || !formData.api_key}
+                    onClick={handleTestConnection}
+                  >
+                    {isTesting ? "Testing..." : "Test connection"}
+                  </Button>
                   <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                     Cancel
                   </Button>
