@@ -30,19 +30,51 @@ export default function ZapUpiDepositCard() {
   const syncDeposit = useServerFn(syncZapupiDeposit);
   const listDeposits = useServerFn(listMyZapupiDeposits);
 
-  const refreshRecent = async () => {
+  const refreshRecent = async (): Promise<Deposit[]> => {
     try {
       const res = await listDeposits({});
-      setRecent(res.deposits ?? []);
+      const list = (res.deposits ?? []) as Deposit[];
+      setRecent(list);
+      return list;
     } catch {
-      /* silent — status list is informational */
+      return [];
     }
   };
 
   useEffect(() => {
-    void refreshRecent();
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    // Auto-verification: silently ask the gateway about any uncredited deposit
+    // so the wallet is credited without the user pressing "check".
+    const tick = async () => {
+      const list = await refreshRecent();
+      if (cancelled) return;
+
+      const pending = list.filter((d) => !d.credited && ['pending', 'processing'].includes(d.status));
+      for (const dep of pending) {
+        try {
+          const res: any = await syncDeposit({ data: { order_id: dep.order_id } });
+          if (!cancelled && res?.credited && !res?.already) {
+            toast.success(`₹${dep.amount_inr} received — wallet credited`);
+            await refreshRecent();
+          }
+        } catch {
+          /* silent — the scheduler retries too */
+        }
+      }
+
+      if (!cancelled) timer = setTimeout(tick, pending.length > 0 ? 10_000 : 30_000);
+    };
+
+    void tick();
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const openPaymentPage = (payUrl: string) => {
     const isEmbedded = (() => {

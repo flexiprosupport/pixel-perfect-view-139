@@ -49,6 +49,7 @@ import { Route as ApiPublicV2RouteImport } from './routes/api/public/v2'
 import { Route as ApiPublicZapupiReturnRouteImport } from './routes/api/public/zapupi-return'
 import { Route as ApiPublicZapupiWebhookRouteImport } from './routes/api/public/zapupi-webhook'
 import { Route as ApiPublicCronEngagementRouteImport } from './routes/api/public/cron/engagement'
+import { Route as ApiPublicCronZapupiRouteImport } from './routes/api/public/cron/zapupi'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const IndexRoute = IndexRouteImport.update({
@@ -253,6 +254,11 @@ const ApiPublicCronEngagementRoute = ApiPublicCronEngagementRouteImport.update({
   path: '/api/public/cron/engagement',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronZapupiRoute = ApiPublicCronZapupiRouteImport.update({
+  id: '/api/public/cron/zapupi',
+  path: '/api/public/cron/zapupi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -301,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
   '/api/public/cron/engagement': typeof ApiPublicCronEngagementRoute
+  '/api/public/cron/zapupi': typeof ApiPublicCronZapupiRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
@@ -344,6 +351,7 @@ export interface FileRoutesByTo {
   '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
   '/api/public/cron/engagement': typeof ApiPublicCronEngagementRoute
+  '/api/public/cron/zapupi': typeof ApiPublicCronZapupiRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
@@ -388,6 +396,7 @@ export interface FileRoutesById {
   '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
   '/api/public/cron/engagement': typeof ApiPublicCronEngagementRoute
+  '/api/public/cron/zapupi': typeof ApiPublicCronZapupiRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
@@ -433,6 +442,7 @@ export interface FileRouteTypes {
     | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
     | '/api/public/cron/engagement'
+    | '/api/public/cron/zapupi'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -476,6 +486,7 @@ export interface FileRouteTypes {
     | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
     | '/api/public/cron/engagement'
+    | '/api/public/cron/zapupi'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
@@ -519,6 +530,7 @@ export interface FileRouteTypes {
     | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
     | '/api/public/cron/engagement'
+    | '/api/public/cron/zapupi'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
@@ -562,6 +574,7 @@ export interface RootRouteChildren {
   ApiPublicZapupiReturnRoute: typeof ApiPublicZapupiReturnRoute
   ApiPublicZapupiWebhookRoute: typeof ApiPublicZapupiWebhookRoute
   ApiPublicCronEngagementRoute: typeof ApiPublicCronEngagementRoute
+  ApiPublicCronZapupiRoute: typeof ApiPublicCronZapupiRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
@@ -847,6 +860,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronEngagementRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/zapupi': {
+      id: '/api/public/cron/zapupi'
+      path: '/api/public/cron/zapupi'
+      fullPath: '/api/public/cron/zapupi'
+      preLoaderRoute: typeof ApiPublicCronZapupiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -908,6 +928,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicZapupiReturnRoute: ApiPublicZapupiReturnRoute,
   ApiPublicZapupiWebhookRoute: ApiPublicZapupiWebhookRoute,
   ApiPublicCronEngagementRoute: ApiPublicCronEngagementRoute,
+  ApiPublicCronZapupiRoute: ApiPublicCronZapupiRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
