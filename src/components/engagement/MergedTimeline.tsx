@@ -7,6 +7,8 @@ import {
   Clock, Play, CheckCircle2, XCircle, Pencil, Timer, RefreshCw, Loader2, TrendingUp, CalendarClock
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { syncRunStatusFn } from "@/lib/engagement.functions";
 import { useState } from "react";
 import { toast } from "sonner";
 
