@@ -1299,7 +1299,7 @@ export default function AdminUsers() {
                 onClick={() =>
                   banUser && banUserMutation.mutate({ targetUser: banUser, reason: banReason })
                 }
-                disabled={banUserMutation.isPending}
+                disabled={banUserMutation.isPending || banReason.trim().length < 5}
               >
                 {banUserMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                 Ban &amp; Cancel All Orders
