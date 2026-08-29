@@ -278,6 +278,54 @@ export function RefundClaimDialog() {
           </div>
 
           <div className="space-y-2">
+            <Label>Attach proof files</Label>
+            <Input
+              type="file"
+              multiple
+              accept={PROOF_ACCEPT}
+              onChange={(e) => {
+                addFiles(e.target.files);
+                e.target.value = "";
+              }}
+            />
+            <p className="text-xs text-muted-foreground">
+              PNG, JPG, WEBP, GIF or PDF · max 5 MB each · up to {MAX_PROOF_FILES} files.
+            </p>
+            {fileErrors.length > 0 && (
+              <ul className="text-xs text-destructive space-y-1">
+                {fileErrors.map((err) => (
+                  <li key={err}>{err}</li>
+                ))}
+              </ul>
+            )}
+            {files.length > 0 && (
+              <ul className="space-y-1">
+                {files.map((f, i) => (
+                  <li
+                    key={`${f.name}-${f.size}`}
+                    className="flex items-center justify-between gap-2 rounded-md border border-border px-2 py-1.5 text-xs"
+                  >
+                    <span className="flex items-center gap-2 truncate">
+                      <Paperclip className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">{f.name}</span>
+                      <span className="text-muted-foreground shrink-0">{formatBytes(f.size)}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(i)}
+                      className="text-muted-foreground hover:text-destructive"
+                      aria-label={`Remove ${f.name}`}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+
+          <div className="space-y-2">
             <Label>Preferred remedy</Label>
             <Select value={remedy} onValueChange={setRemedy}>
               <SelectTrigger><SelectValue /></SelectTrigger>
