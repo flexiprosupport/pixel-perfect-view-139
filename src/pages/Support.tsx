@@ -51,6 +51,8 @@ import {
 } from "lucide-react";
 import { PageMeta } from "@/components/seo/PageMeta";
 import { useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { sendTicketReceipt } from "@/lib/support-email.functions";
 import { NotificationsCard } from "@/components/support/NotificationsCard";
 import { RefundClaimDialog } from "@/components/support/RefundClaimDialog";
 
@@ -138,6 +140,7 @@ export default function Support() {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const sendReceipt = useServerFn(sendTicketReceipt);
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
   const [showFAQ, setShowFAQ] = useState(false);
   
@@ -186,12 +189,19 @@ export default function Support() {
         .single();
 
       if (error) throw error;
+
+      try {
+        await sendReceipt({ data: { ticketId: data.id } });
+      } catch (e) {
+        console.error('ticket receipt email failed', e);
+      }
+
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (ticket: any) => {
       toast({
-        title: "Ticket Created!",
-        description: "Our support team will respond soon.",
+        title: `Ticket Created${ticket?.ticket_number ? ` (${ticket.ticket_number})` : ''}!`,
+        description: "A confirmation receipt has been emailed to you. Our support team will respond soon.",
       });
       queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
       setIsDialogOpen(false);
