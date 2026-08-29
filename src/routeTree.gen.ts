@@ -43,6 +43,7 @@ import { Route as AdminSubscriptionsRouteImport } from './routes/admin/subscript
 import { Route as AdminTopupPlanRouteImport } from './routes/admin/topup-plan'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as EngagementOrdersOrderNumberRouteImport } from './routes/engagement-orders.$orderNumber'
+import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
 import { Route as ApiPublicZapupiReturnRouteImport } from './routes/api/public/zapupi-return'
 import { Route as ApiPublicZapupiWebhookRouteImport } from './routes/api/public/zapupi-webhook'
 
@@ -218,6 +219,11 @@ const EngagementOrdersOrderNumberRoute =
     path: '/$orderNumber',
     getParentRoute: () => EngagementOrdersRoute,
   } as any)
+const TicketsTicketIdRoute = TicketsTicketIdRouteImport.update({
+  id: '/tickets/$ticketId',
+  path: '/tickets/$ticketId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicZapupiReturnRoute = ApiPublicZapupiReturnRouteImport.update({
   id: '/api/public/zapupi-return',
   path: '/api/public/zapupi-return',
@@ -263,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/admin/topup-plan': typeof AdminTopupPlanRoute
   '/admin/users': typeof AdminUsersRoute
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
+  '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
@@ -301,6 +308,7 @@ export interface FileRoutesByTo {
   '/admin/topup-plan': typeof AdminTopupPlanRoute
   '/admin/users': typeof AdminUsersRoute
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
+  '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
@@ -340,6 +348,7 @@ export interface FileRoutesById {
   '/admin/topup-plan': typeof AdminTopupPlanRoute
   '/admin/users': typeof AdminUsersRoute
   '/engagement-orders/$orderNumber': typeof EngagementOrdersOrderNumberRoute
+  '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/zapupi-return': typeof ApiPublicZapupiReturnRoute
   '/api/public/zapupi-webhook': typeof ApiPublicZapupiWebhookRoute
@@ -380,6 +389,7 @@ export interface FileRouteTypes {
     | '/admin/topup-plan'
     | '/admin/users'
     | '/engagement-orders/$orderNumber'
+    | '/tickets/$ticketId'
     | '/admin/'
     | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
@@ -418,6 +428,7 @@ export interface FileRouteTypes {
     | '/admin/topup-plan'
     | '/admin/users'
     | '/engagement-orders/$orderNumber'
+    | '/tickets/$ticketId'
     | '/admin'
     | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
@@ -456,6 +467,7 @@ export interface FileRouteTypes {
     | '/admin/topup-plan'
     | '/admin/users'
     | '/engagement-orders/$orderNumber'
+    | '/tickets/$ticketId'
     | '/admin/'
     | '/api/public/zapupi-return'
     | '/api/public/zapupi-webhook'
@@ -494,6 +506,7 @@ export interface RootRouteChildren {
   AdminSubscriptionsRoute: typeof AdminSubscriptionsRoute
   AdminTopupPlanRoute: typeof AdminTopupPlanRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  TicketsTicketIdRoute: typeof TicketsTicketIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiPublicZapupiReturnRoute: typeof ApiPublicZapupiReturnRoute
   ApiPublicZapupiWebhookRoute: typeof ApiPublicZapupiWebhookRoute
@@ -739,6 +752,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EngagementOrdersOrderNumberRouteImport
       parentRoute: typeof EngagementOrdersRoute
     }
+    '/tickets/$ticketId': {
+      id: '/tickets/$ticketId'
+      path: '/tickets/$ticketId'
+      fullPath: '/tickets/$ticketId'
+      preLoaderRoute: typeof TicketsTicketIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/zapupi-return': {
       id: '/api/public/zapupi-return'
       path: '/api/public/zapupi-return'
@@ -800,6 +820,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminSubscriptionsRoute: AdminSubscriptionsRoute,
   AdminTopupPlanRoute: AdminTopupPlanRoute,
   AdminUsersRoute: AdminUsersRoute,
+  TicketsTicketIdRoute: TicketsTicketIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiPublicZapupiReturnRoute: ApiPublicZapupiReturnRoute,
   ApiPublicZapupiWebhookRoute: ApiPublicZapupiWebhookRoute,

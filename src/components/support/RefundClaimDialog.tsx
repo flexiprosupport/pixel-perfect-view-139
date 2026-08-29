@@ -22,7 +22,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2, ReceiptText, Send } from "lucide-react";
+import { Loader2, Paperclip, ReceiptText, Send, X } from "lucide-react";
+import type { Json } from "@/integrations/supabase/types";
+import {
+  MAX_PROOF_FILES,
+  PROOF_ACCEPT,
+  formatBytes,
+  uploadProofFiles,
+  validateProofFiles,
+} from "@/lib/ticket-attachments";
+
 
 const ISSUE_TYPES = [
   { value: "non_delivery", label: "Order not delivered at all" },
@@ -61,6 +70,23 @@ export function RefundClaimDialog() {
   const [proof, setProof] = useState("");
   const [remedy, setRemedy] = useState("redelivery");
   const [details, setDetails] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [fileErrors, setFileErrors] = useState<string[]>([]);
+
+  const addFiles = (list: FileList | null) => {
+    if (!list) return;
+    const { accepted, errors } = validateProofFiles(Array.from(list), files);
+    if (accepted.length) setFiles((prev) => [...prev, ...accepted]);
+    setFileErrors(errors);
+    if (errors.length) {
+      toast({ title: "Some files were not added", description: errors[0], variant: "destructive" });
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+    setFileErrors([]);
+  };
 
   const reset = () => {
     setIssueType("non_delivery");
@@ -73,7 +99,10 @@ export function RefundClaimDialog() {
     setProof("");
     setRemedy("redelivery");
     setDetails("");
+    setFiles([]);
+    setFileErrors([]);
   };
+
 
   const isFundingIssue =
     issueType === "wallet_not_credited" || issueType === "duplicate_payment";
@@ -85,8 +114,8 @@ export function RefundClaimDialog() {
         throw new Error("Order ID is required");
       if (isFundingIssue && !paymentRef.trim())
         throw new Error("Payment reference / transaction hash is required");
-      if (!proof.trim())
-        throw new Error("Please add proof (screenshot link, transaction reference or timestamps)");
+      if (!proof.trim() && files.length === 0)
+        throw new Error("Please add proof — attach a file or describe your evidence");
 
       const issueLabel =
         ISSUE_TYPES.find((i) => i.value === issueType)?.label ?? issueType;
@@ -94,6 +123,8 @@ export function RefundClaimDialog() {
         PAYMENT_METHODS.find((p) => p.value === paymentMethod)?.label ?? paymentMethod;
       const remedyLabel =
         REMEDIES.find((r) => r.value === remedy)?.label ?? remedy;
+
+      const attachments = await uploadProofFiles(user.id, files);
 
       const message = [
         `Claim type: ${issueLabel}`,
@@ -106,7 +137,8 @@ export function RefundClaimDialog() {
         `Preferred remedy: ${remedyLabel}`,
         "",
         "Proof provided:",
-        proof.trim(),
+        proof.trim() || "—",
+        `Attached files: ${attachments.length ? attachments.map((a) => a.name).join(", ") : "none"}`,
         "",
         "Additional details:",
         details.trim() || "—",
@@ -121,6 +153,7 @@ export function RefundClaimDialog() {
           category: isFundingIssue ? "payment" : "order",
           priority: "high",
           status: "open",
+          attachments: attachments as unknown as Json,
         })
         .select()
         .single();
@@ -128,6 +161,7 @@ export function RefundClaimDialog() {
       if (error) throw error;
       return data;
     },
+
     onSuccess: () => {
       toast({
         title: "Refund claim submitted",
@@ -242,6 +276,54 @@ export function RefundClaimDialog() {
               rows={3}
             />
           </div>
+
+          <div className="space-y-2">
+            <Label>Attach proof files</Label>
+            <Input
+              type="file"
+              multiple
+              accept={PROOF_ACCEPT}
+              onChange={(e) => {
+                addFiles(e.target.files);
+                e.target.value = "";
+              }}
+            />
+            <p className="text-xs text-muted-foreground">
+              PNG, JPG, WEBP, GIF or PDF · max 5 MB each · up to {MAX_PROOF_FILES} files.
+            </p>
+            {fileErrors.length > 0 && (
+              <ul className="text-xs text-destructive space-y-1">
+                {fileErrors.map((err) => (
+                  <li key={err}>{err}</li>
+                ))}
+              </ul>
+            )}
+            {files.length > 0 && (
+              <ul className="space-y-1">
+                {files.map((f, i) => (
+                  <li
+                    key={`${f.name}-${f.size}`}
+                    className="flex items-center justify-between gap-2 rounded-md border border-border px-2 py-1.5 text-xs"
+                  >
+                    <span className="flex items-center gap-2 truncate">
+                      <Paperclip className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">{f.name}</span>
+                      <span className="text-muted-foreground shrink-0">{formatBytes(f.size)}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(i)}
+                      className="text-muted-foreground hover:text-destructive"
+                      aria-label={`Remove ${f.name}`}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
 
           <div className="space-y-2">
             <Label>Preferred remedy</Label>
