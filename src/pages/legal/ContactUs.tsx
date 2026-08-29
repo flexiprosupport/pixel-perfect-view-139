@@ -62,7 +62,7 @@ export default function ContactUs() {
               <a href="tel:+13678288027" className="text-sm text-blue-500 hover:underline">
                 +1 (367) 828-8027
               </a>
-              <p className="text-xs text-muted-foreground mt-2">Call between business hours for urgent issues.</p>
+              <p className="text-xs text-muted-foreground mt-2">Use for urgent order or payment issues. Never share passwords or OTPs.</p>
             </div>
 
             <div className="rounded-xl border border-border p-5 bg-card">
@@ -72,9 +72,9 @@ export default function ContactUs() {
                 </div>
                 <h2 className="font-semibold text-base">Working Hours</h2>
               </div>
-              <p className="text-sm">Monday – Saturday</p>
-              <p className="text-sm">9:00 AM – 6:00 PM EST</p>
-              <p className="text-xs text-muted-foreground mt-2">Live chat and email monitored 24/7.</p>
+              <p className="text-sm">Tickets accepted any time</p>
+              <p className="text-sm">Typical first response: 1 business day</p>
+              <p className="text-xs text-muted-foreground mt-2">Complex payment, delivery or security investigations may take longer — we will keep you updated.</p>
             </div>
           </div>
 
@@ -95,9 +95,20 @@ export default function ContactUs() {
             </div>
           </div>
 
-          <div className="mt-10 text-sm text-muted-foreground">
+          <div className="mt-10 rounded-xl border border-border p-6 bg-card text-sm text-muted-foreground space-y-3">
+            <h2 className="font-semibold text-base text-foreground">Ticket checklist</h2>
+            <ul className="list-disc pl-6 space-y-1">
+              <li>Order or transaction ID (never a password, OTP or private key).</li>
+              <li>Target URL and a short description of the issue.</li>
+              <li>Relevant timestamp and time zone.</li>
+              <li>Screenshot with unrelated personal or financial information redacted.</li>
+              <li>Preferred remedy where the Refund Policy offers a choice.</li>
+            </ul>
+          </div>
+
+          <div className="mt-6 text-sm text-muted-foreground">
             <p>
-              For grievances, please email <a className="text-orange-500 hover:underline" href="mailto:flexipro.support@gmail.com">flexipro.support@gmail.com</a> with subject line "Grievance" — our grievance officer will respond within 48 hours.
+              For grievances, please email <a className="text-orange-500 hover:underline" href="mailto:flexipro.support@gmail.com">flexipro.support@gmail.com</a> with subject line "Grievance" — we acknowledge within 2 business days and provide a substantive response normally within 15 business days.
             </p>
           </div>
         </div>
@@ -109,7 +120,7 @@ export default function ContactUs() {
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
             name: "FlexiPro LLC",
-            url: "https://flexipro.com/",
+            url: "https://flexipro.in/",
             email: "flexipro.support@gmail.com",
             telephone: "+1-367-828-8027",
             address: {
