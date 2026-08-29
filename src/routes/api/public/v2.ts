@@ -137,7 +137,7 @@ export const Route = createFileRoute('/api/public/v2')({
               .eq('is_active', true)
               .order('category', { ascending: true });
 
-            if (error) return finish(fail('Could not load services', 500);
+            if (error) return finish(fail('Could not load services', 500));
 
             return finish(json({
               status: 'ok',
@@ -152,7 +152,7 @@ export const Route = createFileRoute('/api/public/v2')({
                 cancel: s.cancel_allowed,
                 speed: s.speed,
               })),
-            });
+            }));
           }
 
           case 'balance': {
@@ -166,7 +166,7 @@ export const Route = createFileRoute('/api/public/v2')({
               status: 'ok',
               balance: Number(data?.balance ?? 0).toFixed(2),
               currency: 'INR',
-            });
+            }));
           }
 
           case 'add': {
@@ -174,9 +174,9 @@ export const Route = createFileRoute('/api/public/v2')({
             const link = typeof body['link'] === 'string' ? body['link'].trim() : '';
             const quantity = num(body['quantity']);
 
-            if (!serviceId) return finish(fail('service is required');
-            if (!link || !/^https?:\/\//i.test(link)) return finish(fail('A valid link is required');
-            if (!quantity || quantity <= 0) return finish(fail('quantity must be a positive number');
+            if (!serviceId) return finish(fail('service is required'));
+            if (!link || !/^https?:\/\//i.test(link)) return finish(fail('A valid link is required'));
+            if (!quantity || quantity <= 0) return finish(fail('quantity must be a positive number'));
 
             const { data: service } = await supabaseAdmin
               .from('services')
@@ -184,14 +184,14 @@ export const Route = createFileRoute('/api/public/v2')({
               .eq('id', serviceId)
               .maybeSingle();
 
-            if (!service || !service.is_active) return finish(fail('Invalid service');
+            if (!service || !service.is_active) return finish(fail('Invalid service'));
             if (quantity < (service.min_quantity ?? 1))
-              return finish(fail(`Minimum quantity for this service is ${service.min_quantity}`);
+              return finish(fail(`Minimum quantity for this service is ${service.min_quantity}`));
             if (quantity > (service.max_quantity ?? quantity))
-              return finish(fail(`Maximum quantity for this service is ${service.max_quantity}`);
+              return finish(fail(`Maximum quantity for this service is ${service.max_quantity}`));
 
             const price = Math.round((Number(service.price ?? 0) / 1000) * quantity * 10000) / 10000;
-            if (price <= 0) return finish(fail('This service is not available for API ordering');
+            if (price <= 0) return finish(fail('This service is not available for API ordering'));
 
             const { data: wallet } = await supabaseAdmin
               .from('wallets')
@@ -200,7 +200,7 @@ export const Route = createFileRoute('/api/public/v2')({
               .maybeSingle();
 
             if (Number(wallet?.balance ?? 0) < price)
-              return finish(fail('Insufficient balance', 402);
+              return finish(fail('Insufficient balance', 402));
 
             const { data: order, error: orderErr } = await supabaseAdmin
               .from('orders')
@@ -215,7 +215,7 @@ export const Route = createFileRoute('/api/public/v2')({
               .select('id, order_number')
               .single();
 
-            if (orderErr || !order) return finish(fail('Could not create order', 500);
+            if (orderErr || !order) return finish(fail('Could not create order', 500));
 
             const { error: debitErr } = await supabaseAdmin.rpc('debit_wallet_for_order', {
               p_user_id: userId,
@@ -226,15 +226,15 @@ export const Route = createFileRoute('/api/public/v2')({
 
             if (debitErr) {
               await supabaseAdmin.from('orders').delete().eq('id', order.id);
-              return finish(fail(debitErr.message || 'Payment failed', 402);
+              return finish(fail(debitErr.message || 'Payment failed', 402));
             }
 
-            return finish(json({ status: 'ok', order: order.order_number, charge: price.toFixed(4) });
+            return finish(json({ status: 'ok', order: order.order_number, charge: price.toFixed(4) }));
           }
 
           case 'status': {
             const orderNumber = num(body['order']);
-            if (!orderNumber) return finish(fail('order is required');
+            if (!orderNumber) return finish(fail('order is required'));
 
             const { data: order } = await supabaseAdmin
               .from('orders')
@@ -243,7 +243,7 @@ export const Route = createFileRoute('/api/public/v2')({
               .eq('order_number', orderNumber)
               .maybeSingle();
 
-            if (!order) return finish(fail('Order not found', 404);
+            if (!order) return finish(fail('Order not found', 404));
 
             return finish(json({
               status: 'ok',
@@ -257,11 +257,11 @@ export const Route = createFileRoute('/api/public/v2')({
                 service: (order as any).services?.name ?? null,
                 created_at: order.created_at,
               },
-            });
+            }));
           }
 
           default:
-            return finish(fail(`Unknown action "${action}"`);
+            return finish(fail(`Unknown action "${action}"`));
         }
       },
     },
