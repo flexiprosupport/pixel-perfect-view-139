@@ -1038,7 +1038,61 @@ export default function AdminUsers() {
           </DialogContent>
         </Dialog>
 
+        {/* Admin Role Dialog */}
+        <Dialog open={!!roleUser} onOpenChange={(open) => !open && setRoleUser(null)}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                {roleUser?.role === 'admin' ? 'Remove Admin Role' : 'Grant Admin Role'}
+              </DialogTitle>
+            </DialogHeader>
+            {roleUser && (
+              <div className="space-y-4 py-2">
+                <div className="p-4 rounded-xl bg-muted/50 text-center">
+                  <p className="font-medium">{roleUser.full_name || roleUser.email}</p>
+                  <p className="text-xs text-muted-foreground">{roleUser.email}</p>
+                  <Badge variant={roleUser.role === 'admin' ? 'default' : 'secondary'} className="mt-2">
+                    Current: {roleUser.role === 'admin' ? 'Admin' : 'User'}
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {roleUser.role === 'admin'
+                    ? 'Is user ka admin access turant hat jayega.'
+                    : 'Is user ko poora admin panel access mil jayega.'}
+                </p>
+                <div className="space-y-2">
+                  <Label>Reason (required)</Label>
+                  <Input
+                    placeholder="e.g. Promoting support lead"
+                    value={roleReason}
+                    onChange={(e) => setRoleReason(e.target.value)}
+                    className="h-11 rounded-xl"
+                  />
+                </div>
+              </div>
+            )}
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setRoleUser(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant={roleUser?.role === 'admin' ? 'destructive' : 'default'}
+                disabled={toggleAdminMutation.isPending || roleReason.trim().length < 5}
+                onClick={() =>
+                  roleUser &&
+                  toggleAdminMutation.mutate({ targetUser: roleUser, reason: roleReason })
+                }
+              >
+                {toggleAdminMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                {roleUser?.role === 'admin' ? 'Remove Admin' : 'Make Admin'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Remove Subscription Dialog */}
+
         <Dialog
           open={!!removeSubUser}
           onOpenChange={(open) => !open && setRemoveSubUser(null)}
