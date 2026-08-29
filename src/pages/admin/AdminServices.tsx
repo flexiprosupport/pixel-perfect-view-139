@@ -557,14 +557,12 @@ function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, i
             </div>
           )}
         </div>
-        <div className="hidden">
-          <Button
-            type="button"
-            onClick={async () => {
-              {isFetchingRemote ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Fetch'}
-            </Button>
+        {linked && (
+          <div className="col-span-2 rounded-md border border-primary/30 bg-primary/5 p-2 text-xs">
+            <span className="font-semibold">Linked:</span> {formData.provider_id} · #{formData.provider_service_id} —{' '}
+            {linked.name} · rate {linked.rate}/1K · {linked.min}–{linked.max}
           </div>
-        </div>
+        )}
         <div className="space-y-2">
           <Label>Category</Label>
           <Select value={formData.category} onValueChange={(v) => setFormData({ ...formData, category: v })}>
