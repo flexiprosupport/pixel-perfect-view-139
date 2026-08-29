@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect, useCallback, useRef, memo } from "react";
 import { useNavigate } from "@/lib/router-compat";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { placeEngagementOrderFn, executeDueRunsFn } from "@/lib/engagement.functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -499,6 +501,9 @@ export default function EngagementOrder() {
   }, [engagements]);
 
   // Place order mutation
+  const placeOrder = useServerFn(placeEngagementOrderFn);
+  const executeRuns = useServerFn(executeDueRunsFn);
+
   const placeOrderMutation = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error('Not authenticated');
