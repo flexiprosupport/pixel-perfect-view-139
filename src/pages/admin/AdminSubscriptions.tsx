@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { useServerFn } from '@tanstack/react-start';
+import { notifyUser } from '@/lib/notify.functions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -79,6 +81,7 @@ interface Profile {
 }
 
 export default function AdminSubscriptions() {
+  const notify = useServerFn(notifyUser);
   const { user, isAdmin, isLoading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
@@ -174,16 +177,15 @@ export default function AdminSubscriptions() {
 
       if (subError) throw subError;
 
-      // Fire-and-forget email - don't wait for response
-      supabase.functions.invoke('send-subscription-email', {
-        body: {
-          to: profile.email,
-          userName: profile.full_name || profile.email.split('@')[0],
-          planType: addPlanType,
-          status: 'approved',
-          adminNotes: `Your ${addPlanType} subscription has been activated by admin.`,
+      // In-app notification (fire and forget)
+      void notify({
+        data: {
+          target_user_id: profile.user_id as string,
+          title: 'Subscription activated',
+          body: `Your ${addPlanType} subscription is now active.`,
+          link: '/dashboard',
         },
-      }).catch(err => console.error('Email failed:', err));
+      }).catch((err) => console.error('Notification failed:', err));
 
       return profile;
     },
@@ -211,16 +213,14 @@ export default function AdminSubscriptions() {
 
       if (error) throw error;
 
-      // Fire-and-forget email - don't wait for response
-      supabase.functions.invoke('send-subscription-email', {
-        body: {
-          to: email,
-          userName: email.split('@')[0],
-          planType: 'monthly',
-          status: 'rejected',
-          adminNotes: 'Your subscription has been cancelled by admin.',
+      void notify({
+        data: {
+          target_user_id: userId,
+          title: 'Subscription cancelled',
+          body: 'Your subscription has been cancelled by an admin.',
+          link: '/dashboard',
         },
-      }).catch(err => console.error('Email failed:', err));
+      }).catch((err) => console.error('Notification failed:', err));
     },
     onSuccess: () => {
       toast.success('Subscription removed!');
@@ -271,16 +271,16 @@ export default function AdminSubscriptions() {
         if (subError) throw subError;
       }
 
-      // Fire-and-forget email - don't wait for response
-      supabase.functions.invoke('send-subscription-email', {
-        body: {
-          to: request.email,
-          userName: request.full_name,
-          planType: request.plan_type,
-          status: action === 'approve' ? 'approved' : 'rejected',
-          adminNotes: adminNotes || undefined,
+      void notify({
+        data: {
+          target_user_id: request.user_id,
+          title: action === 'approve' ? 'Subscription approved' : 'Subscription request rejected',
+          body: adminNotes || (action === 'approve'
+            ? `Your ${request.plan_type} plan is now active.`
+            : 'Your subscription request was rejected.'),
+          link: '/dashboard',
         },
-      }).catch(err => console.error('Email failed:', err));
+      }).catch((err) => console.error('Notification failed:', err));
     },
     onSuccess: (_, { action }) => {
       toast.success(action === 'approve' ? 'Subscription activated!' : 'Request rejected.');

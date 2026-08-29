@@ -7,6 +7,8 @@ import {
   Clock, Play, CheckCircle2, XCircle, Pencil, Timer, RefreshCw, Loader2, TrendingUp, CalendarClock
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { syncRunStatusFn } from "@/lib/engagement.functions";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -58,6 +60,7 @@ interface MergedTimelineProps {
 }
 
 export function MergedTimeline({ runs, onEditRun, nextRun, onRefresh, typeTargets = [] }: MergedTimelineProps) {
+  const syncStatus = useServerFn(syncRunStatusFn);
   const [refreshingRunId, setRefreshingRunId] = useState<string | null>(null);
   const [isGlobalRefreshing, setIsGlobalRefreshing] = useState(false);
 
@@ -180,11 +183,7 @@ export function MergedTimeline({ runs, onEditRun, nextRun, onRefresh, typeTarget
   const refreshRunStatus = async (runId: string) => {
     setRefreshingRunId(runId);
     try {
-      const { data, error } = await supabase.functions.invoke('check-order-status', {
-        body: { runId }
-      });
-
-      if (error) throw error;
+      await syncStatus({ data: { runId } });
 
       toast.success('Status updated from provider!');
       onRefresh?.();
@@ -199,11 +198,9 @@ export function MergedTimeline({ runs, onEditRun, nextRun, onRefresh, typeTarget
   const refreshAllStatus = async () => {
     setIsGlobalRefreshing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('check-order-status');
+      const data = await syncStatus({ data: {} });
 
-      if (error) throw error;
-
-      toast.success(`Checked ${data?.completed + data?.stillProcessing || 0} runs from provider`);
+      toast.success(`Checked ${(data?.completed ?? 0) + (data?.stillProcessing ?? 0)} runs from provider`);
       onRefresh?.();
     } catch (err: any) {
       toast.error(`Failed to refresh: ${err.message}`);

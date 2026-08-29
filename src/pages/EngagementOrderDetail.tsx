@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "@/lib/router-compat";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { executeDueRunsFn, syncRunStatusFn } from "@/lib/engagement.functions";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -92,6 +94,8 @@ interface EditRunData {
 }
 
 export default function EngagementOrderDetail() {
+  const executeRuns = useServerFn(executeDueRunsFn);
+  const syncStatus = useServerFn(syncRunStatusFn);
   const { orderNumber } = useParams();
   const navigate = useNavigate();
   const { user, isLoading: authLoading, wallet, refreshWallet, isAdmin } = useAuth();
@@ -237,9 +241,7 @@ export default function EngagementOrderDetail() {
       // Trigger immediate execution
       setTimeout(async () => {
         console.log('⚡ Triggering execution for retried runs...');
-        await supabase.functions.invoke('execute-all-runs', {
-          body: { instant: true }
-        });
+        await executeRuns({ data: { limit: 50 } });
         refetch();
       }, 1000);
     },
