@@ -83,22 +83,18 @@ export default function AdminDeposits() {
         },
     });
 
+    const callPendingDepositAction = useServerFn(adminPendingDepositAction);
     const updateStatusMutation = useMutation({
         mutationFn: async ({ id, status, userId, amount }: { id: string, status: 'completed' | 'failed', userId: string, amount: number }) => {
-            // All approvals/rejections go through the audited edge function.
-            // Direct wallet/transaction writes are blocked by RLS.
-            if (!session?.access_token) throw new Error('Admin session expired. Please login again.');
-            const { data, error } = await supabase.functions.invoke('admin-wallet-action', {
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                },
-                body: {
-                    action: status === 'completed' ? 'approve_pending' : 'reject_pending',
+            // Approvals/rejections go through the authenticated server function,
+            // which enforces admin role server-side. Direct wallet/transaction
+            // writes are blocked by RLS.
+            await callPendingDepositAction({
+                data: {
                     transaction_id: id,
+                    decision: status === 'completed' ? 'approve' : 'reject',
                 },
             });
-            if (error) throw new Error(error.message || 'Action failed');
-            if (data?.error) throw new Error(data.error);
         },
         onSuccess: async (_, variables) => {
             const statusText = variables.status === 'completed' ? '✅ APPROVED' : '❌ REJECTED';
