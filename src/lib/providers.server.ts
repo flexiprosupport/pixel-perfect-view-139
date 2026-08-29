@@ -345,3 +345,23 @@ export async function syncBalancesCore(admin: any) {
 
   return { checked: ok, failed: failed.length };
 }
+
+/**
+ * Look up a single service in a provider's catalogue by its provider service id.
+ * Used by the admin "Add service" form so a bare number can be resolved into
+ * name / category / rate / limits straight from the provider API.
+ */
+export async function lookupServiceCore(
+  admin: any,
+  opts: { provider_id: string; service_id: string },
+) {
+  const account = await primaryAccount(admin, opts.provider_id);
+  await ensureProviderRow(admin, account);
+  const catalogue = await fetchCatalogue(account.api_url, account.api_key);
+  const wanted = String(opts.service_id).trim();
+  const svc = catalogue.find((s) => s.service_id === wanted);
+  if (!svc) {
+    throw new Error(`Service ID "${wanted}" not found in ${opts.provider_id}'s catalogue`);
+  }
+  return svc;
+}

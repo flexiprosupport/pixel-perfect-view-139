@@ -37,7 +37,7 @@ import { toast } from 'sonner';
 import type { Service } from '@/lib/supabase';
 import { ImportServicesDialog } from '@/components/admin/ImportServicesDialog';
 import { useServerFn } from '@tanstack/react-start';
-import { syncProviderPrices } from '@/lib/providers.functions';
+import { syncProviderPrices, lookupProviderService } from '@/lib/providers.functions';
 
 export default function AdminServices() {
   const syncPricesFn = useServerFn(syncProviderPrices);
@@ -49,6 +49,7 @@ export default function AdminServices() {
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [isSyncingPrices, setIsSyncingPrices] = useState(false);
   const [formData, setFormData] = useState({
+    provider_id: '',
     provider_service_id: '',
     name: '',
     category: '',
@@ -80,6 +81,7 @@ export default function AdminServices() {
       const { error } = await supabase
         .from('services')
         .insert({
+          provider_id: formData.provider_id || null,
           provider_service_id: formData.provider_service_id,
           name: formData.name,
           category: formData.category,
@@ -113,6 +115,7 @@ export default function AdminServices() {
       const { error } = await supabase
         .from('services')
         .update({
+          provider_id: formData.provider_id || null,
           provider_service_id: formData.provider_service_id,
           name: formData.name,
           category: formData.category,
@@ -203,6 +206,7 @@ export default function AdminServices() {
 
   const resetForm = () => {
     setFormData({
+      provider_id: '',
       provider_service_id: '',
       name: '',
       category: '',
@@ -219,6 +223,7 @@ export default function AdminServices() {
 
   const openEditDialog = (service: Service) => {
     setFormData({
+      provider_id: service.provider_id || '',
       provider_service_id: service.provider_service_id,
       name: service.name,
       category: service.category,
@@ -428,6 +433,7 @@ export default function AdminServices() {
 
 interface ServiceFormProps {
   formData: {
+    provider_id: string;
     provider_service_id: string;
     name: string;
     category: string;
@@ -448,17 +454,77 @@ interface ServiceFormProps {
 }
 
 function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, isEdit }: ServiceFormProps) {
+  const lookupFn = useServerFn(lookupProviderService);
+  const [isFetchingRemote, setIsFetchingRemote] = useState(false);
+  const { data: providers } = useQuery({
+    queryKey: ['admin-provider-ids'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('provider_accounts')
+        .select('provider_id')
+        .eq('is_active', true)
+        .order('provider_id');
+      if (error) throw error;
+      const seen = new Set<string>();
+      return (data ?? []).filter((r) => !seen.has(r.provider_id) && seen.add(r.provider_id));
+    },
+  });
+
   return (
     <div className="space-y-4 mt-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
+          <Label>Provider</Label>
+          <Select value={formData.provider_id} onValueChange={(v) => setFormData({ ...formData, provider_id: v })}>
+            <SelectTrigger className="input-glass">
+              <SelectValue placeholder="Select provider" />
+            </SelectTrigger>
+            <SelectContent>
+              {(providers ?? []).map((p) => (
+                <SelectItem key={p.provider_id} value={p.provider_id}>{p.provider_id}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
           <Label>Provider Service ID</Label>
-          <Input
-            placeholder="e.g., 1001"
-            value={formData.provider_service_id}
-            onChange={(e) => setFormData({ ...formData, provider_service_id: e.target.value })}
-            className="input-glass"
-          />
+          <div className="flex gap-2">
+            <Input
+              placeholder="e.g., 1001"
+              value={formData.provider_service_id}
+              onChange={(e) => setFormData({ ...formData, provider_service_id: e.target.value })}
+              className="input-glass"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isFetchingRemote || !formData.provider_id || !formData.provider_service_id}
+              onClick={async () => {
+                setIsFetchingRemote(true);
+                try {
+                  const svc: any = await lookupFn({
+                    data: { provider_id: formData.provider_id, service_id: formData.provider_service_id },
+                  });
+                  setFormData({
+                    ...formData,
+                    name: svc.name,
+                    category: formData.category || svc.category,
+                    price: String(svc.rate),
+                    min_quantity: String(svc.min),
+                    max_quantity: String(svc.max),
+                    drip_feed_enabled: !!svc.dripfeed,
+                  });
+                  toast.success('Fetched from provider');
+                } catch (err: any) {
+                  toast.error(err?.message || 'Could not fetch this service');
+                } finally {
+                  setIsFetchingRemote(false);
+                }
+              }}
+            >
+              {isFetchingRemote ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Fetch'}
+            </Button>
+          </div>
         </div>
         <div className="space-y-2">
           <Label>Category</Label>
