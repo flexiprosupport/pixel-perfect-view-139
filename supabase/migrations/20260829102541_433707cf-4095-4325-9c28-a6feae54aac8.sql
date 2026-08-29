@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.fp_handle_new_user() FROM PUBLIC, anon, authenticated;
