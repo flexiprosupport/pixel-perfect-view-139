@@ -1,120 +1,126 @@
-import { Link } from "@/lib/router-compat";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { PageMeta } from "@/components/seo/PageMeta";
+import { LegalLayout, Section, Bullets, DataTable } from "@/components/legal/LegalLayout";
 
 export default function PrivacyPolicy() {
   return (
-    <>
-      <PageMeta title="Privacy Policy | FlexiPro" description="Learn how FlexiPro collects, uses, and protects your personal data." canonicalPath="/privacy" breadcrumbs={[{ name: "Home", path: "/" }, { name: "Privacy Policy", path: "/privacy" }]} />
-      <div className="min-h-screen bg-background text-foreground">
-        <div className="max-w-4xl mx-auto px-4 py-12">
-          <Link to="/">
-            <Button variant="ghost" size="sm" className="mb-8 gap-2">
-              <ArrowLeft className="h-4 w-4" /> Back to Home
-            </Button>
-          </Link>
+    <LegalLayout
+      title="Privacy Policy"
+      metaTitle="Privacy Policy | FlexiPro"
+      description="How FlexiPro LLC collects, uses, shares, retains and protects personal information."
+      canonicalPath="/privacy"
+      breadcrumbLabel="Privacy Policy"
+      effectiveDate="29 August 2026"
+    >
+      <Section title="1. Scope and controller">
+        <p>
+          This Privacy Policy explains how FlexiPro LLC processes personal information when you visit
+          flexipro.in, create an account, fund a wallet, submit an order, use the API or contact support.
+          FlexiPro LLC is the controller/business for this processing unless another notice says otherwise.
+        </p>
+      </Section>
 
-          <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
-          <p className="text-muted-foreground mb-8">Last updated: February 10, 2026</p>
+      <Section title="2. Information collected">
+        <Bullets
+          items={[
+            <><strong className="text-foreground">Account data:</strong> name, email, hashed authentication credentials, account status and preferences.</>,
+            <><strong className="text-foreground">Order data:</strong> target URLs/usernames, selected service, quantity, timing, status, delivery measurements and support history.</>,
+            <><strong className="text-foreground">Payment data:</strong> UPI transaction reference, amount, payer/provider status, crypto wallet transaction/address and network confirmation data. We do not accept or store card data.</>,
+            <><strong className="text-foreground">Device and log data:</strong> IP address, browser/device type, timestamps, referral URL, security events and API request metadata.</>,
+            <><strong className="text-foreground">Communications:</strong> tickets, email, WhatsApp/live-chat messages and attachments you choose to send.</>,
+            <><strong className="text-foreground">Cookies/local storage:</strong> session, security and preference identifiers; analytics only where actually deployed and consented to where required.</>,
+          ]}
+        />
+      </Section>
 
-          <div className="prose prose-invert max-w-none space-y-6 text-muted-foreground">
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">1. Introduction</h2>
-              <p>FlexiPro ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform and services. Please read this policy carefully to understand our practices regarding your personal data.</p>
-            </section>
+      <Section title="3. Purposes and legal bases">
+        <Bullets
+          items={[
+            "Provide accounts, wallets, orders, delivery tracking and support (contract).",
+            "Prevent fraud, secure accounts, troubleshoot and improve reliability (legitimate interests and legal obligations).",
+            "Process payments, keep tax/accounting records and respond to lawful requests (contract/legal obligation).",
+            "Send service messages (contract). Marketing messages require consent or another lawful basis and always include opt-out.",
+            "Analyze performance using minimized or aggregated data (legitimate interests, or consent where required).",
+          ]}
+        />
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">2. Information We Collect</h2>
-              <p><strong className="text-foreground">Personal Information:</strong> When you create an account, we collect your name, email address, and other information you provide during registration.</p>
-              <p><strong className="text-foreground">Payment Information:</strong> We collect payment details necessary to process transactions. Payment data is processed through secure, PCI-compliant payment processors and is not stored on our servers.</p>
-              <p><strong className="text-foreground">Usage Data:</strong> We automatically collect information about how you interact with our Platform, including IP addresses, browser type, device information, pages visited, and timestamps.</p>
-              <p><strong className="text-foreground">Order Data:</strong> We collect information related to your service orders, including social media URLs, quantities, and delivery preferences.</p>
-            </section>
+      <Section title="4. Sharing">
+        <p>
+          We share only what is reasonably necessary with hosting/database providers, authentication providers,
+          UPI/payment providers, blockchain networks, service fulfilment providers, email/chat/support providers,
+          analytics providers, professional advisers, fraud/security vendors and authorities when legally
+          required. We do not sell personal information.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">3. How We Use Your Information</h2>
-              <p>We use the information we collect to:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>Provide, maintain, and improve our services</li>
-                <li>Process transactions and send related information</li>
-                <li>Send administrative notifications, such as order updates and support responses</li>
-                <li>Monitor and analyze usage patterns to improve user experience</li>
-                <li>Detect, prevent, and address technical issues, fraud, and security threats</li>
-                <li>Comply with legal obligations and enforce our Terms of Service</li>
-              </ul>
-            </section>
+      <Section title="5. International transfers">
+        <p>
+          Information may be processed in the United States, India and countries where contracted providers
+          operate. Where required, we use an appropriate transfer mechanism and safeguards. You may contact us
+          for information about applicable safeguards.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">4. Data Security</h2>
-              <p>We implement industry-standard security measures to protect your personal information, including:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>SSL/TLS encryption for all data in transit</li>
-                <li>Encrypted storage for sensitive data at rest</li>
-                <li>Row Level Security (RLS) policies on all database tables</li>
-                <li>Regular security audits and vulnerability assessments</li>
-                <li>Access controls limiting data access to authorized personnel only</li>
-              </ul>
-              <p>While we strive to protect your information, no method of electronic transmission or storage is 100% secure. We cannot guarantee absolute security.</p>
-            </section>
+      <Section title="6. Retention">
+        <DataTable
+          head={["Data", "Schedule"]}
+          rows={[
+            ["Account profile", "Account life + 30 days; a minimal suppression/security record may be retained"],
+            ["Orders and payment records", "Up to 7 years where required for tax, accounting, fraud and disputes"],
+            ["Support tickets", "24 months after closure"],
+            ["Security/API logs", "12 months, longer only for an active investigation"],
+            ["Marketing consent", "Until withdrawal, plus the evidence period required by law"],
+            ["Cookie identifiers", "Per the cookie register on the Cookie Policy page"],
+          ]}
+        />
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">5. Data Sharing & Disclosure</h2>
-              <p>We do not sell, trade, or rent your personal information to third parties. We may share your information in the following circumstances:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li><strong className="text-foreground">Service Providers:</strong> With third-party service providers who assist us in operating the Platform (e.g., payment processors, hosting providers)</li>
-                <li><strong className="text-foreground">Legal Requirements:</strong> When required by law, court order, or governmental authority</li>
-                <li><strong className="text-foreground">Protection of Rights:</strong> To protect our rights, privacy, safety, or property, and that of our users and the public</li>
-                <li><strong className="text-foreground">Business Transfers:</strong> In connection with any merger, acquisition, or sale of assets</li>
-              </ul>
-            </section>
+      <Section title="7. Security">
+        <p>
+          We use access controls, transport encryption, credential hashing, logging, least-privilege access,
+          backups and incident-response procedures appropriate to risk. No system is perfectly secure, and we do
+          not claim protections we cannot continuously maintain.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">6. Cookies & Tracking Technologies</h2>
-              <p>We use cookies and similar tracking technologies to enhance your experience. These include:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li><strong className="text-foreground">Essential Cookies:</strong> Required for Platform functionality, such as authentication and session management</li>
-                <li><strong className="text-foreground">Analytics Cookies:</strong> Help us understand how visitors interact with our Platform</li>
-                <li><strong className="text-foreground">Preference Cookies:</strong> Remember your settings and preferences</li>
-              </ul>
-              <p>You can control cookies through your browser settings. Disabling certain cookies may affect Platform functionality.</p>
-            </section>
+      <Section title="8. Rights and choices">
+        <p>
+          Depending on your location, you may request access, correction, deletion, restriction, objection,
+          portability, withdrawal of consent or appeal of a privacy decision. Email{" "}
+          <a className="text-orange-500 hover:underline" href="mailto:flexipro.support@gmail.com">
+            flexipro.support@gmail.com
+          </a>{" "}
+          with the subject "Privacy Request". We may verify your identity and may retain information where law
+          permits or requires. You may also complain to your local data-protection authority.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">7. Data Retention</h2>
-              <p>We retain your personal data for as long as your account is active or as needed to provide services. We may retain certain information after account closure for legitimate business purposes, legal compliance, dispute resolution, and enforcement of our agreements. Anonymized or aggregated data may be retained indefinitely.</p>
-            </section>
+      <Section title="9. US state disclosures">
+        <p>
+          FlexiPro does not sell personal information or share it for cross-context behavioral advertising as
+          those terms are defined by applicable US state privacy laws. We do not knowingly process sensitive
+          personal information to infer characteristics. If practices change, we will provide the required
+          opt-out mechanisms before the change takes effect.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">8. Your Rights</h2>
-              <p>Depending on your jurisdiction, you may have the following rights:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li><strong className="text-foreground">Access:</strong> Request a copy of the personal data we hold about you</li>
-                <li><strong className="text-foreground">Correction:</strong> Request correction of inaccurate or incomplete data</li>
-                <li><strong className="text-foreground">Deletion:</strong> Request deletion of your personal data, subject to legal retention requirements</li>
-                <li><strong className="text-foreground">Portability:</strong> Request your data in a structured, machine-readable format</li>
-                <li><strong className="text-foreground">Objection:</strong> Object to processing of your personal data for certain purposes</li>
-              </ul>
-              <p>To exercise any of these rights, please contact us through our Support page.</p>
-            </section>
+      <Section title="10. Children">
+        <p>
+          The Service is for adults aged 18 or older. We do not knowingly collect children's personal
+          information. Contact us if you believe a child provided data so we can investigate and delete it where
+          required.
+        </p>
+      </Section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">9. Children's Privacy</h2>
-              <p>Our Platform is not intended for individuals under the age of 18. We do not knowingly collect personal information from children. If we become aware that we have collected data from a child, we will take steps to delete it promptly.</p>
-            </section>
-
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">10. Changes to This Policy</h2>
-              <p>We may update this Privacy Policy from time to time. We will notify you of significant changes by posting the new policy on this page with an updated "Last updated" date. Your continued use of the Platform after changes constitutes acceptance of the revised policy.</p>
-            </section>
-
-            <section className="space-y-3">
-              <h2 className="text-xl font-semibold text-foreground">11. Contact Us</h2>
-              <p>If you have questions or concerns about this Privacy Policy or our data practices, please contact us through our Support page or email us at privacy@flexipro.com.</p>
-            </section>
-          </div>
-        </div>
-      </div>
-    </>
+      <Section title="11. Changes and contact">
+        <p>
+          We will post updates with a new effective date and give additional notice for material changes where
+          required. Contact:{" "}
+          <a className="text-orange-500 hover:underline" href="mailto:flexipro.support@gmail.com">
+            flexipro.support@gmail.com
+          </a>
+          , FlexiPro LLC, 8 The Green, Suite #14490, Dover, DE 19901, USA.
+        </p>
+      </Section>
+    </LegalLayout>
   );
 }
