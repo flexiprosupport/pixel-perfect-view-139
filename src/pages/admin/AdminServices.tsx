@@ -64,6 +64,29 @@ function validateServiceForm(f: {
   return null;
 }
 
+/** Link a service to its provider account so ordering + price sync can route it. */
+async function linkServiceToProvider(serviceId: string, providerId: string, providerServiceId: string) {
+  if (!providerId || !providerServiceId) return;
+  const { data: account } = await supabase
+    .from('provider_accounts')
+    .select('id')
+    .eq('provider_id', providerId)
+    .eq('is_active', true)
+    .order('priority', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (!account) return;
+  await supabase.from('service_provider_mapping').upsert(
+    {
+      service_id: serviceId,
+      provider_account_id: account.id,
+      provider_service_id: providerServiceId,
+      is_active: true,
+    },
+    { onConflict: 'service_id,provider_account_id' },
+  );
+}
+
 export default function AdminServices() {
   const syncPricesFn = useServerFn(syncProviderPrices);
   const { isAdmin, isLoading: authLoading } = useAuth();
@@ -125,11 +148,11 @@ export default function AdminServices() {
     mutationFn: async () => {
       const invalid = validateServiceForm(formData);
       if (invalid) throw new Error(invalid);
-      const { error } = await supabase
+      const { data: created, error } = await supabase
         .from('services')
         .insert({
           provider_id: formData.provider_id || null,
-          provider_service_id: formData.provider_service_id,
+          provider_service_id: formData.provider_service_id.trim(),
           name: formData.name,
           category: formData.category,
           description: formData.description || null,
@@ -140,15 +163,20 @@ export default function AdminServices() {
           quality: formData.quality,
           drip_feed_enabled: formData.drip_feed_enabled,
           is_active: formData.is_active,
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
+      await linkServiceToProvider(created.id, formData.provider_id, formData.provider_service_id.trim());
     },
     onSuccess: () => {
       toast.success('Service added successfully!');
       setShowAddService(false);
       resetForm();
       queryClient.invalidateQueries({ queryKey: ['admin-all-services'] });
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+      localStorage.removeItem('whopautopilot_services_cache_v2');
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -165,7 +193,7 @@ export default function AdminServices() {
         .from('services')
         .update({
           provider_id: formData.provider_id || null,
-          provider_service_id: formData.provider_service_id,
+          provider_service_id: formData.provider_service_id.trim(),
           name: formData.name,
           category: formData.category,
           description: formData.description || null,
@@ -180,12 +208,15 @@ export default function AdminServices() {
         .eq('id', editingService.id);
 
       if (error) throw error;
+      await linkServiceToProvider(editingService.id, formData.provider_id, formData.provider_service_id.trim());
     },
     onSuccess: () => {
       toast.success('Service updated successfully!');
       setEditingService(null);
       resetForm();
       queryClient.invalidateQueries({ queryKey: ['admin-all-services'] });
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+      localStorage.removeItem('whopautopilot_services_cache_v2');
     },
     onError: (error: Error) => {
       toast.error(error.message);
