@@ -499,6 +499,40 @@ function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, i
     formData.provider_service_id && !/^[0-9]{1,12}$/.test(formData.provider_service_id.trim())
       ? 'Only digits allowed (e.g. 1001)'
       : null;
+  const runLookup = async () => {
+    const id = formData.provider_service_id.trim();
+    if (!formData.provider_id) {
+      setLookupError('Select a provider first');
+      return;
+    }
+    if (!/^[0-9]{1,12}$/.test(id)) {
+      setLookupError('Provider Service ID must be digits only (e.g. 1001)');
+      return;
+    }
+    setIsFetchingRemote(true);
+    setLookupError(null);
+    try {
+      const svc: any = await lookupFn({ data: { provider_id: formData.provider_id, service_id: id } });
+      setFormData({
+        ...formData,
+        provider_service_id: id,
+        name: svc.name,
+        category: formData.category || svc.category,
+        price: String(svc.rate),
+        min_quantity: String(svc.min),
+        max_quantity: String(svc.max),
+        drip_feed_enabled: !!svc.dripfeed,
+      });
+      setLinked({ name: svc.name, rate: svc.rate, min: svc.min, max: svc.max });
+      toast.success(`Fetched "${svc.name}" from ${formData.provider_id}`);
+    } catch (err: any) {
+      setLinked(null);
+      setLookupError(err?.message || 'Could not reach the provider API. Check the account credentials.');
+    } finally {
+      setIsFetchingRemote(false);
+    }
+  };
+
   const { data: providers } = useQuery({
     queryKey: ['admin-provider-ids'],
     queryFn: async () => {
@@ -518,7 +552,11 @@ function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, i
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Provider</Label>
-          <Select value={formData.provider_id} onValueChange={(v) => setFormData({ ...formData, provider_id: v })}>
+          <Select
+            value={formData.provider_id}
+            disabled={isFetchingRemote}
+            onValueChange={(v) => { setLinked(null); setFormData({ ...formData, provider_id: v }); }}
+          >
             <SelectTrigger className="input-glass">
               <SelectValue placeholder="Select provider" />
             </SelectTrigger>
@@ -534,14 +572,20 @@ function ServiceForm({ formData, setFormData, onSubmit, isLoading, categories, i
           <div className="flex gap-2">
             <Input
               placeholder="e.g., 1001"
+              inputMode="numeric"
+              disabled={isFetchingRemote}
               value={formData.provider_service_id}
-              onChange={(e) => setFormData({ ...formData, provider_service_id: e.target.value })}
+              onChange={(e) => {
+                setLinked(null);
+                setLookupError(null);
+                setFormData({ ...formData, provider_service_id: e.target.value.replace(/[^0-9]/g, '') });
+              }}
               className="input-glass"
             />
             <Button
               type="button"
               variant="outline"
-              disabled={isFetchingRemote || !formData.provider_id || !formData.provider_service_id}
+              disabled={isFetchingRemote || !formData.provider_id || !formData.provider_service_id || !!idFormatError}
               onClick={() => runLookup()}
             >
               {isFetchingRemote ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Fetch'}
