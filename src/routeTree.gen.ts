@@ -19,6 +19,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DeliveryRouteImport } from './routes/delivery'
 import { Route as EngagementOrderRouteImport } from './routes/engagement-order'
 import { Route as EngagementOrdersRouteImport } from './routes/engagement-orders'
+import { Route as EthicalUseRouteImport } from './routes/ethical-use'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
@@ -93,6 +94,11 @@ const EngagementOrderRoute = EngagementOrderRouteImport.update({
 const EngagementOrdersRoute = EngagementOrdersRouteImport.update({
   id: '/engagement-orders',
   path: '/engagement-orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EthicalUseRoute = EthicalUseRouteImport.update({
+  id: '/ethical-use',
+  path: '/ethical-use',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrdersRoute = OrdersRouteImport.update({
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/delivery': typeof DeliveryRoute
   '/engagement-order': typeof EngagementOrderRoute
   '/engagement-orders': typeof EngagementOrdersRouteWithChildren
+  '/ethical-use': typeof EthicalUseRoute
   '/orders': typeof OrdersRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
@@ -271,6 +278,7 @@ export interface FileRoutesByTo {
   '/delivery': typeof DeliveryRoute
   '/engagement-order': typeof EngagementOrderRoute
   '/engagement-orders': typeof EngagementOrdersRouteWithChildren
+  '/ethical-use': typeof EthicalUseRoute
   '/orders': typeof OrdersRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
@@ -309,6 +317,7 @@ export interface FileRoutesById {
   '/delivery': typeof DeliveryRoute
   '/engagement-order': typeof EngagementOrderRoute
   '/engagement-orders': typeof EngagementOrdersRouteWithChildren
+  '/ethical-use': typeof EthicalUseRoute
   '/orders': typeof OrdersRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
@@ -348,6 +357,7 @@ export interface FileRouteTypes {
     | '/delivery'
     | '/engagement-order'
     | '/engagement-orders'
+    | '/ethical-use'
     | '/orders'
     | '/privacy'
     | '/refund'
@@ -385,6 +395,7 @@ export interface FileRouteTypes {
     | '/delivery'
     | '/engagement-order'
     | '/engagement-orders'
+    | '/ethical-use'
     | '/orders'
     | '/privacy'
     | '/refund'
@@ -422,6 +433,7 @@ export interface FileRouteTypes {
     | '/delivery'
     | '/engagement-order'
     | '/engagement-orders'
+    | '/ethical-use'
     | '/orders'
     | '/privacy'
     | '/refund'
@@ -460,6 +472,7 @@ export interface RootRouteChildren {
   DeliveryRoute: typeof DeliveryRoute
   EngagementOrderRoute: typeof EngagementOrderRoute
   EngagementOrdersRoute: typeof EngagementOrdersRouteWithChildren
+  EthicalUseRoute: typeof EthicalUseRoute
   OrdersRoute: typeof OrdersRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundRoute: typeof RefundRoute
@@ -556,6 +569,13 @@ declare module '@tanstack/react-router' {
       path: '/engagement-orders'
       fullPath: '/engagement-orders'
       preLoaderRoute: typeof EngagementOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ethical-use': {
+      id: '/ethical-use'
+      path: '/ethical-use'
+      fullPath: '/ethical-use'
+      preLoaderRoute: typeof EthicalUseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/orders': {
@@ -758,6 +778,7 @@ const rootRouteChildren: RootRouteChildren = {
   DeliveryRoute: DeliveryRoute,
   EngagementOrderRoute: EngagementOrderRoute,
   EngagementOrdersRoute: EngagementOrdersRouteWithChildren,
+  EthicalUseRoute: EthicalUseRoute,
   OrdersRoute: OrdersRoute,
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,
