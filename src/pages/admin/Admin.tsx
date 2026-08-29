@@ -370,6 +370,27 @@ export default function Admin() {
             </Card>
           </Link>
 
+          <Link to="/admin/support">
+            <Card className="glass-card h-full hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all cursor-pointer group border-2 border-primary/30">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <ShieldAlert className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold group-hover:text-primary transition-colors">
+                      Support Tickets
+                    </h3>
+                    <p className="text-xs text-muted-foreground">Reply, update status, full timeline</p>
+                  </div>
+                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+
+
           <Link to="/admin/oxapay-events">
             <Card className="glass-card h-full hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/10 transition-all cursor-pointer group border-2 border-orange-500/30">
               <CardContent className="p-5">

@@ -32,6 +32,8 @@ import {
 import { Link, Navigate } from "@/lib/router-compat";
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import { WalletReconciliationCard } from '@/components/admin/WalletReconciliationCard';
+
 
 interface CronJob {
   id: number;
@@ -189,7 +191,10 @@ export default function AdminCronMonitor() {
           </div>
         </div>
 
+        <WalletReconciliationCard />
+
         {/* Stats Cards */}
+
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Job Cards */}
           {data?.jobs.map((job) => (

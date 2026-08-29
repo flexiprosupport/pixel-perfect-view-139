@@ -695,6 +695,8 @@ export type Database = {
           error_message: string | null
           id: string
           last_status_check: string | null
+          max_retries: number
+          next_attempt_at: string | null
           order_id: string | null
           peak_multiplier: number | null
           provider_account_id: string | null
@@ -722,6 +724,8 @@ export type Database = {
           error_message?: string | null
           id?: string
           last_status_check?: string | null
+          max_retries?: number
+          next_attempt_at?: string | null
           order_id?: string | null
           peak_multiplier?: number | null
           provider_account_id?: string | null
@@ -749,6 +753,8 @@ export type Database = {
           error_message?: string | null
           id?: string
           last_status_check?: string | null
+          max_retries?: number
+          next_attempt_at?: string | null
           order_id?: string | null
           peak_multiplier?: number | null
           provider_account_id?: string | null
@@ -1597,6 +1603,36 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_reconciliation_reports: {
+        Row: {
+          created_at: string
+          id: string
+          mismatch_count: number
+          mismatches: Json
+          run_at: string
+          total_drift: number
+          wallets_checked: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mismatch_count?: number
+          mismatches?: Json
+          run_at?: string
+          total_drift?: number
+          wallets_checked?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mismatch_count?: number
+          mismatches?: Json
+          run_at?: string
+          total_drift?: number
+          wallets_checked?: number
+        }
+        Relationships: []
+      }
       wallets: {
         Row: {
           balance: number | null
@@ -1875,6 +1911,12 @@ export type Database = {
           id: string
         }[]
       }
+      get_due_engagement_run_ids_v2: {
+        Args: { p_limit: number }
+        Returns: {
+          id: string
+        }[]
+      }
       get_or_create_bot_user: {
         Args: { _full_name?: string; _telegram_id: string }
         Returns: string
@@ -1930,6 +1972,7 @@ export type Database = {
       is_maintenance_mode: { Args: never; Returns: boolean }
       is_user_banned: { Args: { _user_id: string }; Returns: boolean }
       pg_advisory_xact_lock: { Args: { key: number }; Returns: undefined }
+      reconcile_wallets: { Args: never; Returns: Json }
       reschedule_organic_run: {
         Args: { p_quantity: number; p_run_id: string; p_scheduled_at: string }
         Returns: Json

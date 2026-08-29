@@ -252,46 +252,56 @@ async function resolveProviderAccount(admin: any, serviceId: string | null) {
   return { account: acct, providerServiceId: String(svc.provider_service_id) };
 }
 
-/** Send every due (pending, scheduled) run to its provider. */
+/** Exponential backoff (minutes) between provider dispatch attempts. */
+const MAX_RETRIES = 5;
+const backoffMinutes = (attempt: number) => Math.min(60, 2 ** Math.max(0, attempt));
+
+/** Send every due (pending, or failed-and-ready-for-retry) run to its provider. */
 export async function executeDueRuns(limit = 25) {
   const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
 
-  const { data: due, error } = await supabaseAdmin.rpc('get_due_engagement_run_ids' as never, {
+  const { data: due, error } = await supabaseAdmin.rpc('get_due_engagement_run_ids_v2' as never, {
     p_limit: limit,
   } as never);
   if (error) throw new Error(error.message);
 
   const ids = ((due ?? []) as { id: string }[]).map((r) => r.id);
   let sent = 0;
+  let retried = 0;
   const failures: string[] = [];
 
   for (const runId of ids) {
     // Claim the run so parallel workers cannot double-send it.
+    // provider_order_id IS NULL is the idempotency guard: a run that already
+    // reached the provider can never be dispatched again.
     const { data: claimed } = await supabaseAdmin
       .from('organic_run_schedule')
       .update({ status: 'processing', started_at: new Date().toISOString() })
       .eq('id', runId)
-      .eq('status', 'pending')
-      .select('id, quantity_to_send, engagement_order_item_id')
+      .in('status', ['pending', 'failed'])
+      .is('provider_order_id', null)
+      .select('id, quantity_to_send, engagement_order_item_id, retry_count')
       .maybeSingle();
     if (!claimed) continue;
+    if (Number(claimed.retry_count ?? 0) > 0) retried++;
 
     const fail = async (message: string) => {
       failures.push(message);
-      const { data: cur } = await supabaseAdmin
-        .from('organic_run_schedule')
-        .select('retry_count')
-        .eq('id', runId)
-        .maybeSingle();
+      const attempt = Number(claimed.retry_count ?? 0) + 1;
+      const exhausted = attempt >= MAX_RETRIES;
       await supabaseAdmin
         .from('organic_run_schedule')
         .update({
           status: 'failed',
-          error_message: message.slice(0, 400),
-          retry_count: Number(cur?.retry_count ?? 0) + 1,
+          error_message: `${message.slice(0, 380)}${exhausted ? ' (retries exhausted)' : ''}`,
+          retry_count: attempt,
+          next_attempt_at: exhausted
+            ? null
+            : new Date(Date.now() + backoffMinutes(attempt) * 60_000).toISOString(),
         })
         .eq('id', runId);
     };
+
 
     try {
       const { data: item } = await supabaseAdmin
@@ -336,6 +346,7 @@ export async function executeDueRuns(limit = 25) {
           provider_account_id: resolved.account.id,
           provider_account_name: resolved.account.name,
           error_message: null,
+          next_attempt_at: null,
         })
         .eq('id', runId);
 
@@ -350,7 +361,8 @@ export async function executeDueRuns(limit = 25) {
     }
   }
 
-  return { due: ids.length, sent, failed: failures.length, errors: failures.slice(0, 10) };
+  return { due: ids.length, sent, retried, failed: failures.length, errors: failures.slice(0, 10) };
+
 }
 
 // ---------------------------------------------------------------------------
