@@ -50,6 +50,7 @@ import {
   Mail
 } from "lucide-react";
 import { PageMeta } from "@/components/seo/PageMeta";
+import { useNavigate } from "@tanstack/react-router";
 import { NotificationsCard } from "@/components/support/NotificationsCard";
 import { RefundClaimDialog } from "@/components/support/RefundClaimDialog";
 
@@ -136,6 +137,7 @@ export default function Support() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const navigate = useNavigate();
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
   const [showFAQ, setShowFAQ] = useState(false);
   
