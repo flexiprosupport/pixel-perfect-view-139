@@ -87,6 +87,21 @@ export default function Settings() {
 
   // No loading states needed for optimistic UI
 
+  // Load the customer's personal API key (stored separately from the profile)
+  useEffect(() => {
+    if (!user?.id) return;
+    let cancelled = false;
+    supabase
+      .from('user_api_keys')
+      .select('api_key')
+      .eq('user_id', user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data?.api_key) setApiKey(data.api_key);
+      });
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
   // Load profile data + organic settings from localStorage
   useEffect(() => {
     if (profile) {
