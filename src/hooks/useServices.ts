@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Service } from '@/lib/supabase';
 
 const SERVICES_CACHE_KEY = 'whopautopilot_services_cache_v2';
-const SERVICES_CACHE_TTL = 30 * 60 * 1000; // 30 minutes localStorage cache
+const SERVICES_CACHE_TTL = 2 * 60 * 1000; // 2 minutes localStorage cache — keeps prices fresh
 
 /** Read services from localStorage if still fresh */
 function getCachedServices(): Service[] | null {
@@ -52,10 +52,10 @@ export function useServices() {
       setCachedServices(services);
       return services;
     },
-    staleTime: 10 * 60 * 1000,   // 10 min React Query staleness (was 1 min)
+    staleTime: 60 * 1000,        // 1 min React Query staleness
     gcTime: 30 * 60 * 1000,      // 30 min cache retention
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
   });
 
   // Global markup removed — services.price is the final per-1000 USD price.
