@@ -39,6 +39,31 @@ import { ImportServicesDialog } from '@/components/admin/ImportServicesDialog';
 import { useServerFn } from '@tanstack/react-start';
 import { syncProviderPrices, lookupProviderService } from '@/lib/providers.functions';
 
+function validateServiceForm(f: {
+  provider_id: string;
+  provider_service_id: string;
+  name: string;
+  category: string;
+  price: string;
+  min_quantity: string;
+  max_quantity: string;
+}): string | null {
+  if (!f.name.trim()) return 'Service name is required';
+  if (!f.category) return 'Please select a category';
+  if (f.provider_service_id && !/^[0-9]{1,12}$/.test(f.provider_service_id.trim()))
+    return 'Provider Service ID must be a number (e.g. 1001) with no spaces or letters';
+  if (f.provider_service_id && !f.provider_id)
+    return 'Select a provider — without it prices cannot be synced for this service';
+  const price = parseFloat(f.price);
+  if (!Number.isFinite(price) || price <= 0) return 'Price per 1K must be a number greater than 0';
+  const min = parseInt(f.min_quantity, 10);
+  const max = parseInt(f.max_quantity, 10);
+  if (!Number.isFinite(min) || min < 1) return 'Min quantity must be at least 1';
+  if (!Number.isFinite(max) || max < 1) return 'Max quantity must be at least 1';
+  if (min > max) return 'Min quantity cannot be greater than Max quantity';
+  return null;
+}
+
 export default function AdminServices() {
   const syncPricesFn = useServerFn(syncProviderPrices);
   const { isAdmin, isLoading: authLoading } = useAuth();
@@ -63,6 +88,26 @@ export default function AdminServices() {
     is_active: true,
   });
 
+  const runSyncPrices = async () => {
+    setIsSyncingPrices(true);
+    try {
+      const data = await syncPricesFn({});
+      toast.success(`${data.updated} service price(s) synced from providers`);
+      for (const e of data.errors ?? []) {
+        toast.error(`Price sync failed — ${e}`, { duration: 10000 });
+      }
+      queryClient.invalidateQueries({ queryKey: ['admin-all-services'] });
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+    } catch (err: any) {
+      toast.error(err?.message || 'Price sync failed', {
+        duration: 12000,
+        action: { label: 'Retry', onClick: () => runSyncPrices() },
+      });
+    } finally {
+      setIsSyncingPrices(false);
+    }
+  };
+
   const { data: services, isLoading } = useQuery({
     queryKey: ['admin-all-services'],
     queryFn: async () => {
@@ -78,6 +123,8 @@ export default function AdminServices() {
 
   const addServiceMutation = useMutation({
     mutationFn: async () => {
+      const invalid = validateServiceForm(formData);
+      if (invalid) throw new Error(invalid);
       const { error } = await supabase
         .from('services')
         .insert({
@@ -111,6 +158,8 @@ export default function AdminServices() {
   const updateServiceMutation = useMutation({
     mutationFn: async () => {
       if (!editingService) return;
+      const invalid = validateServiceForm(formData);
+      if (invalid) throw new Error(invalid);
 
       const { error } = await supabase
         .from('services')
@@ -271,22 +320,35 @@ export default function AdminServices() {
               variant="outline"
               className="gap-2"
               disabled={isSyncingPrices}
+              onClick={() => runSyncPrices()}
+            >
+              {isSyncingPrices ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              {isSyncingPrices ? 'Syncing…' : 'Refresh Prices'}
+            </Button>
+            <Button
+              variant="outline"
+              className="gap-2 hidden"
               onClick={async () => {
                 setIsSyncingPrices(true);
                 try {
                   const data = await syncPricesFn({});
-                  toast.success(`${data.updated} service prices synced from providers!`);
-                  if (data.errors?.length) toast.error(data.errors[0]);
+                  toast.success(`${data.updated} service price(s) synced from providers`);
+                  for (const e of data.errors ?? []) {
+                    toast.error(`Price sync failed — ${e}`, { duration: 10000 });
+                  }
                   queryClient.invalidateQueries({ queryKey: ['admin-all-services'] });
+                  queryClient.invalidateQueries({ queryKey: ['services'] });
                 } catch (err: any) {
-                  toast.error(err.message || 'Sync failed');
+                  toast.error(err?.message || 'Price sync failed', {
+                    duration: 12000,
+                    action: { label: 'Retry', onClick: () => runSyncPrices() },
+                  });
                 } finally {
                   setIsSyncingPrices(false);
                 }
               }}
             >
-              {isSyncingPrices ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-              Sync Prices
+              hidden
             </Button>
             <Button
               variant="outline"
