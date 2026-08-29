@@ -105,12 +105,18 @@ export default function AdminUsers() {
   ];
   // Any verified admin can adjust wallets manually; the server re-checks the role.
   const isSuperAdmin = !!isAdmin || (!!user?.id && SUPER_ADMIN_USER_IDS.includes(user.id));
+  // Role grant/revoke + ban is restricted to the true super-admin allowlist
+  // (server re-checks the same list).
+  const isTrueSuperAdmin = !!user?.id && SUPER_ADMIN_USER_IDS.includes(user.id);
   const [removeSubUser, setRemoveSubUser] = useState<UserProfile | null>(null);
   const [pauseUser, setPauseUser] = useState<UserProfile | null>(null);
   const [cancelUser, setCancelUser] = useState<UserProfile | null>(null);
   const [refundOnCancel, setRefundOnCancel] = useState(false);
   const [banUser, setBanUser] = useState<UserProfile | null>(null);
   const [banReason, setBanReason] = useState('');
+  const [roleUser, setRoleUser] = useState<UserProfile | null>(null);
+  const [roleReason, setRoleReason] = useState('');
+
 
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-all-users-with-subs'],
