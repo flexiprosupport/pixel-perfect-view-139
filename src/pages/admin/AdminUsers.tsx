@@ -170,43 +170,23 @@ export default function AdminUsers() {
     onError: (err: Error) => toast.error(err.message),
   });
 
+  const callAdminWalletAction = useServerFn(adminWalletAction);
   const updateBalanceMutation = useMutation({
     mutationFn: async () => {
       if (!selectedUser || !balanceAmount) return;
       const inrAmount = parseFloat(balanceAmount);
       if (!inrAmount || inrAmount <= 0) throw new Error('Enter a valid INR amount');
 
-      // All admin wallet changes go through the audited edge function.
-      // Direct client-side wallet/transaction writes are blocked at the RLS layer.
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      const freshToken = sessionData.session?.access_token;
-      if (sessionError || !freshToken) throw new Error('Admin session expired. Please login again.');
-
-      const { data, error } = await supabase.functions.invoke('admin-wallet-action', {
-        headers: {
-          Authorization: `Bearer ${freshToken}`,
-        },
-        body: {
+      // Wallet changes go through the authenticated server function, which
+      // re-checks admin + super-admin allowlist server-side. Direct client-side
+      // wallet/transaction writes are blocked at the RLS layer.
+      await callAdminWalletAction({
+        data: {
           target_user_id: selectedUser.user_id,
           action: balanceAction, // 'add' | 'subtract'
           inr_amount: inrAmount,
         },
       });
-      if (error) {
-        const response = (error as any)?.context;
-        if (response && typeof response.json === 'function') {
-          try {
-            const body = await response.json();
-            throw new Error(body?.error || error.message || 'Action failed');
-          } catch (parseError) {
-            if (parseError instanceof Error && parseError.message !== 'Unexpected end of JSON input') {
-              throw parseError;
-            }
-          }
-        }
-        throw new Error(error.message || 'Action failed');
-      }
-      if (data?.error) throw new Error(data.error);
     },
     onSuccess: () => {
       toast.success('Balance updated successfully!');
