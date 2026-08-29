@@ -115,3 +115,84 @@ export const adminWalletAction = createServerFn({ method: 'POST' })
 
     return { success: true, new_balance: newBalance };
   });
+
+const pendingDepositSchema = z.object({
+  transaction_id: z.string().uuid(),
+  decision: z.enum(['approve', 'reject']),
+});
+
+/** Admin approves/rejects a pending manual deposit transaction. */
+export const adminPendingDepositAction = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => pendingDepositSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const callerId = context.userId as string;
+    const { data: isAdmin } = await context.supabase.rpc('has_role', {
+      _user_id: callerId,
+      _role: 'admin',
+    });
+    if (!isAdmin) throw new Error('Admins only');
+
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+    const { data: tx } = await supabaseAdmin
+      .from('transactions')
+      .select('id, user_id, amount, status, type')
+      .eq('id', data.transaction_id)
+      .maybeSingle();
+    if (!tx) throw new Error('Transaction not found');
+    if (tx.status !== 'pending') throw new Error('Transaction is not pending');
+    if (tx.type !== 'deposit') throw new Error('Only deposit transactions can be approved');
+
+    if (data.decision === 'reject') {
+      const { error } = await supabaseAdmin
+        .from('transactions')
+        .update({ status: 'failed' })
+        .eq('id', tx.id);
+      if (error) throw new Error(error.message);
+      return { success: true, rejected: true };
+    }
+
+    const amount = Number(tx.amount ?? 0);
+    if (!(amount > 0)) throw new Error('Invalid deposit amount');
+
+    const { data: wallet } = await supabaseAdmin
+      .from('wallets')
+      .select('balance, total_deposited')
+      .eq('user_id', tx.user_id)
+      .maybeSingle();
+    if (!wallet) throw new Error('Wallet not found for target user');
+
+    const newBalance = Math.round((Number(wallet.balance ?? 0) + amount) * 10000) / 10000;
+
+    // Mark the existing transaction completed FIRST (credit trail trigger), then credit.
+    const { error: txErr } = await supabaseAdmin
+      .from('transactions')
+      .update({ status: 'completed', balance_after: newBalance })
+      .eq('id', tx.id);
+    if (txErr) throw new Error(txErr.message);
+
+    const { error: wErr } = await supabaseAdmin
+      .from('wallets')
+      .update({
+        balance: newBalance,
+        total_deposited: Math.round((Number(wallet.total_deposited ?? 0) + amount) * 10000) / 10000,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', tx.user_id);
+    if (wErr) throw new Error(wErr.message);
+
+    const { data: callerProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('email')
+      .eq('user_id', callerId)
+      .maybeSingle();
+    await supabaseAdmin.from('admin_audit_log').insert({
+      actor_id: callerId,
+      actor_email: callerProfile?.email ?? null,
+      target_user_id: tx.user_id,
+      action: 'deposit_approved',
+      metadata: { transaction_id: tx.id, amount },
+    });
+
+    return { success: true, approved: true, new_balance: newBalance };
+  });
