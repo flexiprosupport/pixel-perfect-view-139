@@ -875,7 +875,14 @@ export default function AdminUsers() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => setBanUser(u)}
+                          onClick={() => {
+                            if (!isTrueSuperAdmin) {
+                              toast.error('Only a super-admin can ban users');
+                              return;
+                            }
+                            setBanReason('');
+                            setBanUser(u);
+                          }}
                           className="h-8 w-8 rounded-lg text-destructive hover:text-destructive"
                           title="Ban User (irreversible)"
                         >
@@ -887,6 +894,10 @@ export default function AdminUsers() {
                           variant="ghost"
                           size="icon"
                           onClick={() => {
+                            if (!isTrueSuperAdmin) {
+                              toast.error('Only a super-admin can unban users');
+                              return;
+                            }
                             if (confirm(`Unban ${u.email}?`)) unbanUserMutation.mutate(u);
                           }}
                           disabled={unbanUserMutation.isPending}
