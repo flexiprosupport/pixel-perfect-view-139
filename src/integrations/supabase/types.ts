@@ -1483,6 +1483,30 @@ export type Database = {
           },
         ]
       }
+      user_api_keys: {
+        Row: {
+          api_key: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1835,6 +1859,7 @@ export type Database = {
         Args: { p_quantity: number; p_run_id: string; p_scheduled_at: string }
         Returns: Json
       }
+      rotate_my_api_key: { Args: never; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
