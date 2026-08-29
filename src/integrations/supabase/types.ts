@@ -62,6 +62,75 @@ export type Database = {
         }
         Relationships: []
       }
+      api_audit_log: {
+        Row: {
+          action: string | null
+          api_key_prefix: string | null
+          created_at: string
+          endpoint: string
+          error_message: string | null
+          id: string
+          ip_address: string | null
+          metadata: Json
+          method: string | null
+          status_code: number | null
+          success: boolean
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action?: string | null
+          api_key_prefix?: string | null
+          created_at?: string
+          endpoint: string
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json
+          method?: string | null
+          status_code?: number | null
+          success?: boolean
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string | null
+          api_key_prefix?: string | null
+          created_at?: string
+          endpoint?: string
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json
+          method?: string | null
+          status_code?: number | null
+          success?: boolean
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      api_rate_limits: {
+        Row: {
+          bucket_key: string
+          request_count: number
+          updated_at: string
+          window_start: string
+        }
+        Insert: {
+          bucket_key: string
+          request_count?: number
+          updated_at?: string
+          window_start?: string
+        }
+        Update: {
+          bucket_key?: string
+          request_count?: number
+          updated_at?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       bundle_items: {
         Row: {
           bundle_id: string
@@ -1733,6 +1802,14 @@ export type Database = {
         Returns: Json
       }
       admin_unban_user: { Args: { p_target_user_id: string }; Returns: Json }
+      api_rate_limit_hit: {
+        Args: {
+          p_bucket_key: string
+          p_limit: number
+          p_window_seconds: number
+        }
+        Returns: Json
+      }
       cancel_order_with_refund: {
         Args: { p_actor: string; p_is_admin: boolean; p_order_id: string }
         Returns: Json

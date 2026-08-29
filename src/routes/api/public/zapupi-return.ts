@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { logApiCall } from '@/lib/api-audit.server';
 
 /**
  * Landing endpoint the gateway redirects to after payment.
@@ -29,6 +30,15 @@ export const Route = createFileRoute('/api/public/zapupi-return')({
         const target = new URL('/wallet', url.origin);
         if (orderId) target.searchParams.set('zapupi_order_id', orderId);
         target.searchParams.set('status', status);
+
+        await logApiCall(request, {
+          endpoint: '/api/public/zapupi-return',
+          method: 'GET',
+          action: 'return',
+          statusCode: 302,
+          success: status === 'success',
+          metadata: { order_id: orderId, status },
+        });
 
         return new Response(null, {
           status: 302,
