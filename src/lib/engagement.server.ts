@@ -186,7 +186,7 @@ export async function placeEngagementOrder(userId: string, input: PlaceOrderInpu
   }
 
   // Charge the wallet (atomic debit + ledger row).
-  const { data: debit, error: debitErr } = await supabaseAdmin.rpc('debit_wallet_for_order' as never, {
+  const { error: debitErr } = await supabaseAdmin.rpc('debit_wallet_for_order' as never, {
     p_user_id: userId,
     p_amount: totalPrice,
     p_order_id: null,
@@ -205,7 +205,6 @@ export async function placeEngagementOrder(userId: string, input: PlaceOrderInpu
     order_id: order.id,
     order_number: order.order_number,
     total_price: totalPrice,
-    debit: (debit ?? null) as unknown,
   };
 }
 
