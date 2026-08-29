@@ -211,21 +211,21 @@ export default function Admin() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link to="/admin/bundles">
             <Card className="glass-card h-full hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all cursor-pointer group border-2 border-primary/20">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Sparkles className="h-6 w-6 text-primary" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Sparkles className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold group-hover:text-primary transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
                         Bundles
                       </h3>
-                      <Badge className="text-[10px] h-4 px-1.5 bg-primary">NEW</Badge>
+                      <Badge className="shrink-0 text-[9px] h-4 px-1.5 bg-primary">NEW</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">Engagement combos</p>
+                    <p className="text-xs text-muted-foreground truncate">Engagement combos</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               </CardContent>
             </Card>
@@ -233,18 +233,18 @@ export default function Admin() {
 
           <Link to="/admin/users">
             <Card className="glass-card h-full hover:border-accent/50 hover:shadow-lg hover:shadow-accent/10 transition-all cursor-pointer group">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Users className="h-6 w-6 text-accent" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Users className="h-5 w-5 text-accent" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold group-hover:text-accent transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm truncate group-hover:text-accent transition-colors">
                       Users
                     </h3>
-                    <p className="text-xs text-muted-foreground">Manage accounts</p>
+                    <p className="text-xs text-muted-foreground truncate">Manage accounts</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-accent transition-colors" />
                 </div>
               </CardContent>
             </Card>
@@ -252,21 +252,21 @@ export default function Admin() {
 
           <Link to="/admin/cron-monitor">
             <Card className="glass-card h-full hover:border-warning/50 hover:shadow-lg hover:shadow-warning/10 transition-all cursor-pointer group">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-warning/20 to-warning/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Clock className="h-6 w-6 text-warning" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-warning/20 to-warning/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Clock className="h-5 w-5 text-warning" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold group-hover:text-warning transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-semibold text-sm truncate group-hover:text-warning transition-colors">
                         Cron Monitor
                       </h3>
-                      <Badge className="text-[10px] h-4 px-1.5 bg-warning text-warning-foreground">LIVE</Badge>
+                      <Badge className="shrink-0 text-[9px] h-4 px-1.5 bg-warning text-warning-foreground">LIVE</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">Real-time status</p>
+                    <p className="text-xs text-muted-foreground truncate">Real-time status</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-warning transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-warning transition-colors" />
                 </div>
               </CardContent>
             </Card>
@@ -275,21 +275,21 @@ export default function Admin() {
 
           <Link to="/admin/provider-accounts">
             <Card className="glass-card h-full hover:border-accent/50 hover:shadow-lg hover:shadow-accent/10 transition-all cursor-pointer group border-2 border-accent/30">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/30 to-accent/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Globe className="h-6 w-6 text-accent" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-accent/30 to-accent/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Globe className="h-5 w-5 text-accent" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold group-hover:text-accent transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-semibold text-sm truncate group-hover:text-accent transition-colors">
                         Provider Accounts
                       </h3>
-                      <Badge className="text-[10px] h-4 px-1.5 bg-accent text-accent-foreground">NEW</Badge>
+                      <Badge className="shrink-0 text-[9px] h-4 px-1.5 bg-accent text-accent-foreground">NEW</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">API keys & URLs</p>
+                    <p className="text-xs text-muted-foreground truncate">API keys & URLs</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-accent transition-colors" />
                 </div>
               </CardContent>
             </Card>
@@ -297,21 +297,21 @@ export default function Admin() {
 
           <Link to="/admin/topup-plan">
             <Card className="glass-card h-full hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/10 transition-all cursor-pointer group border-2 border-orange-500/30">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500/30 to-orange-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <CreditCard className="h-6 w-6 text-orange-500" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-orange-500/30 to-orange-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <CreditCard className="h-5 w-5 text-orange-500" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold group-hover:text-orange-500 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-semibold text-sm truncate group-hover:text-orange-500 transition-colors">
                         Top-up Plan
                       </h3>
-                      <Badge className="text-[10px] h-4 px-1.5 bg-orange-500 text-white">NEW</Badge>
+                      <Badge className="shrink-0 text-[9px] h-4 px-1.5 bg-orange-500 text-white">NEW</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">Per-provider ₹ to add</p>
+                    <p className="text-xs text-muted-foreground truncate">Per-provider ₹ to add</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-orange-500 transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-orange-500 transition-colors" />
                 </div>
               </CardContent>
             </Card>
@@ -319,21 +319,21 @@ export default function Admin() {
 
           <Link to="/admin/service-provider-mapping">
             <Card className="glass-card h-full hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all cursor-pointer group border-2 border-primary/30">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Zap className="h-6 w-6 text-primary" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Zap className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold group-hover:text-primary transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
                         Service Mapping
                       </h3>
-                      <Badge className="text-[10px] h-4 px-1.5 bg-primary">NEW</Badge>
+                      <Badge className="shrink-0 text-[9px] h-4 px-1.5 bg-primary">NEW</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">Failover & Rotation</p>
+                    <p className="text-xs text-muted-foreground truncate">Failover & Rotation</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               </CardContent>
             </Card>
@@ -341,21 +341,21 @@ export default function Admin() {
 
           <Link to="/admin/deposits">
             <Card className="glass-card h-full hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/10 transition-all cursor-pointer group border-2 border-amber-500/30">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/30 to-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <CreditCard className="h-6 w-6 text-amber-500" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-amber-500/30 to-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <CreditCard className="h-5 w-5 text-amber-500" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold group-hover:text-amber-500 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-semibold text-sm truncate group-hover:text-amber-500 transition-colors">
                         Deposit Requests
                       </h3>
-                      <Badge className="text-[10px] h-4 px-1.5 bg-amber-500 text-amber-500-foreground">PENDING</Badge>
+                      <Badge className="shrink-0 text-[9px] h-4 px-1.5 bg-amber-500 text-amber-500-foreground">PENDING</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">Approve Razorpay payments</p>
+                    <p className="text-xs text-muted-foreground truncate">Approve Razorpay payments</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-amber-500 transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-amber-500 transition-colors" />
                 </div>
               </CardContent>
             </Card>
@@ -363,21 +363,21 @@ export default function Admin() {
 
           <Link to="/admin/audit-log">
             <Card className="glass-card h-full hover:border-red-500/50 hover:shadow-lg hover:shadow-red-500/10 transition-all cursor-pointer group border-2 border-red-500/30">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500/30 to-red-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <ShieldAlert className="h-6 w-6 text-red-500" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-red-500/30 to-red-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <ShieldAlert className="h-5 w-5 text-red-500" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold group-hover:text-red-500 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-semibold text-sm truncate group-hover:text-red-500 transition-colors">
                         Admin Audit Log
                       </h3>
-                      <Badge className="text-[10px] h-4 px-1.5 bg-red-500 text-white">NEW</Badge>
+                      <Badge className="shrink-0 text-[9px] h-4 px-1.5 bg-red-500 text-white">NEW</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">IP + actor for every wallet action</p>
+                    <p className="text-xs text-muted-foreground truncate">IP + actor for every wallet action</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-red-500 transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-red-500 transition-colors" />
                 </div>
               </CardContent>
             </Card>
@@ -385,18 +385,18 @@ export default function Admin() {
 
           <Link to="/admin/support">
             <Card className="glass-card h-full hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all cursor-pointer group border-2 border-primary/30">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <ShieldAlert className="h-6 w-6 text-primary" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <ShieldAlert className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold group-hover:text-primary transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
                       Support Tickets
                     </h3>
-                    <p className="text-xs text-muted-foreground">Reply, update status, full timeline</p>
+                    <p className="text-xs text-muted-foreground truncate">Reply, update status, full timeline</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               </CardContent>
             </Card>
@@ -406,21 +406,21 @@ export default function Admin() {
 
           <Link to="/admin/oxapay-events">
             <Card className="glass-card h-full hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/10 transition-all cursor-pointer group border-2 border-orange-500/30">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500/30 to-orange-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <ShieldAlert className="h-6 w-6 text-orange-500" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-orange-500/30 to-orange-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <ShieldAlert className="h-5 w-5 text-orange-500" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold group-hover:text-orange-500 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-semibold text-sm truncate group-hover:text-orange-500 transition-colors">
                         OxaPay Webhook Events
                       </h3>
-                      <Badge className="text-[10px] h-4 px-1.5 bg-orange-500 text-white">NEW</Badge>
+                      <Badge className="shrink-0 text-[9px] h-4 px-1.5 bg-orange-500 text-white">NEW</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">Signature, replays &amp; credit outcome</p>
+                    <p className="text-xs text-muted-foreground truncate">Signature, replays &amp; credit outcome</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-orange-500 transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-orange-500 transition-colors" />
                 </div>
               </CardContent>
             </Card>
@@ -428,21 +428,21 @@ export default function Admin() {
 
           <Link to="/admin/popup-ad">
             <Card className="glass-card h-full hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/10 transition-all cursor-pointer group border-2 border-orange-500/30">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500/30 to-red-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Megaphone className="h-6 w-6 text-orange-500" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 shrink-0 rounded-2xl bg-gradient-to-br from-orange-500/30 to-red-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Megaphone className="h-5 w-5 text-orange-500" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold group-hover:text-orange-500 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-semibold text-sm truncate group-hover:text-orange-500 transition-colors">
                         Popup Ad
                       </h3>
-                      <Badge className="text-[10px] h-4 px-1.5 bg-orange-500 text-white">NEW</Badge>
+                      <Badge className="shrink-0 text-[9px] h-4 px-1.5 bg-orange-500 text-white">NEW</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">YouTube popup on engagement pages</p>
+                    <p className="text-xs text-muted-foreground truncate">YouTube popup on engagement pages</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-orange-500 transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-orange-500 transition-colors" />
                 </div>
               </CardContent>
             </Card>
