@@ -50,6 +50,7 @@ import {
   Mail
 } from "lucide-react";
 import { PageMeta } from "@/components/seo/PageMeta";
+import { NotificationsCard } from "@/components/support/NotificationsCard";
 import { RefundClaimDialog } from "@/components/support/RefundClaimDialog";
 
 import { format } from "date-fns";
@@ -415,6 +416,8 @@ export default function Support() {
           </div>
         </a>
 
+        <NotificationsCard />
+
         {/* Tickets List */}
 
         <h2 className="sr-only">Your Support Tickets</h2>
@@ -444,7 +447,7 @@ export default function Support() {
                     <div
                       key={ticket.id}
                       className="p-4 rounded-xl border border-border bg-card/50 hover:bg-card/80 transition-colors cursor-pointer"
-                      onClick={() => setSelectedTicket(ticket)}
+                      onClick={() => navigate({ to: '/tickets/$ticketId', params: { ticketId: ticket.id } })}
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-start gap-3 flex-1 min-w-0">
