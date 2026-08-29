@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { clientIp, logApiCall, rateLimit } from '@/lib/api-audit.server';
 
 /**
  * FlexiPro customer API (SMM-panel style).
@@ -64,8 +65,47 @@ export const Route = createFileRoute('/api/public/v2')({
         const key = typeof body['key'] === 'string' ? body['key'].trim() : '';
         const action = typeof body['action'] === 'string' ? body['action'].trim() : '';
 
-        if (!key) return fail('key is required', 401);
-        if (!action) return fail('action is required');
+        const audit = {
+          endpoint: '/api/public/v2',
+          method: 'POST',
+          action: action || null,
+          apiKey: key || null,
+          userId: null as string | null,
+        };
+        const finish = async (response: Response, errorMessage?: string) => {
+          await logApiCall(request, {
+            ...audit,
+            statusCode: response.status,
+            success: response.status < 400,
+            errorMessage: errorMessage ?? null,
+          });
+          return response;
+        };
+
+        // Throttle by IP first (covers repeated invalid-key guessing),
+        // then per API key for authenticated abuse.
+        const ipLimit = await rateLimit(`v2:ip:${clientIp(request)}`, 60, 60);
+        if (!ipLimit.allowed) {
+          const res = json(
+            { status: 'error', error: 'Too many requests. Please slow down.' },
+            429,
+          );
+          res.headers.set('Retry-After', String(ipLimit.retryAfter));
+          return finish(res, 'ip rate limit exceeded');
+        }
+
+        if (!key) return finish(fail('key is required', 401), 'missing key');
+        if (!action) return finish(fail('action is required'), 'missing action');
+
+        const keyLimit = await rateLimit(`v2:key:${key}`, 120, 60);
+        if (!keyLimit.allowed) {
+          const res = json(
+            { status: 'error', error: 'Too many requests for this API key.' },
+            429,
+          );
+          res.headers.set('Retry-After', String(keyLimit.retryAfter));
+          return finish(res, 'key rate limit exceeded');
+        }
 
         const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
 
@@ -75,10 +115,11 @@ export const Route = createFileRoute('/api/public/v2')({
           .eq('api_key', key)
           .maybeSingle();
 
-        if (keyErr) return fail('Authentication failed', 500);
-        if (!keyRow) return fail('Invalid API key', 401);
+        if (keyErr) return finish(fail('Authentication failed', 500), keyErr.message);
+        if (!keyRow) return finish(fail('Invalid API key', 401), 'invalid api key');
 
         const userId = keyRow.user_id as string;
+        audit.userId = userId;
 
         const { data: profile } = await supabaseAdmin
           .from('profiles')
@@ -86,7 +127,7 @@ export const Route = createFileRoute('/api/public/v2')({
           .eq('user_id', userId)
           .maybeSingle();
 
-        if (profile?.is_banned) return fail('Account suspended', 403);
+        if (profile?.is_banned) return finish(fail('Account suspended', 403), 'banned account');
 
         switch (action) {
           case 'services': {
@@ -96,9 +137,9 @@ export const Route = createFileRoute('/api/public/v2')({
               .eq('is_active', true)
               .order('category', { ascending: true });
 
-            if (error) return fail('Could not load services', 500);
+            if (error) return finish(fail('Could not load services', 500);
 
-            return json({
+            return finish(json({
               status: 'ok',
               services: (data ?? []).map((s) => ({
                 service: s.id,
@@ -121,7 +162,7 @@ export const Route = createFileRoute('/api/public/v2')({
               .eq('user_id', userId)
               .maybeSingle();
 
-            return json({
+            return finish(json({
               status: 'ok',
               balance: Number(data?.balance ?? 0).toFixed(2),
               currency: 'INR',
@@ -133,9 +174,9 @@ export const Route = createFileRoute('/api/public/v2')({
             const link = typeof body['link'] === 'string' ? body['link'].trim() : '';
             const quantity = num(body['quantity']);
 
-            if (!serviceId) return fail('service is required');
-            if (!link || !/^https?:\/\//i.test(link)) return fail('A valid link is required');
-            if (!quantity || quantity <= 0) return fail('quantity must be a positive number');
+            if (!serviceId) return finish(fail('service is required');
+            if (!link || !/^https?:\/\//i.test(link)) return finish(fail('A valid link is required');
+            if (!quantity || quantity <= 0) return finish(fail('quantity must be a positive number');
 
             const { data: service } = await supabaseAdmin
               .from('services')
@@ -143,14 +184,14 @@ export const Route = createFileRoute('/api/public/v2')({
               .eq('id', serviceId)
               .maybeSingle();
 
-            if (!service || !service.is_active) return fail('Invalid service');
+            if (!service || !service.is_active) return finish(fail('Invalid service');
             if (quantity < (service.min_quantity ?? 1))
-              return fail(`Minimum quantity for this service is ${service.min_quantity}`);
+              return finish(fail(`Minimum quantity for this service is ${service.min_quantity}`);
             if (quantity > (service.max_quantity ?? quantity))
-              return fail(`Maximum quantity for this service is ${service.max_quantity}`);
+              return finish(fail(`Maximum quantity for this service is ${service.max_quantity}`);
 
             const price = Math.round((Number(service.price ?? 0) / 1000) * quantity * 10000) / 10000;
-            if (price <= 0) return fail('This service is not available for API ordering');
+            if (price <= 0) return finish(fail('This service is not available for API ordering');
 
             const { data: wallet } = await supabaseAdmin
               .from('wallets')
@@ -159,7 +200,7 @@ export const Route = createFileRoute('/api/public/v2')({
               .maybeSingle();
 
             if (Number(wallet?.balance ?? 0) < price)
-              return fail('Insufficient balance', 402);
+              return finish(fail('Insufficient balance', 402);
 
             const { data: order, error: orderErr } = await supabaseAdmin
               .from('orders')
@@ -174,7 +215,7 @@ export const Route = createFileRoute('/api/public/v2')({
               .select('id, order_number')
               .single();
 
-            if (orderErr || !order) return fail('Could not create order', 500);
+            if (orderErr || !order) return finish(fail('Could not create order', 500);
 
             const { error: debitErr } = await supabaseAdmin.rpc('debit_wallet_for_order', {
               p_user_id: userId,
@@ -185,15 +226,15 @@ export const Route = createFileRoute('/api/public/v2')({
 
             if (debitErr) {
               await supabaseAdmin.from('orders').delete().eq('id', order.id);
-              return fail(debitErr.message || 'Payment failed', 402);
+              return finish(fail(debitErr.message || 'Payment failed', 402);
             }
 
-            return json({ status: 'ok', order: order.order_number, charge: price.toFixed(4) });
+            return finish(json({ status: 'ok', order: order.order_number, charge: price.toFixed(4) });
           }
 
           case 'status': {
             const orderNumber = num(body['order']);
-            if (!orderNumber) return fail('order is required');
+            if (!orderNumber) return finish(fail('order is required');
 
             const { data: order } = await supabaseAdmin
               .from('orders')
@@ -202,9 +243,9 @@ export const Route = createFileRoute('/api/public/v2')({
               .eq('order_number', orderNumber)
               .maybeSingle();
 
-            if (!order) return fail('Order not found', 404);
+            if (!order) return finish(fail('Order not found', 404);
 
-            return json({
+            return finish(json({
               status: 'ok',
               order: {
                 order_number: order.order_number,
@@ -220,7 +261,7 @@ export const Route = createFileRoute('/api/public/v2')({
           }
 
           default:
-            return fail(`Unknown action "${action}"`);
+            return finish(fail(`Unknown action "${action}"`);
         }
       },
     },
