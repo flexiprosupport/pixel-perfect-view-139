@@ -159,15 +159,24 @@ export function RefundClaimDialog() {
         .single();
 
       if (error) throw error;
+
+      // Confirmation receipt — never block ticket creation on email delivery.
+      try {
+        await sendReceipt({ data: { ticketId: data.id } });
+      } catch (e) {
+        console.error("ticket receipt email failed", e);
+      }
+
       return data;
     },
 
-    onSuccess: () => {
+    onSuccess: (ticket) => {
       toast({
-        title: "Refund claim submitted",
+        title: `Refund claim submitted${ticket?.ticket_number ? ` (${ticket.ticket_number})` : ""}`,
         description:
-          "Your claim is now a high-priority ticket. Typical first response within one business day.",
+          "A confirmation receipt is on its way to your email. Typical first response within one business day.",
       });
+
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
       setOpen(false);
       reset();
