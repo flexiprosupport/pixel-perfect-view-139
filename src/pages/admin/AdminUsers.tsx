@@ -138,16 +138,18 @@ export default function AdminUsers() {
     },
   });
 
+  const callBanUser = useServerFn(adminBanUser);
+  const callUnbanUser = useServerFn(adminUnbanUser);
+  const callSetUserRole = useServerFn(adminSetUserRole);
+
   const banUserMutation = useMutation({
     mutationFn: async ({ targetUser, reason }: { targetUser: UserProfile; reason: string }) => {
-      const { data, error } = await supabase.rpc('admin_ban_user_and_cancel' as any, {
-        p_target_user_id: targetUser.user_id,
-        p_reason: reason || null,
+      if (reason.trim().length < 5) throw new Error('Ban reason must be at least 5 characters');
+      return await callBanUser({
+        data: { target_user_id: targetUser.user_id, reason: reason.trim() },
       });
-      if (error) throw error;
-      return data as any;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       const s = data?.single_orders_cancelled ?? 0;
       const e = data?.engagement_orders_cancelled ?? 0;
       const r = data?.pending_runs_cancelled ?? 0;
@@ -160,19 +162,15 @@ export default function AdminUsers() {
   });
 
   const unbanUserMutation = useMutation({
-    mutationFn: async (targetUser: UserProfile) => {
-      const { data, error } = await supabase.rpc('admin_unban_user' as any, {
-        p_target_user_id: targetUser.user_id,
-      });
-      if (error) throw error;
-      return data as any;
-    },
+    mutationFn: async (targetUser: UserProfile) =>
+      await callUnbanUser({ data: { target_user_id: targetUser.user_id } }),
     onSuccess: () => {
       toast.success('User unbanned ✅');
       queryClient.invalidateQueries({ queryKey: ['admin-all-users-with-subs'] });
     },
     onError: (err: Error) => toast.error(err.message),
   });
+
 
   const callAdminWalletAction = useServerFn(adminWalletAction);
   const [balanceReason, setBalanceReason] = useState('');
