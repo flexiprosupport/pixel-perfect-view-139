@@ -15,8 +15,9 @@ export const runWalletReconciliationFn = createServerFn({ method: 'POST' })
       wallets_checked: number;
       mismatch_count: number;
       total_drift: number;
-      mismatches: unknown[];
+      mismatches: Record<string, number | string>[];
     };
+
   });
 
 /** Latest reconciliation reports (admin only). */
