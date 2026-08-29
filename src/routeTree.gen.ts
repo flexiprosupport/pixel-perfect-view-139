@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DeliveryRouteImport } from './routes/delivery'
 import { Route as EngagementOrderRouteImport } from './routes/engagement-order'
 import { Route as EngagementOrdersRouteImport } from './routes/engagement-orders'
 import { Route as OrdersRouteImport } from './routes/orders'
@@ -77,6 +78,11 @@ const CookiesRoute = CookiesRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeliveryRoute = DeliveryRouteImport.update({
+  id: '/delivery',
+  path: '/delivery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EngagementOrderRoute = EngagementOrderRouteImport.update({
@@ -225,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRoute
+  '/delivery': typeof DeliveryRoute
   '/engagement-order': typeof EngagementOrderRoute
   '/engagement-orders': typeof EngagementOrdersRouteWithChildren
   '/orders': typeof OrdersRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRoute
+  '/delivery': typeof DeliveryRoute
   '/engagement-order': typeof EngagementOrderRoute
   '/engagement-orders': typeof EngagementOrdersRouteWithChildren
   '/orders': typeof OrdersRoute
@@ -298,6 +306,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/dashboard': typeof DashboardRoute
+  '/delivery': typeof DeliveryRoute
   '/engagement-order': typeof EngagementOrderRoute
   '/engagement-orders': typeof EngagementOrdersRouteWithChildren
   '/orders': typeof OrdersRoute
@@ -336,6 +345,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/dashboard'
+    | '/delivery'
     | '/engagement-order'
     | '/engagement-orders'
     | '/orders'
@@ -372,6 +382,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/dashboard'
+    | '/delivery'
     | '/engagement-order'
     | '/engagement-orders'
     | '/orders'
@@ -408,6 +419,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/cookies'
     | '/dashboard'
+    | '/delivery'
     | '/engagement-order'
     | '/engagement-orders'
     | '/orders'
@@ -445,6 +457,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   DashboardRoute: typeof DashboardRoute
+  DeliveryRoute: typeof DeliveryRoute
   EngagementOrderRoute: typeof EngagementOrderRoute
   EngagementOrdersRoute: typeof EngagementOrdersRouteWithChildren
   OrdersRoute: typeof OrdersRoute
@@ -522,6 +535,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/delivery': {
+      id: '/delivery'
+      path: '/delivery'
+      fullPath: '/delivery'
+      preLoaderRoute: typeof DeliveryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/engagement-order': {
@@ -735,6 +755,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   DashboardRoute: DashboardRoute,
+  DeliveryRoute: DeliveryRoute,
   EngagementOrderRoute: EngagementOrderRoute,
   EngagementOrdersRoute: EngagementOrdersRouteWithChildren,
   OrdersRoute: OrdersRoute,
