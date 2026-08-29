@@ -84,6 +84,8 @@ export default function Admin() {
     onSuccess: (_, enabled) => {
       toast.success(enabled ? 'Maintenance mode enabled' : 'Maintenance mode disabled');
       queryClient.invalidateQueries({ queryKey: ['admin-dashboard-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['maintenance-mode'] });
+
     },
     onError: (err: Error) => toast.error(err.message),
   });
