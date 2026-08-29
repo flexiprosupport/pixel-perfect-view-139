@@ -215,7 +215,7 @@ export default function Auth() {
           <img src={logo} alt="FlexiPro" className="w-9 h-9 rounded-xl object-cover"
                style={{ border: `1px solid ${C.line}` }} />
           <span className="text-[16px] font-bold tracking-tight" style={{ color: C.navy }}>
-            flexipro<span style={{ color: C.magenta }}>.</span>panel
+            FlexiPro.in
           </span>
         </Link>
 
@@ -260,7 +260,7 @@ export default function Auth() {
             <img src={logo} alt="FlexiPro" className="w-10 h-10 rounded-xl object-cover"
                  style={{ border: `1px solid ${C.line}` }} />
             <span className="text-[16px] font-bold tracking-tight" style={{ color: C.navy }}>
-              flexipro<span style={{ color: C.magenta }}>.</span>panel
+              FlexiPro.in
             </span>
           </div>
 
