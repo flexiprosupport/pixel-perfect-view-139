@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react';
-import { useNavigate } from "@/lib/router-compat";
+import { useNavigate, useLocation } from "@/lib/router-compat";
 import { useAuth } from '@/hooks/useAuth';
 import { Sidebar } from './Sidebar';
 import { MobileBottomNav } from './MobileBottomNav';
@@ -11,6 +11,8 @@ interface DashboardLayoutProps { children: ReactNode; }
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith('/admin');
 
   useEffect(() => {
     if (!isLoading && !user) navigate('/auth');
@@ -23,7 +25,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </aside>
       <MobileBottomNav />
       <main className="lg:pl-[260px] w-full">
-       <div className="min-h-screen pt-16 lg:pt-0 px-3 sm:px-4 py-4 sm:py-5 lg:p-8">
+       <div className={`min-h-screen pt-16 lg:pt-0 px-3 sm:px-4 py-4 sm:py-5 lg:p-8 ${isAdmin ? 'text-sm' : ''}`}>
           <div className="max-w-7xl mx-auto w-full">{children}</div>
         </div>
       </main>
