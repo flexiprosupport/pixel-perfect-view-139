@@ -215,7 +215,7 @@ export default function Support() {
     <DashboardLayout>
       <PageMeta
         title="Support & FAQ — FlexiPro"
-        description="FlexiPro support: open tickets, browse FAQs about delivery times, payments, refunds and Organic Mode. We respond within 24 hours."
+        description="FlexiPro support: open tickets, browse FAQs about delivery times, payments, refunds and Organic Mode. Typical first response within one business day."
         canonicalPath="/support"
         breadcrumbs={[
           { name: 'Home', path: '/' },
