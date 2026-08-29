@@ -10,8 +10,13 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "FlexiPro — AI-Powered Social Media Growth Panel" },
       { property: "og:description", content: "Grow on Instagram, YouTube & TikTok with real, human-like engagement. Safe automated delivery, wallet top-ups and live order tracking." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://flexipro.in/" },
+      { property: "og:image", content: "https://flexipro.in/og-image.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://flexipro.in/og-image.jpg" },
     ],
+    links: [{ rel: "canonical", href: "https://flexipro.in/" }],
   }),
+
   component: Index,
 });
