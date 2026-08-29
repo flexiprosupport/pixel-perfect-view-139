@@ -94,6 +94,8 @@ interface EditRunData {
 }
 
 export default function EngagementOrderDetail() {
+  const executeRuns = useServerFn(executeDueRunsFn);
+  const syncStatus = useServerFn(syncRunStatusFn);
   const { orderNumber } = useParams();
   const navigate = useNavigate();
   const { user, isLoading: authLoading, wallet, refreshWallet, isAdmin } = useAuth();

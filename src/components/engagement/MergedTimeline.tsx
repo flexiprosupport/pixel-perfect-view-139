@@ -60,6 +60,7 @@ interface MergedTimelineProps {
 }
 
 export function MergedTimeline({ runs, onEditRun, nextRun, onRefresh, typeTargets = [] }: MergedTimelineProps) {
+  const syncStatus = useServerFn(syncRunStatusFn);
   const [refreshingRunId, setRefreshingRunId] = useState<string | null>(null);
   const [isGlobalRefreshing, setIsGlobalRefreshing] = useState(false);
 
