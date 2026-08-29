@@ -480,6 +480,36 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link: string | null
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           completion_locked_at: string | null
@@ -1305,8 +1335,44 @@ export type Database = {
         }
         Relationships: []
       }
+      support_ticket_events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          status: string
+          ticket_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          status: string
+          ticket_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          status?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_ticket_events_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       support_tickets: {
         Row: {
+          attachments: Json
           category: string | null
           created_at: string | null
           id: string
@@ -1314,11 +1380,14 @@ export type Database = {
           order_id: string | null
           priority: string | null
           status: string | null
+          status_changed_at: string
           subject: string
+          ticket_number: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          attachments?: Json
           category?: string | null
           created_at?: string | null
           id?: string
@@ -1326,11 +1395,14 @@ export type Database = {
           order_id?: string | null
           priority?: string | null
           status?: string | null
+          status_changed_at?: string
           subject: string
+          ticket_number?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          attachments?: Json
           category?: string | null
           created_at?: string | null
           id?: string
@@ -1338,7 +1410,9 @@ export type Database = {
           order_id?: string | null
           priority?: string | null
           status?: string | null
+          status_changed_at?: string
           subject?: string
+          ticket_number?: string | null
           updated_at?: string | null
           user_id?: string
         }
