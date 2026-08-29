@@ -3,7 +3,7 @@ import { Link } from "@/lib/router-compat";
 import {
   ArrowRight, Sparkles, Shield, Zap, Eye, TrendingUp, Shuffle, Clock,
   Moon, Timer, Brain, Link2, CheckCircle2, FileText, Lock, HelpCircle,
-  Mail, Code2,
+  Mail, Code2, SlidersHorizontal,
 } from 'lucide-react';
 import logo from '@/assets/logo.jpg';
 import { PageMeta } from '@/components/seo/PageMeta';
@@ -338,7 +338,7 @@ const Index = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { step: '01', icon: Link2, title: 'Drop the URL', desc: 'Paste any Instagram, YouTube or TikTok link.' },
-                { step: '02', icon: Sparkles, title: 'Choose the mix', desc: 'Flip on views, likes, comments, saves or shares.' },
+                { step: '02', icon: SlidersHorizontal, title: 'Choose the mix', desc: 'Flip on views, likes, comments, saves or shares.' },
                 { step: '03', icon: Brain, title: 'Engine plans it', desc: 'S-curve pacing, ±50% variance, peak-hour lifts.' },
                 { step: '04', icon: TrendingUp, title: 'Watch it unfold', desc: 'Rolls in gradually, tracked live, safe.' },
               ].map((s, i) => (
