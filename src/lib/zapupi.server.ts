@@ -245,3 +245,48 @@ export async function settleZapupiOrder(opts: {
     status: 'completed',
   };
 }
+
+/**
+ * Auto-settle: picks recent uncredited deposits and verifies them against the
+ * gateway, crediting the wallet when the payment is confirmed.
+ * Runs from the scheduler so users never have to check manually.
+ */
+export async function settlePendingZapupiDeposits(limit = 25): Promise<{
+  checked: number;
+  credited: number;
+  mismatched: number;
+  results: Array<{ order_id: string; credited?: boolean; status?: string; mismatch?: boolean }>;
+}> {
+  const admin = await getAdmin();
+  const cutoff = new Date(Date.now() - 24 * 3600_000).toISOString();
+
+  const { data: rows } = await admin
+    .from('zapupi_deposits')
+    .select('order_id, created_at')
+    .eq('credited', false)
+    .in('status', ['pending', 'processing'])
+    .gte('created_at', cutoff)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  const results: Array<{ order_id: string; credited?: boolean; status?: string; mismatch?: boolean }> = [];
+  let credited = 0;
+  let mismatched = 0;
+
+  for (const row of (rows ?? []) as Array<{ order_id: string }>) {
+    try {
+      const r = await settleZapupiOrder({
+        orderId: row.order_id,
+        payload: { source: 'auto', order_id: row.order_id, at: new Date().toISOString() },
+        source: 'sync',
+      });
+      if (r.credited) credited += 1;
+      if (r.mismatch) mismatched += 1;
+      results.push({ order_id: row.order_id, credited: r.credited, status: r.status, mismatch: r.mismatch });
+    } catch (err: any) {
+      results.push({ order_id: row.order_id, status: `error: ${String(err?.message ?? err)}` });
+    }
+  }
+
+  return { checked: (rows ?? []).length, credited, mismatched, results };
+}
