@@ -87,12 +87,27 @@ export default function Settings() {
 
   // No loading states needed for optimistic UI
 
+  // Load the customer's personal API key (stored separately from the profile)
+  useEffect(() => {
+    if (!user?.id) return;
+    let cancelled = false;
+    supabase
+      .from('user_api_keys')
+      .select('api_key')
+      .eq('user_id', user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data?.api_key) setApiKey(data.api_key);
+      });
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
   // Load profile data + organic settings from localStorage
   useEffect(() => {
     if (profile) {
       setFullName(profile.full_name || '');
       setEmail(profile.email || '');
-      setApiKey(profile.api_key || '');
+      
       setAvatarUrl((profile as any).avatar_url || null);
     }
     // Load organic settings from localStorage
@@ -250,36 +265,25 @@ export default function Settings() {
     });
   };
 
-  const generateApiKey = () => {
+  const generateApiKey = async () => {
     if (!user) return;
 
-    const newKey = `sk_live_${crypto.randomUUID().replace(/-/g, '')}`;
+    const { data, error } = await supabase.rpc('rotate_my_api_key' as any);
 
-    // 🚀 INSTANT: Update UI and show success immediately
-    setApiKey(newKey);
+    if (error || !data) {
+      toast({
+        title: "Error",
+        description: error?.message || "Failed to generate API key",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setApiKey(data as unknown as string);
     toast({
       title: "API Key Generated",
       description: "Your new API key has been created. Keep it safe!",
     });
-
-    // Fire-and-forget: Process in background
-    supabase
-      .from('profiles')
-      .update({
-        api_key: newKey,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('user_id', user.id)
-      .then(({ error }) => {
-        if (error) {
-          toast({
-            title: "Error",
-            description: "Failed to save API key - please refresh",
-            variant: "destructive",
-          });
-        }
-        refreshProfile();
-      });
   };
 
   const copyApiKey = async () => {

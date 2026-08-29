@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,37 +23,39 @@ import {
     AlertCircle,
 } from 'lucide-react';
 
-// Detect Supabase project URL for showing API base URL
-const SUPABASE_URL = (import.meta as any).env?.VITE_SUPABASE_URL || 'https://YOUR_PROJECT.supabase.co';
-const API_BASE = `${SUPABASE_URL}/functions/v1/public-api`;
-
-function generateApiKey(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const array = new Uint8Array(48);
-    crypto.getRandomValues(array);
-    return Array.from(array, (b) => chars[b % chars.length]).join('');
-}
+// Customer API lives on the FlexiPro site itself (same origin as the panel)
+const SITE_ORIGIN =
+    typeof window !== 'undefined' ? window.location.origin : 'https://flexipro.in';
+const API_BASE = `${SITE_ORIGIN}/api/public/v2`;
 
 export default function ApiAccess() {
-    const { user, profile, refreshProfile } = useAuth();
+    const { user } = useAuth();
     const [isGenerating, setIsGenerating] = useState(false);
     const [showKey, setShowKey] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [apiKey, setApiKey] = useState<string | null>(null);
 
-    const apiKey: string | null = (profile as any)?.api_key ?? null;
+    useEffect(() => {
+        if (!user?.id) return;
+        let cancelled = false;
+        supabase
+            .from('user_api_keys')
+            .select('api_key')
+            .eq('user_id', user.id)
+            .maybeSingle()
+            .then(({ data }) => {
+                if (!cancelled) setApiKey(data?.api_key ?? null);
+            });
+        return () => { cancelled = true; };
+    }, [user?.id]);
 
     const handleGenerateKey = async () => {
         if (!user) return;
         setIsGenerating(true);
         try {
-            const newKey = generateApiKey();
-            const { error } = await supabase
-                .from('profiles')
-                .update({ api_key: newKey })
-                .eq('user_id', user.id);
-
+            const { data, error } = await supabase.rpc('rotate_my_api_key' as any);
             if (error) throw error;
-            await refreshProfile();
+            setApiKey(data as unknown as string);
             toast.success('API Key generated successfully!');
             setShowKey(true);
         } catch (err: any) {
@@ -196,7 +198,7 @@ export default function ApiAccess() {
                     <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20">
                         <AlertCircle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
                         <p className="text-xs text-amber-200/70">
-                            Saare requests ko <code className="bg-amber-500/10 px-1 py-0.5 rounded text-amber-300">POST</code> method se bhejein aur body mein <code className="bg-amber-500/10 px-1 py-0.5 rounded text-amber-300">key</code> field zaroori hai.
+                            Saare requests ko <code className="bg-amber-500/10 px-1 py-0.5 rounded text-amber-300">POST</code> method se bhejein aur body mein <code className="bg-amber-500/10 px-1 py-0.5 rounded text-amber-300">key</code> field zaroori hai. API sirf aapke apne account tak limited hai — services, orders, status aur balance. Koi bhi admin/panel-management access API se available nahi hai.
                         </p>
                     </div>
 
@@ -209,7 +211,7 @@ export default function ApiAccess() {
                             label="Services List"
                             description="Sare available services aur unke rates dekkhein"
                             request={`{\n  "key": "YOUR_API_KEY",\n  "action": "services"\n}`}
-                            response={`{\n  "status": "ok",\n  "services": [\n    {\n      "service": 1001,\n      "name": "Instagram Followers",\n      "category": "Instagram",\n      "rate": "0.50",\n      "min": 100,\n      "max": 50000\n    }\n  ]\n}`}
+                            response={`{\n  "status": "ok",\n  "services": [\n    {\n      "service": "8f3c1b2e-...-service-id",\n      "name": "Instagram Followers",\n      "category": "Instagram",\n      "rate": "0.50",\n      "min": 100,\n      "max": 50000\n    }\n  ]\n}`}
                             onCopyRequest={() =>
                                 handleCopy(`{\n  "key": "${apiKey || 'YOUR_API_KEY'}",\n  "action": "services"\n}`)
                             }
@@ -222,11 +224,11 @@ export default function ApiAccess() {
                             action="add"
                             label="Place Order"
                             description="Naya order place karein (wallet se amount deduct hoga)"
-                            request={`{\n  "key": "YOUR_API_KEY",\n  "action": "add",\n  "service": 1001,\n  "link": "https://instagram.com/p/...",\n  "quantity": 1000\n}`}
-                            response={`{\n  "status": "ok",\n  "order": 78432\n}`}
+                            request={`{\n  "key": "YOUR_API_KEY",\n  "action": "add",\n  "service": "SERVICE_ID",\n  "link": "https://instagram.com/p/...",\n  "quantity": 1000\n}`}
+                            response={`{\n  "status": "ok",\n  "order": 78432,\n  "charge": "0.5000"\n}`}
                             onCopyRequest={() =>
                                 handleCopy(
-                                    `{\n  "key": "${apiKey || 'YOUR_API_KEY'}",\n  "action": "add",\n  "service": 1001,\n  "link": "https://instagram.com/p/...",\n  "quantity": 1000\n}`
+                                    `{\n  "key": "${apiKey || 'YOUR_API_KEY'}",\n  "action": "add",\n  "service": "SERVICE_ID",\n  "link": "https://instagram.com/p/...",\n  "quantity": 1000\n}`
                                 )
                             }
                         />
