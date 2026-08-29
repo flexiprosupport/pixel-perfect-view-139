@@ -22,7 +22,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2, ReceiptText, Send } from "lucide-react";
+import { Loader2, Paperclip, ReceiptText, Send, X } from "lucide-react";
+import type { Json } from "@/integrations/supabase/types";
+import {
+  MAX_PROOF_FILES,
+  PROOF_ACCEPT,
+  formatBytes,
+  uploadProofFiles,
+  validateProofFiles,
+} from "@/lib/ticket-attachments";
+
 
 const ISSUE_TYPES = [
   { value: "non_delivery", label: "Order not delivered at all" },
