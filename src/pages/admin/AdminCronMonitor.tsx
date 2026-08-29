@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { useServerFn } from '@tanstack/react-start';
+import { schedulerStatusFn, executeDueRunsFn, syncRunStatusFn } from '@/lib/engagement.functions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -69,14 +70,15 @@ export default function AdminCronMonitor() {
   const { isAdmin, isLoading: authLoading } = useAuth();
   const [countdown, setCountdown] = useState(30);
   const [triggeringJob, setTriggeringJob] = useState<string | null>(null);
+  const fetchStatus = useServerFn(schedulerStatusFn);
+  const executeRuns = useServerFn(executeDueRunsFn);
+  const syncStatus = useServerFn(syncRunStatusFn);
 
   // Fetch cron status
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['cron-status'],
     queryFn: async (): Promise<CronStatusResponse> => {
-      const { data, error } = await supabase.functions.invoke('cron-status');
-      if (error) throw error;
-      return data;
+      return (await fetchStatus()) as unknown as CronStatusResponse;
     },
     refetchInterval: 30000, // Auto-refresh every 30s
   });
@@ -100,13 +102,11 @@ export default function AdminCronMonitor() {
   const triggerJob = async (jobName: string) => {
     setTriggeringJob(jobName);
     try {
-      const functionName = jobName.includes('execute-all') 
-        ? 'execute-all-runs' 
-        : 'check-order-status';
-      
-      const { error } = await supabase.functions.invoke(functionName);
-      
-      if (error) throw error;
+      if (jobName.includes('execute-all')) {
+        await executeRuns({ data: { limit: 50 } });
+      } else {
+        await syncStatus({ data: {} });
+      }
       
       toast.success(`${jobName} triggered successfully!`);
       setTimeout(() => refetch(), 2000);

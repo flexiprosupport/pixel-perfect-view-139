@@ -68,3 +68,13 @@ export const syncRunStatusFn = createServerFn({ method: 'POST' })
     const { syncRunStatus } = await import('@/lib/engagement.server');
     return await syncRunStatus({ runId: data.runId });
   });
+
+/** Admin-only scheduler snapshot for the cron monitor page. */
+export const schedulerStatusFn = createServerFn({ method: 'GET' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import('@/lib/providers.server');
+    await assertAdmin(context.supabase, context.userId as string);
+    const { schedulerStatus } = await import('@/lib/engagement.server');
+    return await schedulerStatus();
+  });

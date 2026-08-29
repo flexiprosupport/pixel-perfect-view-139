@@ -458,3 +458,78 @@ export async function syncRunStatus(opts: { runId?: string; limit?: number } = {
 
   return { checked: runs?.length ?? 0, completed, stillProcessing };
 }
+
+// ---------------------------------------------------------------------------
+// Scheduler monitoring
+// ---------------------------------------------------------------------------
+
+/** Snapshot of the run scheduler for the admin monitor page. */
+export async function schedulerStatus() {
+  const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+  const { data: recent } = await supabaseAdmin
+    .from('organic_run_schedule')
+    .select('id, run_number, status, scheduled_at, started_at, completed_at, error_message, provider_account_name')
+    .gte('scheduled_at', since)
+    .order('scheduled_at', { ascending: false })
+    .limit(50);
+
+  const rows = recent ?? [];
+  const successCount = rows.filter((r: any) => r.status === 'completed').length;
+  const failedCount = rows.filter((r: any) => r.status === 'failed').length;
+  const totalRuns = rows.length;
+
+  const { count: pendingDue } = await supabaseAdmin
+    .from('organic_run_schedule')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'pending')
+    .lte('scheduled_at', new Date().toISOString());
+
+  const { count: inFlight } = await supabaseAdmin
+    .from('organic_run_schedule')
+    .select('id', { count: 'exact', head: true })
+    .in('status', ['started', 'processing']);
+
+  return {
+    jobs: [
+      {
+        id: 1,
+        name: 'execute-all-runs',
+        schedule: 'every minute',
+        frequency: 'Dispatch due runs to providers',
+        active: true,
+      },
+      {
+        id: 2,
+        name: 'check-order-status',
+        schedule: 'every 5 minutes',
+        frequency: 'Sync provider delivery status',
+        active: true,
+      },
+    ],
+    recentRuns: rows.map((r: any, i: number) => ({
+      id: i + 1,
+      jobId: 1,
+      jobName: r.provider_account_name ?? 'run',
+      status: r.status,
+      message: r.error_message ?? `Run #${r.run_number}`,
+      startTime: r.started_at ?? r.scheduled_at,
+      endTime: r.completed_at ?? '',
+      duration:
+        r.started_at && r.completed_at
+          ? Math.round(
+              (new Date(r.completed_at).getTime() - new Date(r.started_at).getTime()) / 1000,
+            )
+          : null,
+    })),
+    stats: {
+      totalRuns,
+      successCount,
+      failedCount,
+      successRate: totalRuns ? Math.round((successCount / totalRuns) * 100) : 0,
+    },
+    pendingDue: pendingDue ?? 0,
+    inFlight: inFlight ?? 0,
+  };
+}
