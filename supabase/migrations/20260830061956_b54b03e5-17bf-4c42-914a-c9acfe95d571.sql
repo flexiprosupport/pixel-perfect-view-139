@@ -1,0 +1,2 @@
+REVOKE SELECT ON public.services FROM anon;
+GRANT SELECT (id, name, category, description, price, min_quantity, max_quantity, speed, quality, drip_feed_enabled, is_active, start_time, refill, cancel_allowed, drop_type, created_at, updated_at) ON public.services TO anon;
