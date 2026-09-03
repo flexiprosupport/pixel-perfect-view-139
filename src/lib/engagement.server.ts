@@ -256,8 +256,32 @@ async function resolveProviderAccount(admin: any, serviceId: string | null) {
 const MAX_RETRIES = 5;
 const backoffMinutes = (attempt: number) => Math.min(60, 2 ** Math.max(0, attempt));
 
+/**
+ * Restrict a list of run ids to those belonging to `userId`.
+ * Used so a non-admin caller can only ever tick their own runs.
+ */
+async function filterRunIdsByOwner(ids: string[], userId: string): Promise<string[]> {
+  if (ids.length === 0) return [];
+  const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+
+  const { data: rows } = await supabaseAdmin
+    .from('organic_run_schedule')
+    .select(
+      'id, order_id, orders(user_id), engagement_order_item_id, engagement_order_items(engagement_orders(user_id))',
+    )
+    .in('id', ids);
+
+  return ((rows ?? []) as any[])
+    .filter((r) => {
+      const direct = r.orders?.user_id;
+      const viaItem = r.engagement_order_items?.engagement_orders?.user_id;
+      return direct === userId || viaItem === userId;
+    })
+    .map((r) => String(r.id));
+}
+
 /** Send every due (pending, or failed-and-ready-for-retry) run to its provider. */
-export async function executeDueRuns(limit = 25) {
+export async function executeDueRuns(limit = 25, ownerUserId?: string) {
   const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
 
   const { data: due, error } = await supabaseAdmin.rpc('get_due_engagement_run_ids_v2' as never, {
@@ -265,7 +289,9 @@ export async function executeDueRuns(limit = 25) {
   } as never);
   if (error) throw new Error(error.message);
 
-  const ids = ((due ?? []) as { id: string }[]).map((r) => r.id);
+  let ids = ((due ?? []) as { id: string }[]).map((r) => r.id);
+  if (ownerUserId) ids = await filterRunIdsByOwner(ids, ownerUserId);
+
   let sent = 0;
   let retried = 0;
   const failures: string[] = [];
@@ -370,7 +396,9 @@ export async function executeDueRuns(limit = 25) {
 // ---------------------------------------------------------------------------
 
 /** Poll the provider for one run (or all in-flight runs) and persist the result. */
-export async function syncRunStatus(opts: { runId?: string; limit?: number } = {}) {
+export async function syncRunStatus(
+  opts: { runId?: string; limit?: number; ownerUserId?: string } = {},
+) {
   const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
 
   let query = supabaseAdmin
@@ -382,8 +410,20 @@ export async function syncRunStatus(opts: { runId?: string; limit?: number } = {
     ? query.eq('id', opts.runId)
     : query.in('status', ['started', 'processing']).limit(opts.limit ?? 50);
 
-  const { data: runs, error } = await query;
+  const { data: runsRaw, error } = await query;
   if (error) throw new Error(error.message);
+
+  let runs = runsRaw ?? [];
+  if (opts.ownerUserId) {
+    const owned = new Set(
+      await filterRunIdsByOwner(
+        runs.map((r) => String(r.id)),
+        opts.ownerUserId,
+      ),
+    );
+    runs = runs.filter((r) => owned.has(String(r.id)));
+  }
+
 
   let completed = 0;
   let stillProcessing = 0;
