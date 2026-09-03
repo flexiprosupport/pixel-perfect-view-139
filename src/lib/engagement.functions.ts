@@ -49,25 +49,39 @@ export const placeEngagementOrderFn = createServerFn({ method: 'POST' })
     });
   });
 
-/** Dispatch every due run to the provider (any signed-in user may trigger their own tick). */
+/** Dispatch due runs. Admins tick the whole queue; other users only their own runs. */
 export const executeDueRunsFn = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { limit?: number } | undefined) => ({
     limit: Math.min(50, Math.max(1, input?.limit ?? 25)),
   }))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const userId = context.userId as string;
+    const { data: isAdmin } = await context.supabase.rpc('has_role', {
+      _user_id: userId,
+      _role: 'admin',
+    });
     const { executeDueRuns } = await import('@/lib/engagement.server');
-    return await executeDueRuns(data.limit);
+    return await executeDueRuns(data.limit, isAdmin ? undefined : userId);
   });
 
-/** Refresh provider status for one run, or for all in-flight runs. */
+/** Refresh provider status. Admins may sync all runs; other users only their own. */
 export const syncRunStatusFn = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { runId?: string } | undefined) => ({ runId: input?.runId }))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const userId = context.userId as string;
+    const { data: isAdmin } = await context.supabase.rpc('has_role', {
+      _user_id: userId,
+      _role: 'admin',
+    });
     const { syncRunStatus } = await import('@/lib/engagement.server');
-    return await syncRunStatus({ runId: data.runId });
+    return await syncRunStatus({
+      runId: data.runId,
+      ...(isAdmin ? {} : { ownerUserId: userId }),
+    });
   });
+
 
 /** Admin-only scheduler snapshot for the cron monitor page. */
 export const schedulerStatusFn = createServerFn({ method: 'GET' })
