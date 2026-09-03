@@ -396,7 +396,9 @@ export async function executeDueRuns(limit = 25, ownerUserId?: string) {
 // ---------------------------------------------------------------------------
 
 /** Poll the provider for one run (or all in-flight runs) and persist the result. */
-export async function syncRunStatus(opts: { runId?: string; limit?: number } = {}) {
+export async function syncRunStatus(
+  opts: { runId?: string; limit?: number; ownerUserId?: string } = {},
+) {
   const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
 
   let query = supabaseAdmin
@@ -408,8 +410,20 @@ export async function syncRunStatus(opts: { runId?: string; limit?: number } = {
     ? query.eq('id', opts.runId)
     : query.in('status', ['started', 'processing']).limit(opts.limit ?? 50);
 
-  const { data: runs, error } = await query;
+  const { data: runsRaw, error } = await query;
   if (error) throw new Error(error.message);
+
+  let runs = runsRaw ?? [];
+  if (opts.ownerUserId) {
+    const owned = new Set(
+      await filterRunIdsByOwner(
+        runs.map((r) => String(r.id)),
+        opts.ownerUserId,
+      ),
+    );
+    runs = runs.filter((r) => owned.has(String(r.id)));
+  }
+
 
   let completed = 0;
   let stillProcessing = 0;
