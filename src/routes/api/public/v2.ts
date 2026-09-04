@@ -178,6 +178,22 @@ export const Route = createFileRoute('/api/public/v2')({
             if (!link || !/^https?:\/\//i.test(link)) return finish(fail('A valid link is required'));
             if (!quantity || quantity <= 0) return finish(fail('quantity must be a positive number'));
 
+            // Paid-feature gate: API ordering also requires an active subscription.
+            const { data: sub } = await supabaseAdmin
+              .from('subscriptions')
+              .select('status, expires_at')
+              .eq('user_id', userId)
+              .maybeSingle();
+            const subActive =
+              sub?.status === 'active' &&
+              (!sub.expires_at || new Date(sub.expires_at) > new Date());
+            if (!subActive) {
+              return finish(
+                fail('An active subscription is required to place orders. Please choose a plan.', 403),
+              );
+            }
+
+
             const { data: service } = await supabaseAdmin
               .from('services')
               .select('id, name, price, min_quantity, max_quantity, is_active')
