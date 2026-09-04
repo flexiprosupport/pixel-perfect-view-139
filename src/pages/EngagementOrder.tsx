@@ -7,6 +7,7 @@ import { placeEngagementOrderFn, executeDueRunsFn } from "@/lib/engagement.funct
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { SubscriptionGuard } from "@/components/subscription/SubscriptionGuard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -733,6 +734,7 @@ export default function EngagementOrder() {
 
   return (
     <DashboardLayout>
+      <SubscriptionGuard>
       <PageMeta title="New Engagement Order" description="Place a natural, AI-organic engagement order — Instagram, YouTube, or TikTok views, likes, and comments delivered on a real growth curve." canonicalPath="/engagement-order" noIndex />
       <div className="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8 space-y-3 sm:space-y-6 pb-8">
         {/* Header with gradient - Compact on mobile */}
@@ -1076,6 +1078,7 @@ export default function EngagementOrder() {
         </Card>
       </div>
 
+      </SubscriptionGuard>
     </DashboardLayout>
   );
 }

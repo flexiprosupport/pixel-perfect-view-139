@@ -49,6 +49,19 @@ export async function placeEngagementOrder(userId: string, input: PlaceOrderInpu
     .maybeSingle();
   if (profile?.is_banned) throw new Error('Your account is suspended. Contact support.');
 
+  // Paid-feature gate: an active subscription is required to place orders.
+  const { data: sub } = await supabaseAdmin
+    .from('subscriptions')
+    .select('status, plan_type, expires_at')
+    .eq('user_id', userId)
+    .maybeSingle();
+  const subActive =
+    sub?.status === 'active' && (!sub.expires_at || new Date(sub.expires_at) > new Date());
+  if (!subActive) {
+    throw new Error('An active subscription is required to place orders. Please choose a plan.');
+  }
+
+
   // Admin-controlled per-bundle pricing.
   const bundleItems = input.bundle_id
     ? (
