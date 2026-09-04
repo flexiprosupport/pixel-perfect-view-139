@@ -1077,6 +1077,7 @@ export default function EngagementOrder() {
         </Card>
       </div>
 
+      </SubscriptionGuard>
     </DashboardLayout>
   );
 }
