@@ -1,0 +1,1 @@
+- [Bun transitive security overrides](bun-transitive-security-overrides.md) — exact selectors can leave stale nested versions; verify the resolved tree with Bun audit.
